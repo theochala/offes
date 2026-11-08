@@ -1,0 +1,591 @@
+[
+    {
+        "title": "| LACTA Σοκολάτα Γάλακτος Biscoff 85g κιλό τεμ.",
+        "price": "1,68 €",
+        "all_prices": [
+            "19,77 €",
+            "1,68 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/files/ProductMedia/Products/1710811/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| ΠΑΥΛΙΔΗΣ Σοκολάτα Υγείας με Σταφίδες & Φουντούκια 100g κιλό τεμ. 0",
+        "price": "1,86 €",
+        "all_prices": [
+            "18,60 €",
+            "1,86 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/files/ProductMedia/Products/1710876/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| ΝΟΥΝΟΥ Κεφίρ Χωρίς προσθήκη ζάχαρης 300ml λίτρο τεμ. 0",
+        "price": "1,04 €",
+        "all_prices": [
+            "3,47 €",
+            "1,04 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/files/ProductMedia/Products/1710261/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| ΝΟΥΝΟΥ Κεφίρ Φράουλα 300ml λίτρο τεμ. 0",
+        "price": "1,20 €",
+        "all_prices": [
+            "4,00 €",
+            "1,20 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/files/ProductMedia/Products/1710266/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| BABYCARE Μωρομάντιλα Χαμομήλι 3x72τεμ τεμ. συσκ. 0 συσκ.",
+        "price": "2,61 €",
+        "all_prices": [
+            "0,01 €",
+            "2,61 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/3/files/ProductMedia/Products/1650836/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| PHILADELPHIA Original 300g κιλό τεμ. 0",
+        "price": "2,98 €",
+        "all_prices": [
+            "9,93 €",
+            "2,98 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/42/files/ProductMedia/Products/7015670/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| MISKO Σπαγγέτι Νο6 500g κιλό τεμ. 0",
+        "price": "0,69 €",
+        "all_prices": [
+            "1,38 €",
+            "0,69 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/41/files/ProductMedia/Products/4060802/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| EVERYDAY Sensitive Cotton Σερβιέτες Ultra Plus Super 18τεμ +Νεσεσέρ Δώρο τεμ. συσκ. 0 συσκ.",
+        "price": "2,33 €",
+        "all_prices": [
+            "0,13 €",
+            "2,33 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/2/files/ProductMedia/Products/1556777/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| EVERYDAY Sensitive Cotton Σερβιέτες Ultra Plus Maxi Night 18τεμ +Νεσεσέρ Δώρο τεμ. συσκ. 0 συσκ.",
+        "price": "2,33 €",
+        "all_prices": [
+            "0,13 €",
+            "2,33 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/2/files/ProductMedia/Products/1556779/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| MISKO Κριθαράκι Μέτριο 500g κιλό τεμ. 0",
+        "price": "0,86 €",
+        "all_prices": [
+            "1,72 €",
+            "0,86 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/41/files/ProductMedia/Products/4062055/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| 1+1 Δώρο SWIFFER Dusters για Ξεσκόνισμα 5τεμ τεμ. συσκ. 0 συσκ.",
+        "price": "5,28 €",
+        "all_prices": [
+            "1,06 €",
+            "5,28 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/files/ProductMedia/Products/1579193/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| LURPAK Soft Μείγμα Λιπαρών Υλών για Επάλειψη Ανάλατο 225g κιλό τεμ. 0",
+        "price": "2,58 €",
+        "all_prices": [
+            "11,47 €",
+            "2,58 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/42/files/ProductMedia/Products/1132607/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| LURPAK Βούτυρο Ανάλατo 250g κιλό τεμ. 0",
+        "price": "3,08 €",
+        "all_prices": [
+            "12,32 €",
+            "3,08 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/43/files/ProductMedia/Products/9241027/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| PHILADELPHIA Original 200g κιλό τεμ. 0",
+        "price": "2,38 €",
+        "all_prices": [
+            "11,90 €",
+            "2,38 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/42/files/ProductMedia/Products/4063012/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| 7DAYS Mini Κρουασάν με γέμιση Κακάο 103g κιλό τεμ. 0",
+        "price": "1,18 €",
+        "all_prices": [
+            "11,46 €",
+            "1,18 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/4/files/ProductMedia/Products/1557229/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| 7DAYS Mini Κρουασάν με γέμιση Κρέμα Μιλφέιγ 103g κιλό τεμ. 0",
+        "price": "1,18 €",
+        "all_prices": [
+            "11,46 €",
+            "1,18 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/4/files/ProductMedia/Products/1557218/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| FINISH Καθαριστικό Πλυντηρίου Πιάτων Υγρό Λεμόνι 250ml λίτρο τεμ. 0",
+        "price": "5,92 €",
+        "all_prices": [
+            "23,68 €",
+            "5,92 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/41/files/ProductMedia/Products/6986756/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| LENOR Fresh Air Υπερσυμπυκνωμένο Μαλακτικό Ρούχων Θαλασσινό Αεράκι 50 πλύσεις πλύση τεμ. 0",
+        "price": "3,99 €",
+        "all_prices": [
+            "0,08 €",
+            "3,99 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/files/ProductMedia/Products/1668914/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| FINISH Powerball Ultimate Plus Απορρυπαντικό Πλυντηρίου Πιάτων Ταμπλέτες Λεμόνι 48τεμ τεμ. συσκ. 0 συσκ.",
+        "price": "12,84 €",
+        "all_prices": [
+            "0,27 €",
+            "12,84 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/files/ProductMedia/Products/1649187/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| SYOSS Keratin Σαμπουάν για Αδύναμα Μαλλιά που Σπάνε 750ml λίτρο τεμ. 0",
+        "price": "4,23 €",
+        "all_prices": [
+            "5,64 €",
+            "4,23 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/42/files/ProductMedia/Products/1131814/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| BABYLINO Sensitive Πάνες Cotton Soft Νο4 Maxi 8-13kg 50τεμ τεμ. συσκ. 0 συσκ.",
+        "price": "9,67 €",
+        "all_prices": [
+            "0,19 €",
+            "9,67 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/41/files/ProductMedia/Products/7095524/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| ORAL-B Οδοντόκρεμα 3D Clinical Intensive Whitening 75ml λίτρο τεμ. 0",
+        "price": "4,68 €",
+        "all_prices": [
+            "62,40 €",
+            "4,68 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/files/ProductMedia/Products/1663930/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| OLD SPICE Αφροντούς 3in1 Captain 400ml λίτρο τεμ. 0",
+        "price": "2,79 €",
+        "all_prices": [
+            "6,98 €",
+            "2,79 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/43/files/ProductMedia/Products/1430845/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "| LACTA Mini Stars Μπισκότα με Σοκολάτα Γάλακτος 150g κιλό τεμ. 0",
+        "price": "1,48 €",
+        "all_prices": [
+            "9,87 €",
+            "1,48 €"
+        ],
+        "image": "https://s1.sklavenitis.gr/images/Product/files/ProductMedia/Products/1703816/1.jpg",
+        "supermarket": "Σκλαβενίτης"
+    },
+    {
+        "title": "- | Αβοκάντο Συσκευασμένο Ready to Eat 2τεμ. κιλό €2.59 € 2.75 Προσθήκη",
+        "price": "7.00 €",
+        "all_prices": [
+            "0.16 €",
+            "7.00 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1760539393_81009495.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-15% | ΦΡΕΣΚΟΥΛΗΣ Ιταλική Σαλάτα 200γρ. κιλό €1.40 € 1.65 Προσθήκη",
+        "price": "7.00 €",
+        "all_prices": [
+            "7.00 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1772011014_702059.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "Πατάτες Κάτω Νευροκοπίου Π.Γ.Ε Χύμα | ~5 τεμάχιο 1kg € 0 75 Τιμή κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 198324",
+        "price": "0,75€",
+        "all_prices": [
+            "0,75€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/01_10_26/fe0ed409-dc87-40a2-af9b-6cca18dd61be_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Αχλάδια Κρυστάλλια Ελληνικά Ποιότητα Α΄Τιμή Κιλού | ~1 τεμάχιο 170g € 1 49 Τιμή κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 198274",
+        "price": "1,49€",
+        "all_prices": [
+            "1,49€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/09_04_21/e330b7bd-0f18-44b0-946a-785b6308bdb4_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Soft Lux Χαρτί Υγείας 3φυλλο 10αρι 1,200kg | € 3 90 SUPER ΤΙΜΗ Τιμή κιλού Προσθήκη Κωδ: 608889",
+        "price": "3,25€",
+        "all_prices": [
+            "3,25€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/4ce84040-f98c-45d3-aeb2-d4ee13b1f623_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Gusto Τυρί Gouda Φραντζόλα Προέλευσης Ε.Ε. Τιμή Κιλού | ~10 250g € 5 55 κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 125010",
+        "price": "5,55€",
+        "all_prices": [
+            "5,55€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/19_08_21/ffa4d898-539c-4b76-a082-658127752db1_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Soft Jumbo Χαρτοπετσέτες 100Φύλλα 0,175kg | € 0 75 SUPER ΤΙΜΗ Τιμή κιλού Προσθήκη Κωδ: 608794",
+        "price": "4,29€",
+        "all_prices": [
+            "4,29€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/f9e7824e-789c-4405-9e66-022d4e6728b4_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Soft Jumbo Ρολό Κουζίνας 600gr | € 2 42 SUPER ΤΙΜΗ Τιμή κιλού Προσθήκη Κωδ: 609410",
+        "price": "4,03€",
+        "all_prices": [
+            "4,03€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/d73dbbf6-e1c6-494b-98e7-5e082cf8c53c_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Adoro Creamy Gouda Φρατζόλα Τιμή Κιλού | ~10 250g € 7 41 κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 125019",
+        "price": "7,41€",
+        "all_prices": [
+            "7,41€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/18_01_21/36f0c4b2-6a80-488d-aebf-28c72eebda57_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Μανταρίνια Κλημεντίνες Ελληνικά Ποιότητα Α΄Τιμή Κιλού | ~1 τεμάχιο 100g € 2 49 Τιμή κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 198120",
+        "price": "2,49€",
+        "all_prices": [
+            "2,49€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/09_04_21/5db79b68-ec51-42e3-a2b3-40ccd1a14e0c_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "ΝΟΥΝΟΥ Τυρί Gouda Ολλανδίας Φραντζόλα Τιμή Κιλού | ~10 250g € 10 99 κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 125316",
+        "price": "10,99€",
+        "all_prices": [
+            "10,99€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/10_03_26/ccfddd86-70ec-420a-bcd4-9cc842f669ab_EH.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Ακτινίδια Εισαγωγής Ποιότητα Α' | ~1 τεμάχιο 120g € 5 29 Τιμή κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 198143",
+        "price": "5,29€",
+        "all_prices": [
+            "5,29€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/09_04_21/d2e82682-a93e-44e3-9b88-8161d6076bf4_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Άρτα Κοτόπουλο Ελληνικό Νωπό Xύμα | ~1 τεμάχιο 1,7kg € 2 69 Τιμή κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 137711",
+        "price": "2,69€",
+        "all_prices": [
+            "2,69€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/02_01_23/5bf6f041-a27d-477f-bfef-493d782c46cf_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Καρότα Συσκευασμένα Εγχώρια 500gr | € 0 48 SUPER ΤΙΜΗ Τιμή κιλού Προσθήκη Κωδ: 198791",
+        "price": "0,96€",
+        "all_prices": [
+            "0,96€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/05_07_22/52d2ce57-3d49-47e8-9e91-03148957e07e_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Ελιά Βοείου Γερμανίας Νωπή Άνευ Οστού Τιμή Κιλού | € 12 89 κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 133205",
+        "price": "12,89€",
+        "all_prices": [
+            "12,89€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/31d9a13e-846e-4b8e-8d90-736e7ac86ce6_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Μπούτι Χοιρινό Ολλανδίας Νωπό Άνευ Οστού Δέρμα | € 5 95 Τελ. τιμή κιλού ΠΡΟΣΦΟΡΑ Αρχ. κιλού κιλού Προσθήκη Κωδ: 134205",
+        "price": "5,95€",
+        "all_prices": [
+            "7,59€",
+            "5,95€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/85a091df-ff56-42fe-bef3-33bb47aaf683_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Ζαγόρι Φυσικό Μεταλλικό Νερό 1,5lt 6τεμ | € 1 75 SUPER ΤΙΜΗ Τιμή λίτρου Προσθήκη Κωδ: 404092",
+        "price": "0,19€",
+        "all_prices": [
+            "0,19€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/27_11_25/03db0425-63e3-4425-8f78-0a86253eece5_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Kouzina Συμπυκνωμένο Γάλα 170gr | € 0 51 2+2 Αρχ. τιμή κιλού Τελ. κιλού σετ ( X 4) Προσθήκη Κωδ: 250220",
+        "price": "1,02€",
+        "all_prices": [
+            "2,04€",
+            "3,00€",
+            "1,50€",
+            "2,04€",
+            "0,51€",
+            "1,02€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/42376e38-ff98-463c-8ba2-500333cffaa8_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Soft Χαρτοπετσέτες 70 Φύλλων 0,120kg | € 0 73 SUPER ΤΙΜΗ Τιμή κιλού Προσθήκη Κωδ: 608793",
+        "price": "6,08€",
+        "all_prices": [
+            "6,08€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/fdbb5eee-4d1e-484d-9b57-bf9b281493ed_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Melissa Σπαγγέτι Νο 6 500gr | € 0 75 SUPER ΤΙΜΗ Τιμή κιλού Προσθήκη Κωδ: 233004",
+        "price": "1,50€",
+        "all_prices": [
+            "1,50€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/10_12_24/1738cd56-b586-4bea-ab55-73b75f1dfa3e_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "BabyCare 99% Water Μωρομάντηλα Triple Pack 3x72τεμ | € 2 35 SUPER ΤΙΜΗ Τιμή τεμαχίου Προσθήκη Κωδ: 611277",
+        "price": "0,01€",
+        "all_prices": [
+            "0,01€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/19_11_25/60551a5f-a282-4a5e-b34f-807b76260ba5_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Babycare Χαμομήλι Μωρομάντηλα Triple Pack 3x72τεμ | € 2 60 SUPER ΤΙΜΗ Τιμή τεμαχίου Προσθήκη Κωδ: 611798",
+        "price": "0,01€",
+        "all_prices": [
+            "0,01€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_04_25/a345c0ed-9880-45aa-805c-9e203002c73a_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Alfa Τορτίγια Κλασσική 6τεμ 370gr | € 1 16 SUPER ΤΙΜΗ Τιμή κιλού Προσθήκη Κωδ: 280136",
+        "price": "3,14€",
+        "all_prices": [
+            "3,14€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/30_05_22/4e90ecc2-ac63-4b0a-b012-36e3379efe3a_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Ήπειρος Μαλακή Ημιδοχείο Τιμή Κιλού | € 9 45 κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 123239",
+        "price": "9,45€",
+        "all_prices": [
+            "9,45€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/14_03_23/1ee68b82-3900-48fb-964c-90fa84f9016d_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Μήλα Ζαγοράς Πηλίου Π.Ο.Π. Ποιότητα Α΄ Τιμή Κιλού | ~1 τεμάχιο 270g € 2 35 κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 198097",
+        "price": "2,35€",
+        "all_prices": [
+            "2,35€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/05_09_22/ea2e333d-c257-4abb-8c6b-54faee4aa299_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "ΝΟΥΝΟΥ Family Γάλα 3,6% Λιπαρά 1,5lt | € 2 21 -25% Αρχ. τιμή λίτρου Τελ. λίτρου Προσθήκη Κωδ: 113637",
+        "price": "2,21€",
+        "all_prices": [
+            "2,95€",
+            "1,97€",
+            "1,47€",
+            "2,95€",
+            "2,21€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/08_07_25/fbc1194d-2d05-4d2e-9382-44870519360f_EH.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Milner Τυρί Ολλανδίας Φρατζόλα Προέλευση Ε.Ε. Τιμή Κιλού | ~10 200g € 7 45 κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 125016",
+        "price": "7,45€",
+        "all_prices": [
+            "7,45€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/10_03_26/a0d384c9-746a-47df-b1c9-1e5d410367e6_EH.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Kerrygold Regato Ιρλανδίας Τιμή Κιλού | € 11 57 κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 126302",
+        "price": "11,57€",
+        "all_prices": [
+            "11,57€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/21_10_24/345f06c8-55d4-4ed1-b263-a8a72f6b694a_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Σφακιανές Μαδάρες Γραβιέρα Κρήτης Ποπ Τιμή Κιλού | € 12 95 κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 124656",
+        "price": "12,95€",
+        "all_prices": [
+            "12,95€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/12_04_24/1901775a-2d78-4cc1-8cf2-b88443965d26_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Πορτοκάλια Φαγητού Ναβαλίνες Ποιότητα Α΄ Τιμή Κιλού | ~1 τεμάχιο 280g € 1 09 κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 198114",
+        "price": "1,09€",
+        "all_prices": [
+            "1,09€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/09_04_21/2fa013ba-7667-48d1-9954-270e7c5d3080_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Green Cola 1,5lt | € 1 18 SUPER ΤΙΜΗ Τιμή λίτρου Προσθήκη Κωδ: 401744",
+        "price": "0,79€",
+        "all_prices": [
+            "0,79€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/27_11_25/1b18f99a-420a-4679-bfd5-7abfc9ef993e_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Ήπειρος Ελαφρύ Δοχείο Τιμή Κιλού | € 10 34 κιλού SUPER ΤΙΜΗ κιλού Προσθήκη Κωδ: 123243",
+        "price": "10,34€",
+        "all_prices": [
+            "10,34€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/21_05_24/8c1f5fef-fc54-45e4-89a2-cd37559a8893_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "ΝΟΥΝΟΥ Γάλα Family 1,5% Λιπαρά 1,5lt | € 2 21 -25% Αρχ. τιμή λίτρου Τελ. λίτρου Προσθήκη Κωδ: 113639",
+        "price": "2,21€",
+        "all_prices": [
+            "2,95€",
+            "1,97€",
+            "1,47€",
+            "2,95€",
+            "2,21€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/10_03_26/e00b3f54-54b8-4170-b2ce-77a98822ec4f_EH.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Pummaro Χυμός Τομάτας 2x500gr | € 1 62 SUPER ΤΙΜΗ Τιμή κιλού Προσθήκη Κωδ: 226100",
+        "price": "1,62€",
+        "all_prices": [
+            "1,62€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/08_03_25/c1d133ba-2d7d-4b4e-a775-a374ba340320_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Pummaro Χυμό Τομάτας Κλασσικός Συμπυκνωμένος 500gr | € 0 81 SUPER ΤΙΜΗ Τιμή κιλού Προσθήκη Κωδ: 226511",
+        "price": "1,62€",
+        "all_prices": [
+            "1,62€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/31_10_24/ca6a7288-84ce-4333-8482-cb71b7a6beeb_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Παπαδοπούλου Ψωμί Τοστ Γεύση2 Σταρένιο 700gr | € 1 56 SUPER ΤΙΜΗ Τιμή κιλού Προσθήκη Κωδ: 301079",
+        "price": "2,23€",
+        "all_prices": [
+            "2,23€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/08_06_23/c7104265-12d5-462a-816d-6aa85b05a599_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Μπριζόλα Χοιρινή Ολλανδίας Νωπή Με Οστό | € 5 49 Τελ. τιμή κιλού ΠΡΟΣΦΟΡΑ Αρχ. κιλού κιλού Προσθήκη Κωδ: 134010",
+        "price": "5,49€",
+        "all_prices": [
+            "7,40€",
+            "5,49€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/26eac176-0ea1-4401-9a7b-ce54251e6e7b_E1.jpg",
+        "supermarket": "My Market"
+    }
+]
