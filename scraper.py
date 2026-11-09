@@ -4,6 +4,7 @@ import re
 import os
 import requests
 from requests.auth import HTTPBasicAuth
+import ftplib
 
 def clean_title(title):
     artifacts = [
@@ -330,6 +331,25 @@ def upload_to_wordpress(json_file="clean_offers.json"):
         except Exception as e:
             print(f"✖ Εξαίρεση κατά το ανέβασμα: {e}")
 
+def upload_to_ftp():
+    ftp_server = os.getenv("FTP_SERVER")
+    ftp_user = os.getenv("FTP_USERNAME")
+    ftp_pass = os.getenv("FTP_PASSWORD")
+
+    if not ftp_server or not ftp_user or not ftp_pass:
+        print("Δεν βρέθηκαν τα FTP credentials στα GitHub Secrets. Παράλειψη μεταφόρτωσης FTP.")
+        return
+
+    print("\nΣύνδεση στο FTP του InfinityFree...")
+    try:
+        with ftplib.FTP(ftp_server, ftp_user, ftp_pass) as ftp:
+            ftp.cwd("/htdocs/")
+            with open("clean_offers.json", "rb") as f:
+                ftp.storbinary("STOR clean_offers.json", f)
+            print("✔ Το αρχείο clean_offers.json ανέβηκε επιτυχώς μέσω FTP!")
+    except Exception as e:
+        print(f"✖ Σφάλμα κατά το FTP upload: {e}")
+
 # Εκτέλεση Scraping
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
@@ -358,4 +378,6 @@ with sync_playwright() as p:
         json.dump(unique_offers, f, ensure_ascii=False, indent=4)
         print(f"\nΑποθήκευση {len(unique_offers)} μοναδικών προσφορών στο clean_offers.json!")
 
+# Αυτόματη αποστολή
 upload_to_wordpress()
+upload_to_ftp()
