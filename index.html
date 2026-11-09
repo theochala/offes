@@ -3,68 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Σούπερ Μάρκετ - Προσφορές</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Σούπερ Μάρκετ Προσφορές</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        header {
+            background-color: #2563eb;
+            color: white;
+            padding: 2rem 1rem;
+            text-align: left;
+        }
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header h1 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .badge {
+            align-self: flex-start;
+            background-color: #e0e7ff;
+            color: #3730a3;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            margin: 1rem 1rem 0.5rem 1rem;
+            text-transform: uppercase;
+        }
+        .card-img-container {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .card-img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .card-content {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+            color: #1f2937;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto;
+            padding-top: 0.5rem;
+            border-top: 1px solid #f3f4f6;
+        }
+        .price-container {
+            display: flex;
+            flex-direction: column;
+        }
+        .original-price {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-decoration: line-through;
+        }
+        .offer-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #dc2626;
+        }
+        .btn-link {
+            background-color: #2563eb;
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .btn-link:hover {
+            background-color: #1d4ed8;
+        }
+        .loading, .error-msg {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.1rem;
+            color: #6b7280;
+            grid-column: 1 / -1;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body>
 
-    <header class="bg-blue-600 text-white shadow-md py-6 mb-8">
-        <div class="container mx-auto px-4">
-            <h1 class="text-3xl font-bold">🛒 Σούπερ Μάρκετ Προσφορές</h1>
-            <p class="text-blue-100 mt-1">Συγκέντρωση τιμών και εικόνων προϊόντων σε πραγματικό χρόνο</p>
+    <header>
+        <div class="header-container">
+            <h1>🛒 Σούπερ Μάρκετ Προσφορές</h1>
+            <p>Συγκέντρωση τιμών και εικόνων προϊόντων σε πραγματικό χρόνο</p>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 pb-12">
-        <div id="loading" class="text-center py-10 text-gray-600 text-lg">Φόρτωση προσφορών...</div>
-        
-        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Εδώ φορτώνονται οι κάρτες -->
+    <main>
+        <div id="offers-container" class="offers-grid">
+            <div class="loading">Φόρτωση προσφορών...</div>
         </div>
     </main>
 
     <script>
-        async function loadOffers() {
-            try {
-                const response = await fetch('clean_offers.json');
-                const products = await response.json();
-                
-                const grid = document.getElementById('products-grid');
-                const loading = document.getElementById('loading');
-                
-                loading.style.display = 'none';
-                grid.innerHTML = '';
+        document.addEventListener("DOMContentLoaded", function () {
+            // Φόρτωση του clean_offers.json που παράγει ο scraper
+            fetch('clean_offers.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Δεν ήταν δυνατή η εύρεση του clean_offers.json');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const container = document.getElementById('offers-container');
+                    container.innerHTML = ''; // Καθαρισμός του loading
 
-                products.forEach(product => {
-                    const card = document.createElement('div');
-                    card.className = 'bg-white rounded-lg shadow-md p-4 flex flex-col justify-between hover:shadow-lg transition-shadow border border-gray-200';
-                    
-                    const imgSrc = product.image && product.image.startsWith('http') 
-                        ? product.image 
-                        : 'https://via.placeholder.com/150?text=No+Image';
+                    if (!data || data.length === 0) {
+                        container.innerHTML = '<div class="loading">Δεν βρέθηκαν διαθέσιμες προσφορές αυτή τη στιγμή.</div>';
+                        return;
+                    }
 
-                    card.innerHTML = `
-                        <div>
-                            <div class="relative h-48 mb-3 overflow-hidden rounded bg-gray-50 flex items-center justify-center">
-                                <img src="${imgSrc}" alt="${product.title}" class="object-contain h-full w-full p-2">
-                                <span class="absolute top-2 left-2 text-xs font-semibold bg-red-100 text-red-600 px-2 py-1 rounded-full uppercase shadow">${product.supermarket}</span>
+                    data.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+
+                        card.innerHTML = `
+                            <span class="badge">${item.supermarket || 'SUPERMARKET'}</span>
+                            <div class="card-img-container">
+                                <img src="${item.image_url || 'https://via.placeholder.com/150'}" alt="${item.product_title || 'Προϊόν'}" onerror="this.src='https://via.placeholder.com/150'">
                             </div>
-                            <h2 class="text-gray-800 font-medium text-sm mb-3 line-clamp-2">${product.title}</h2>
-                        </div>
-                        <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
-                            <span class="text-xl font-bold text-green-600">${product.price}</span>
-                            <span class="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded border">${product.all_prices[0] || ''}</span>
+                            <div class="card-content">
+                                <div class="card-title">${item.product_title || 'Προσφορά'}</div>
+                                <div class="card-footer">
+                                    <div class="price-container">
+                                        ${item.unit_or_original_price && item.unit_or_original_price !== '—' ? `<span class="original-price">${item.unit_or_original_price}</span>` : ''}
+                                        <span class="offer-price">${item.offer_price || '0.00 €'}</span>
+                                    </div>
+                                    <a href="${item.source_link || '#'}" target="_blank" class="btn-link">Δείτε το</a>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading JSON:', error);
+                    document.getElementById('offers-container').innerHTML = `
+                        <div class="error-msg">
+                            ⚠️ Πρόβλημα κατά τη φόρτωση των δεδομένων.<br>
+                            <small>Βεβαιωθείτε ότι το αρχείο <code>clean_offers.json</code> βρίσκεται στον ίδιο φάκελο με το <code>index.html</code>.</small>
                         </div>
                     `;
-                    grid.appendChild(card);
                 });
-            } catch (error) {
-                console.error('Σφάλμα φόρτωσης:', error);
-                document.getElementById('loading').innerHTML = 'Σφάλμα κατά τη φόρτωση των δεδομένων.';
-            }
-        }
-
-        loadOffers();
+        });
     </script>
+
 </body>
 </html>
