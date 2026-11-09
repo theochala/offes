@@ -100,6 +100,15 @@
         "supermarket": "Κρητικός"
     },
     {
+        "title": "ΛΙΣΤΑ ΑΓΟΡΩΝclose Η λίστα αγορών σας είναι άδεια. ΣΥΝΟΛΟ:",
+        "price": "0.00 €",
+        "all_prices": [
+            "0.00 €"
+        ],
+        "image": "https://galaxias.shop/assets/img/cart/kalathi.png",
+        "supermarket": "Γαλαξίας"
+    },
+    {
         "title": "Terra Επαναφορτιζόμενη ΣκούπαΣκουπάκι | € 65 98 Τελ. τιμή Κωδ: 955062 Ad",
         "price": "65,98€",
         "all_prices": [
