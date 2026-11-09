@@ -1,8 +1,16 @@
 [
     {
+        "supermarket": "KRITIKOS",
+        "image_url": "https://via.placeholder.com/150",
+        "product_title": "Ενεργή σελίδα προσφορών (kritikos)",
+        "offer_price": "0.00 €",
+        "unit_or_original_price": "—",
+        "source_link": "https://kritikos-sm.gr/prosfores/"
+    },
+    {
         "supermarket": "SKLEVENITIS",
         "image_url": "https://via.placeholder.com/150",
-        "product_title": "Επιτυχής πρόσβαση στη σελίδα προσφορών του/της sklevenitis",
+        "product_title": "Ενεργή σελίδα προσφορών (sklevenitis)",
         "offer_price": "0.00 €",
         "unit_or_original_price": "—",
         "source_link": "https://www.sklavenitis.gr/prosfores/"
@@ -10,7 +18,7 @@
     {
         "supermarket": "AB_VASSILOPOULOS",
         "image_url": "https://via.placeholder.com/150",
-        "product_title": "Επιτυχής πρόσβαση στη σελίδα προσφορών του/της ab_vassilopoulos",
+        "product_title": "Ενεργή σελίδα προσφορών (ab_vassilopoulos)",
         "offer_price": "0.00 €",
         "unit_or_original_price": "—",
         "source_link": "https://www.ab.gr/promotions"
@@ -18,7 +26,7 @@
     {
         "supermarket": "MASOUTIS",
         "image_url": "https://via.placeholder.com/150",
-        "product_title": "Επιτυχής πρόσβαση στη σελίδα προσφορών του/της masoutis",
+        "product_title": "Ενεργή σελίδα προσφορών (masoutis)",
         "offer_price": "0.00 €",
         "unit_or_original_price": "—",
         "source_link": "https://www.masoutis.gr/offers"
@@ -26,17 +34,9 @@
     {
         "supermarket": "LIDL",
         "image_url": "https://via.placeholder.com/150",
-        "product_title": "Επιτυχής πρόσβαση στη σελίδα προσφορών του/της lidl",
+        "product_title": "Ενεργή σελίδα προσφορών (lidl)",
         "offer_price": "0.00 €",
         "unit_or_original_price": "—",
         "source_link": "https://www.lidl-hellas.gr/c/prosfores/a100000"
-    },
-    {
-        "supermarket": "KRITIKOS",
-        "image_url": "https://via.placeholder.com/150",
-        "product_title": "Επιτυχής πρόσβαση στη σελίδα προσφορών του/της kritikos",
-        "offer_price": "0.00 €",
-        "unit_or_original_price": "—",
-        "source_link": "https://kritikos-sm.gr/prosfores/"
     }
 ]
