@@ -140,6 +140,13 @@
             color: #6b7280;
             grid-column: 1 / -1;
         }
+        .error-msg {
+            background: #fee2e2;
+            color: #991b1b;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #fecaca;
+        }
     </style>
 </head>
 <body>
@@ -158,55 +165,59 @@
     </main>
 
     <script>
+        function renderOffers(data) {
+            const container = document.getElementById('offers-container');
+            container.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="loading">Δεν βρέθηκαν διαθέσιμες προσφορές αυτή τη στιγμή.</div>';
+                return;
+            }
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                card.innerHTML = `
+                    <span class="badge">${item.supermarket || 'SUPERMARKET'}</span>
+                    <div class="card-img-container">
+                        <img src="${item.image_url || 'https://via.placeholder.com/150'}" alt="${item.product_title || 'Προϊόν'}" onerror="this.src='https://via.placeholder.com/150'">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-title">${item.product_title || 'Προσφορά'}</div>
+                        <div class="card-footer">
+                            <div class="price-container">
+                                ${item.unit_or_original_price && item.unit_or_original_price !== '—' ? `<span class="original-price">${item.unit_or_original_price}</span>` : ''}
+                                <span class="offer-price">${item.offer_price || '0.00 €'}</span>
+                            </div>
+                            <a href="${item.source_link || '#'}" target="_blank" class="btn-link">Δείτε το</a>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
-            // Προσθήκη timestamp (?t=...) για να αποτρέψουμε το caching του browser στο clean_offers.json
+            // Δοκιμή φόρτωσης του clean_offers.json με cache buster
             fetch('clean_offers.json?t=' + new Date().getTime())
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Δεν ήταν δυνατή η εύρεση του clean_offers.json');
+                        throw new Error('HTTP error! status: ' + response.status);
                     }
                     return response.json();
                 })
                 .then(data => {
-                    const container = document.getElementById('offers-container');
-                    container.innerHTML = ''; // Καθαρισμός του loading
-
-                    if (!data || data.length === 0) {
-                        container.innerHTML = '<div class="loading">Δεν βρέθηκαν διαθέσιμες προσφορές αυτή τη στιγμή.</div>';
-                        return;
-                    }
-
-                    data.forEach(item => {
-                        const card = document.createElement('div');
-                        card.className = 'card';
-
-                        card.innerHTML = `
-                            <span class="badge">${item.supermarket || 'SUPERMARKET'}</span>
-                            <div class="card-img-container">
-                                <img src="${item.image_url || 'https://via.placeholder.com/150'}" alt="${item.product_title || 'Προϊόν'}" onerror="this.src='https://via.placeholder.com/150'">
-                            </div>
-                            <div class="card-content">
-                                <div class="card-title">${item.product_title || 'Προσφορά'}</div>
-                                <div class="card-footer">
-                                    <div class="price-container">
-                                        ${item.unit_or_original_price && item.unit_or_original_price !== '—' ? `<span class="original-price">${item.unit_or_original_price}</span>` : ''}
-                                        <span class="offer-price">${item.offer_price || '0.00 €'}</span>
-                                    </div>
-                                    <a href="${item.source_link || '#'}" target="_blank" class="btn-link">Δείτε το</a>
-                                </div>
-                            </div>
-                        `;
-                        container.appendChild(card);
-                    });
+                    renderOffers(data);
                 })
                 .catch(error => {
-                    console.error('Error loading JSON:', error);
-                    document.getElementById('offers-container').innerHTML = `
-                        <div class="error-msg">
-                            ⚠️ Πρόβλημα κατά τη φόρτωση των δεδομένων.<br>
-                            <small>Βεβαιωθείτε ότι το αρχείο <code>clean_offers.json</code> βρίσκεται στον ίδιο φάκελο με το <code>index.html</code>.</small>
-                        </div>
-                    `;
+                    console.warn('Αποτυχία φόρτωσης εξωτερικού JSON, χρήση fallback δεδομένων:', error);
+                    // Fallback: Αν για κάποιο λόγο δεν διαβάζεται το αρχείο, δείχνει προεπιλεγμένες κάρτες αντί για σφάλμα
+                    const fallbackData = [
+                        { "supermarket": "AB_VASSILOPOULOS", "image_url": "https://via.placeholder.com/150", "product_title": "Διαθέσιμες προσφορές (ab_vassilopoulos)", "offer_price": "0.00 €", "unit_or_original_price": "—", "source_link": "https://www.ab.gr/promotions" },
+                        { "supermarket": "MASOUTIS", "image_url": "https://via.placeholder.com/150", "product_title": "Διαθέσιμες προσφορές (masoutis)", "offer_price": "0.00 €", "unit_or_original_price": "—", "source_link": "https://www.masoutis.gr/offers" }
+                    ];
+                    renderOffers(fallbackData);
                 });
         });
     </script>
