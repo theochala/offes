@@ -6,7 +6,7 @@ def clean_title(title):
     # Καθαρισμός από περιττές λέξεις, εικονίδια και UI artifacts
     artifacts = [
         "playlist_add", "favorite", "add", "remove", "Χρυσές Τιμές", 
-        "Λίτ", "Τεμ", "/", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση"
+        "Λίτ", "Τεμ", "/", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση", "με Lidl Plus", "Χωρίς Lidl Plus"
     ]
     for art in artifacts:
         title = title.replace(art, "")
@@ -58,7 +58,6 @@ def scrape_sklavenitis(page):
     
     raw = page.evaluate("""() => {
         const results = [];
-        // Στοχεύουμε πιο κοντά στις κάρτες προϊόντων για να αποφύγουμε τα διπλά
         const elements = document.querySelectorAll('article, .product-item, div[class*="product"]');
         elements.forEach(el => {
             const text = el.innerText;
@@ -249,13 +248,58 @@ def scrape_mymarket(page):
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από My Market.")
     return parsed
 
+def scrape_lidl(page):
+    print("Συλλογή από Lidl...")
+    try:
+        # Στοχεύουμε στην κεντρική ενότητα τροφίμων/εβδομαδιαίων επιλογών των Lidl
+        page.goto("https://www.lidl-hellas.gr/c/fagito-poto/s10068374", timeout=60000)
+        page.wait_for_timeout(6000)
+    except Exception as e:
+        print("Σφάλμα φόρτωσης Lidl:", e)
+        return []
+
+    try:
+        cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
+        if cookie_btn.count() > 0:
+            cookie_btn.first().click()
+            page.wait_for_timeout(2000)
+    except:
+        pass
+
+    for _ in range(5):
+        page.evaluate("window.scrollBy(0, 1000)")
+        page.wait_for_timeout(2000)
+    
+    raw = page.evaluate("""() => {
+        const results = [];
+        const elements = document.querySelectorAll('article, div[class*="product"], div[class*="card"], .item');
+        elements.forEach(el => {
+            const text = el.innerText;
+            if (text && text.includes('€') && text.length < 300 && text.length > 10) {
+                const cleanText = text.replace(/\\n/g, ' | ').trim();
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (!results.some(r => r.text === cleanText)) {
+                    results.push({ text: cleanText, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    parsed = parse_products(raw, "Lidl")
+    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Lidl.")
+    return parsed
+
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
     page = browser.new_page()
     
     all_offers = []
     
-    for scraper_func in [scrape_sklavenitis, scrape_ab, scrape_masoutis, scrape_kritikos, scrape_galaxias, scrape_mymarket]:
+    # Προσθήκη και του scrape_lidl στη λίστα εκτέλεσης
+    scrapers = [scrape_sklavenitis, scrape_ab, scrape_masoutis, scrape_kritikos, scrape_galaxias, scrape_mymarket, scrape_lidl]
+    
+    for scraper_func in scrapers:
         try:
             all_offers.extend(scraper_func(page))
         except Exception as e:
@@ -263,7 +307,7 @@ with sync_playwright() as p:
 
     browser.close()
     
-    # Τελικό καθαρισμό παγκόσμιας μοναδικότητας (αν υπάρχει ξανά διπλότυπο τίτλου)
+    # Τελικός καθαρισμός παγκόσμιας μοναδικότητας
     unique_offers = []
     seen_titles = set()
     for offer in all_offers:
