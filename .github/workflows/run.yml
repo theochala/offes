@@ -9,13 +9,14 @@ jobs:
   run-scraper:
     runs-on: ubuntu-24.04
     
-    # Απαραίτητο δικαίωμα για να μπορεί το GitHub Actions να γράφει στο repository
     permissions:
       contents: write
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        persist-credentials: true
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -29,6 +30,7 @@ jobs:
         playwright install --with-deps chromium
 
     - name: Run Scraper & Upload
+      continue-on-error: true # Αποτρέπει το απόλυτο κρασάρισμα αν κολλήσει κάποιο site
       env:
         WP_URL: ${{ secrets.WP_URL }}
         WP_USER: ${{ secrets.WP_USER }}
@@ -44,5 +46,5 @@ jobs:
         git config --global user.name "GitHub Actions Bot"
         git config --global user.email "actions@github.com"
         git add clean_offers.json
-        git commit -m "Auto-update clean_offers.json [skip ci]" || exit 0
-        git push
+        git diff --staged --quiet || git commit -m "Auto-update clean_offers.json [skip ci]"
+        git push origin HEAD:main
