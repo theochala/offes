@@ -45,15 +45,40 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-def scrape_sklavenitis(page):
+def create_stealth_page(p):
+    browser = p.chromium.launch(
+        headless=True,
+        args=[
+            "--disable-blink-features=AutomationControlled",
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-infobars",
+            "--window-size=1920,1080"
+        ]
+    )
+    context = browser.new_context(
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        viewport={"width": 1920, "height": 1080},
+        locale="el-GR",
+        timezone_id="Europe/Athens"
+    )
+    page = context.new_page()
+    # Απόκρυψη του ότι πρόκειται για αυτοματοποιημένο πρόγραμμα (Playwright/Selenium)
+    page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    return browser, page
+
+def scrape_sklavenitis(p):
     print("Συλλογή από Σκλαβενίτη...")
+    browser, page = create_stealth_page(p)
     try:
-        page.goto("https://www.sklavenitis.gr/prosporous-prosfores/", timeout=60000)
-        page.wait_for_timeout(5000)
-    except:
+        page.goto("https://www.sklavenitis.gr/prosporous-prosfores/", timeout=60000, wait_until="domcontentloaded")
+        page.wait_for_timeout(6000)
+    except Exception as e:
+        print(f"Σφάλμα Σκλαβενίτης: {e}")
+        browser.close()
         return []
     
-    for _ in range(3):
+    for _ in range(4):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(2000)
         
@@ -73,19 +98,23 @@ def scrape_sklavenitis(page):
         });
         return results;
     }""")
+    browser.close()
     parsed = parse_products(raw, "Σκλαβενίτης")
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Σκλαβενίτη.")
     return parsed
 
-def scrape_ab(page):
+def scrape_ab(p):
     print("Συλλογή από ΑΒ Βασιλόπουλο...")
+    browser, page = create_stealth_page(p)
     try:
-        page.goto("https://www.ab.gr/e-shop/prosfopoi-prosfores", timeout=60000)
-        page.wait_for_timeout(5000)
-    except:
+        page.goto("https://www.ab.gr/e-shop/prosfopoi-prosfores", timeout=60000, wait_until="domcontentloaded")
+        page.wait_for_timeout(6000)
+    except Exception as e:
+        print(f"Σφάλμα ΑΒ: {e}")
+        browser.close()
         return []
         
-    for _ in range(3):
+    for _ in range(4):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(2000)
         
@@ -105,19 +134,23 @@ def scrape_ab(page):
         });
         return results;
     }""")
+    browser.close()
     parsed = parse_products(raw, "ΑΒ Βασιλόπουλος")
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από ΑΒ.")
     return parsed
 
-def scrape_masoutis(page):
+def scrape_masoutis(p):
     print("Συλλογή από Μασούτη...")
+    browser, page = create_stealth_page(p)
     try:
-        page.goto("https://www.masoutis.gr/offers", timeout=60000)
-        page.wait_for_timeout(5000)
-    except:
+        page.goto("https://www.masoutis.gr/offers", timeout=60000, wait_until="domcontentloaded")
+        page.wait_for_timeout(6000)
+    except Exception as e:
+        print(f"Σφάλμα Μασούτης: {e}")
+        browser.close()
         return []
         
-    for _ in range(3):
+    for _ in range(4):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(2000)
         
@@ -137,16 +170,20 @@ def scrape_masoutis(page):
         });
         return results;
     }""")
+    browser.close()
     parsed = parse_products(raw, "Μασούτης")
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Μασούτη.")
     return parsed
 
-def scrape_kritikos(page):
+def scrape_kritikos(p):
     print("Συλλογή από Κρητικό...")
+    browser, page = create_stealth_page(p)
     try:
-        page.goto("https://kritikos-sm.gr/offers/?srsltid=AYCX9vJWXPLOaa4mCSyC7xt-dwrv1ovQ7pkBaLPHp-8tjTfpPrQCT6pA", timeout=60000)
+        page.goto("https://kritikos-sm.gr/offers/?srsltid=AYCX9vJWXPLOaa4mCSyC7xt-dwrv1ovQ7pkBaLPHp-8tjTfpPrQCT6pA", timeout=60000, wait_until="domcontentloaded")
         page.wait_for_timeout(5000)
-    except:
+    except Exception as e:
+        print(f"Σφάλμα Κρητικός: {e}")
+        browser.close()
         return []
 
     for _ in range(4):
@@ -169,19 +206,23 @@ def scrape_kritikos(page):
         });
         return results;
     }""")
+    browser.close()
     parsed = parse_products(raw, "Κρητικός")
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Κρητικό.")
     return parsed
 
-def scrape_galaxias(page):
+def scrape_galaxias(p):
     print("Συλλογή από Γαλαξία...")
+    browser, page = create_stealth_page(p)
     try:
-        page.goto("https://www.galaxiasnet.gr/", timeout=60000)
-        page.wait_for_timeout(5000)
-    except:
+        page.goto("https://www.galaxiasnet.gr/", timeout=60000, wait_until="domcontentloaded")
+        page.wait_for_timeout(6000)
+    except Exception as e:
+        print(f"Σφάλμα Γαλαξίας: {e}")
+        browser.close()
         return []
         
-    for _ in range(3):
+    for _ in range(4):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(2000)
         
@@ -201,19 +242,23 @@ def scrape_galaxias(page):
         });
         return results;
     }""")
+    browser.close()
     parsed = parse_products(raw, "Γαλαξίας")
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Γαλαξία.")
     return parsed
 
-def scrape_mymarket(page):
+def scrape_mymarket(p):
     print("Συλλογή από My Market...")
+    browser, page = create_stealth_page(p)
     try:
-        page.goto("https://www.mymarket.gr/", timeout=60000)
-        page.wait_for_timeout(5000)
-    except:
+        page.goto("https://www.mymarket.gr/", timeout=60000, wait_until="domcontentloaded")
+        page.wait_for_timeout(6000)
+    except Exception as e:
+        print(f"Σφάλμα My Market: {e}")
+        browser.close()
         return []
         
-    for _ in range(3):
+    for _ in range(4):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(2000)
         
@@ -233,19 +278,23 @@ def scrape_mymarket(page):
         });
         return results;
     }""")
+    browser.close()
     parsed = parse_products(raw, "My Market")
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από My Market.")
     return parsed
 
-def scrape_lidl(page):
+def scrape_lidl(p):
     print("Συλλογή από Lidl...")
+    browser, page = create_stealth_page(p)
     try:
-        page.goto("https://www.lidl.gr/", timeout=60000)
-        page.wait_for_timeout(5000)
-    except:
+        page.goto("https://www.lidl.gr/", timeout=60000, wait_until="domcontentloaded")
+        page.wait_for_timeout(6000)
+    except Exception as e:
+        print(f"Σφάλμα Lidl: {e}")
+        browser.close()
         return []
         
-    for _ in range(3):
+    for _ in range(4):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(2000)
         
@@ -265,25 +314,22 @@ def scrape_lidl(page):
         });
         return results;
     }""")
+    browser.close()
     parsed = parse_products(raw, "Lidl")
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Lidl.")
     return parsed
 
-# Εκτέλεση για όλα τα σούπερ μάρκετ
+# Εκτέλεση για όλα τα σούπερ μάρκετ με stealth mode
 with sync_playwright() as p:
-    browser = p.chromium.launch(headless=True)
-    page = browser.new_page()
-    
     all_offers = []
-    all_offers.extend(scrape_sklavenitis(page))
-    all_offers.extend(scrape_ab(page))
-    all_offers.extend(scrape_masoutis(page))
-    all_offers.extend(scrape_kritikos(page))
-    all_offers.extend(scrape_galaxias(page))
-    all_offers.extend(scrape_mymarket(page))
-    all_offers.extend(scrape_lidl(page))
-
-    browser.close()
+    
+    all_offers.extend(scrape_sklavenitis(p))
+    all_offers.extend(scrape_ab(p))
+    all_offers.extend(scrape_masoutis(p))
+    all_offers.extend(scrape_kritikos(p))
+    all_offers.extend(scrape_galaxias(p))
+    all_offers.extend(scrape_mymarket(p))
+    all_offers.extend(scrape_lidl(p))
     
     unique_offers = []
     seen_titles = set()
