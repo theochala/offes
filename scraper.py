@@ -71,7 +71,13 @@ def scrape_store(p, url, supermarket_name):
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         
         page.goto(url, timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(8000)
+        page.wait_for_timeout(5000)
+        
+        # Αυτόματο κλείσιμο πιθανών pop-ups / cookies
+        try:
+            page.click("button:has-text('Αποδοχή'), button:has-text('Accept'), button[id*='cookie'], button[class*='cookie']", timeout=3000)
+        except:
+            pass
         
         for _ in range(8):
             page.evaluate("window.scrollBy(0, 1000)")
@@ -79,7 +85,6 @@ def scrape_store(p, url, supermarket_name):
             
         raw = page.evaluate("""() => {
             const results = [];
-            // Πιάνουμε ΟΠΟIOΔΗΠΟΤΕ block/div/li/section που περιέχει κείμενο με € και εικόνα
             const elements = document.querySelectorAll('div, article, li, section');
             elements.forEach(el => {
                 const text = el.innerText;
@@ -91,7 +96,7 @@ def scrape_store(p, url, supermarket_name):
                     if (imgSrc.startsWith('//')) {
                         imgSrc = 'https:' + imgSrc;
                     }
-                    if (imgSrc.startsWith('http') && !results.some(r => r.text === cleanText)) {
+                    if (imgSrc.startswith('http') && !results.some(r => r.text === cleanText)) {
                         results.push({ text: cleanText, image: imgSrc });
                     }
                 }
@@ -110,12 +115,14 @@ with sync_playwright() as p:
     all_offers = []
     
     all_offers.extend(scrape_store(p, "https://kritikos-sm.gr/offers/", "Κρητικός"))
-    all_offers.extend(scrape_store(p, "https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
+    # Ενημερωμένο URL Σκλαβενίτη (απευθείας eshow/offers)
+    all_offers.extend(scrape_store(p, "https://www.sklavenitis.gr/e-shop/prosfores/", "Σκλαβενίτης"))
     all_offers.extend(scrape_store(p, "https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
     all_offers.extend(scrape_store(p, "https://www.masoutis.gr/offers", "Μασούτης"))
     all_offers.extend(scrape_store(p, "https://galaxias.shop/eshop/2?promos=isExtraBonus&promos=isBravoBonus&promos=isKalathiNoikokiriou&promos=isSumferei&promos=isTileoptiko&promos=isGoldPrices", "Γαλαξίας"))
     all_offers.extend(scrape_store(p, "https://www.mymarket.gr/", "My Market"))
-    all_offers.extend(scrape_store(p, "https://www.lidl.gr/q/query/c/s10007771", "Lidl"))
+    # Ενημερωμένο URL Lidl (κεντρική προσφορών)
+    all_offers.extend(scrape_store(p, "https://www.lidl.gr/c/ebdomadiaies-prosfores/s10007771", "Lidl"))
 
     unique_offers = []
     seen_titles = set()
