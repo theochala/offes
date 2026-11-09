@@ -31,7 +31,7 @@ jobs:
 
     - name: Run Scraper Script
       run: |
-        python supermarket_scraper.py
+        python scraper.py
 
     - name: Commit and push clean_offers.json if changed
       run: |
