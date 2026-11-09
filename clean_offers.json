@@ -98,5 +98,298 @@
         ],
         "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@742210.jpg",
         "supermarket": "Κρητικός"
+    },
+    {
+        "title": "Terra Επαναφορτιζόμενη ΣκούπαΣκουπάκι | € 65 98 Τελ. τιμή Κωδ: 955062 Ad",
+        "price": "65,98€",
+        "all_prices": [
+            "65,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/10_07_26/33aacd01-4e7f-446f-ae4f-243298da786a_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Baker's Secret Belle Αντικολλητική Φόρμα 26cm | € 10 45 Τελ. τιμή Κωδ: 999596 Ad",
+        "price": "10,45€",
+        "all_prices": [
+            "10,45€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/30_04_26/22e8b503-3abc-44bb-abe2-f88f59550eac_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Baker's Secret Belle Τηγάνι Αντικολλητικό 24cm | € 21 98 Τελ. τιμή Κωδ: 999590 Ad",
+        "price": "21,98€",
+        "all_prices": [
+            "21,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/30_04_26/c6da3bbb-6346-4ccf-bd3b-29f13beca867_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Conceptum Σύστημα Σιδερώματος CCS-DG199 2700W | € 61 95 Τελ. τιμή Κωδ: 955033 Ad",
+        "price": "61,95€",
+        "all_prices": [
+            "61,95€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/09_09_24/c96a5681-e03b-4e18-b76b-27b93f451917_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Baker's Secret Belle Τηγάνι Aντικολλητικό 28cm | € 26 98 Τελ. τιμή Κωδ: 999591 Ad",
+        "price": "26,98€",
+        "all_prices": [
+            "26,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/30_04_26/a6b68cd5-0c88-4dd9-9b3c-29989808fd06_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Baker's Secret Belle Τηγάνι Aντικολλητικό 20cm | € 17 98 Τελ. τιμή Κωδ: 999589 Ad",
+        "price": "17,98€",
+        "all_prices": [
+            "17,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/30_04_26/a4c78ade-323e-4e98-936e-e750c44915f9_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Baker's Secret Belle Γκριλιέρα 26cm | € 31 98 Τελ. τιμή Κωδ: 999592 Ad",
+        "price": "31,98€",
+        "all_prices": [
+            "31,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/30_04_26/f89b6c0b-b2cd-4093-aa1d-356e600ca9a8_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Γάργαρο Επιτραπέζιο Νερό 6x1,5lt | € 1 46 Τιμή λίτρου Κωδ: 404410",
+        "price": "0,16€",
+        "all_prices": [
+            "0,16€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_05_21/47959109-1796-4a5d-99cd-5e5a30c254d1_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Soft Jumbo Χαρτοπετσέτες 100Φύλλα 0,175kg | € 0 75 SUPER ΤΙΜΗ Τιμή κιλού Κωδ: 608794",
+        "price": "4,29€",
+        "all_prices": [
+            "4,29€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/f9e7824e-789c-4405-9e66-022d4e6728b4_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Feel Good! Aroma Therapy Relax Αφρόλουτρο 750ml | € 1 60 SUPER ΤΙΜΗ Τιμή λίτρου Κωδ: 775239",
+        "price": "2,13€",
+        "all_prices": [
+            "2,13€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/15_03_24/75e17311-1fd1-4bbf-a8cf-3a82258bc997_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Soft Jumbo Ρολό Κουζίνας 600gr | € 2 42 SUPER ΤΙΜΗ Τιμή κιλού Κωδ: 609410",
+        "price": "4,03€",
+        "all_prices": [
+            "4,03€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/d73dbbf6-e1c6-494b-98e7-5e082cf8c53c_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Feel Good! Μωρομάντηλα Χαμομήλι 72 τεμ | € 1 22 SUPER ΤΙΜΗ Τιμή τεμαχίου Κωδ: 611150",
+        "price": "0,02€",
+        "all_prices": [
+            "0,02€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/10_12_25/17db8554-5ffd-49e3-89ea-c818483d67d8_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Feel Good! Σαμπουάν Λιπαρά Μαλλιά 400ml | € 2 11 Τιμή λίτρου Κωδ: 751823",
+        "price": "5,27€",
+        "all_prices": [
+            "5,27€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/ed841778-5172-4b68-af37-d8835ad04b17_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Friends Κροκέτες Γάτας Κοκτέιλ 2Kg | € 4 49 Τιμή κιλού Κωδ: 292092",
+        "price": "2,25€",
+        "all_prices": [
+            "2,25€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/03_01_23/a5b79804-0240-4694-89f8-c4c65047d5dd_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Gusto Gouda Φέτες 200gr | € 1 93 Τιμή κιλού Κωδ: 128431",
+        "price": "9,65€",
+        "all_prices": [
+            "9,65€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/18_01_24/ae8ca274-66f7-4fcc-a98c-04adb2a2ddca_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Gusto Line Dark Chocolate Δημητριακά 375gr | € 2 72 Τιμή κιλού Κωδ: 272543",
+        "price": "7,25€",
+        "all_prices": [
+            "7,25€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/21_10_25/a2037c51-f201-4869-ac55-92597e6fb58d_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Gusto Καφές Φίλτρου Classic 500gr | € 8 91 Τιμή κιλού Κωδ: 262538",
+        "price": "17,82€",
+        "all_prices": [
+            "17,82€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/05_01_24/46fd75f6-906e-4eda-b693-372e0b77ac80_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Home Chloro Ultra Lemon 1250ml | € 1 03 Τιμή λίτρου Κωδ: 511724",
+        "price": "0,82€",
+        "all_prices": [
+            "0,82€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/83e73608-212a-4ee6-9a77-8c4b55358799_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Home Αγριολούλουδα Υγρό Γενικού Καθαρισμού 1lt | € 1 72 Τιμή λίτρου Κωδ: 512568",
+        "price": "1,72€",
+        "all_prices": [
+            "1,72€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/a67cc030-08d5-4748-8ba1-3339b1c9b1bb_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Home Μαλακτικό Lavender 15μεζ 1,5lt | € 2 11 Τιμή μεζούρας Κωδ: 506421",
+        "price": "0,14€",
+        "all_prices": [
+            "0,14€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/e4790e33-2a37-4ae7-8690-8f078913a764_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Kouzina Τομάτα Ψιλοκομμένη 400gr (Στραγγ .Βάρος 240gr) | € 0 57 Τιμή κιλού Κωδ: 226002",
+        "price": "2,38€",
+        "all_prices": [
+            "2,38€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_01_21/953faac7-0f97-4957-84b4-f3535ac7227d_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Kouzina Ρύζι Γλασσέ Ελληνικό 500gr | € 0 78 Τιμή κιλού Κωδ: 230314",
+        "price": "1,56€",
+        "all_prices": [
+            "1,56€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/10_06_21/3a25d63c-f27b-4a9a-abdf-70f420599e9a_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Kouzina Σπαγγέτι No6 500gr | € 0 58 Τιμή κιλού Κωδ: 233435",
+        "price": "1,16€",
+        "all_prices": [
+            "1,16€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/13_01_21/9817d5eb-0827-4c8d-80ba-a17c296e3376_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Kouzina Φακές Χονδρές 500gr | € 1 18 Τιμή κιλού Κωδ: 232335",
+        "price": "2,36€",
+        "all_prices": [
+            "2,36€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/de194d6e-796d-42ad-863e-28179ff72f34_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Επαναφορτιζόμενο κατσαβίδι 4V Rapidfire 2.2 για 12.39 EUR | Parkside Επαναφορτιζόμενο κατσαβίδι Rapidfire -11% * Κάθε συσκευασία μόνο στο κατάστημα 09.11. - 11.11.",
+        "price": "13,99 €",
+        "all_prices": [
+            "13,99 €",
+            "12,39€",
+            "13,99 €"
+        ],
+        "image": "https://www.lidl-hellas.gr/assets/gcpf22ff95471664a7d8ce1ebdad85ec586.png",
+        "supermarket": "Lidl"
+    },
+    {
+        "title": "Parkside | Επαναφορτιζόμενο κατσαβίδι 4V Rapidfire 2.2 -11% * Κάθε συσκευασία μόνο στο κατάστημα 09.11. - 11.11.",
+        "price": "13,99 €",
+        "all_prices": [
+            "13,99 €",
+            "12,39€",
+            "13,99 €"
+        ],
+        "image": "https://www.lidl-hellas.gr/assets/gcpefcb8aac5ca94493b8d92ef8c907c513.png",
+        "supermarket": "Lidl"
+    },
+    {
+        "title": "Σπα ποδιών για 25.99 EUR | SANITAS ποδιών -13% * Κάθε συσκευασία μόνο στο κατάστημα 09.11. - 11.11.",
+        "price": "29,99 €",
+        "all_prices": [
+            "29,99 €",
+            "25,99€",
+            "29,99 €"
+        ],
+        "image": "https://www.lidl-hellas.gr/assets/gcp93d8ddcd983747339cbabc222349d087.png",
+        "supermarket": "Lidl"
+    },
+    {
+        "title": "Μαξιλάρι για 6.99 EUR | LIVARNO Μαξιλάρι -12% * Κάθε συσκευασία μόνο στο κατάστημα 09.11. - 11.11.",
+        "price": "7,99 €",
+        "all_prices": [
+            "7,99 €",
+            "6,99€",
+            "7,99 €"
+        ],
+        "image": "https://www.lidl-hellas.gr/assets/gcp53daef4d59364119811bf54623324691.png",
+        "supermarket": "Lidl"
+    },
+    {
+        "title": "LIVARNO | Μαξιλάρι -12% * Κάθε συσκευασία μόνο στο κατάστημα 09.11. - 11.11.",
+        "price": "7,99 €",
+        "all_prices": [
+            "7,99 €",
+            "6,99€",
+            "7,99 €"
+        ],
+        "image": "https://www.lidl-hellas.gr/assets/gcpe71d9e5e0caa46e3b665e6015416195e.png",
+        "supermarket": "Lidl"
+    },
+    {
+        "title": "Συσκευή αλκοτέστ για 5.99 EUR | EASYMAXX Συσκευή αλκοτέστ -14% * Κάθε συσκευασία μόνο στο κατάστημα 09.11. - 11.11.",
+        "price": "6,99 €",
+        "all_prices": [
+            "6,99 €",
+            "5,99€",
+            "6,99 €"
+        ],
+        "image": "https://www.lidl-hellas.gr/assets/gcpfea127b169644c4fbe0d14a0432cdfc0.png",
+        "supermarket": "Lidl"
+    },
+    {
+        "title": "Σακίδιο πλάτης Business Τσάντα για laptop 12.99 EUR | Esmara Σακίδιο πλάτης Business Τσάντα laptop -13% * Κάθε συσκευασία μόνο στο κατάστημα 09.11. - 11.11.",
+        "price": "14,99 €",
+        "all_prices": [
+            "14,99 €",
+            "12,99€",
+            "14,99 €"
+        ],
+        "image": "https://www.lidl-hellas.gr/assets/gcp59f194d1dd8d4bc2b1f4730ade675288.png",
+        "supermarket": "Lidl"
     }
 ]
