@@ -159,8 +159,8 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Φόρτωση του clean_offers.json που παράγει ο scraper
-            fetch('clean_offers.json')
+            // Προσθήκη timestamp (?t=...) για να αποτρέψουμε το caching του browser στο clean_offers.json
+            fetch('clean_offers.json?t=' + new Date().getTime())
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Δεν ήταν δυνατή η εύρεση του clean_offers.json');
