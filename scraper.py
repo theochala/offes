@@ -25,7 +25,7 @@ def parse_products(raw_products, supermarket_name):
     parsed = []
     invalid_keywords = [
         "Διαγωνισμοί", "ώρα παράδοσης", "items in cart", "Επίλεξε", 
-        "Σούπερ Μάρκετ", "Καλάθι", "Σύνδεση", "Εγγραφή", "Cookies", "Πολιτική"
+        "Σούπερ Μάρκετ", "Καλάθι", "Σύνδεση", "Εγγραφή", "Cookies", "Πολιτική", "eshop"
     ]
     
     for item in raw_products:
@@ -71,18 +71,19 @@ def scrape_store(p, url, supermarket_name):
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         
         page.goto(url, timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(7000)
+        page.wait_for_timeout(8000)
         
-        for _ in range(6):
+        for _ in range(8):
             page.evaluate("window.scrollBy(0, 1000)")
             page.wait_for_timeout(2000)
             
         raw = page.evaluate("""() => {
             const results = [];
-            const elements = document.querySelectorAll('article, div[class*="product"], div[class*="item"], li[class*="product"], div.cell, div.card');
+            // Πιάνουμε ΟΠΟIOΔΗΠΟΤΕ block/div/li/section που περιέχει κείμενο με € και εικόνα
+            const elements = document.querySelectorAll('div, article, li, section');
             elements.forEach(el => {
                 const text = el.innerText;
-                if (text && text.includes('€') && text.length < 350 && text.length > 8) {
+                if (text && text.includes('€') && text.length < 300 && text.length > 10) {
                     const cleanText = text.replace(/\\n/g, ' | ').trim();
                     const img = el.querySelector('img');
                     let imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
@@ -90,7 +91,7 @@ def scrape_store(p, url, supermarket_name):
                     if (imgSrc.startsWith('//')) {
                         imgSrc = 'https:' + imgSrc;
                     }
-                    if (!results.some(r => r.text === cleanText)) {
+                    if (imgSrc.startsWith('http') && !results.some(r => r.text === cleanText)) {
                         results.push({ text: cleanText, image: imgSrc });
                     }
                 }
@@ -108,25 +109,12 @@ def scrape_store(p, url, supermarket_name):
 with sync_playwright() as p:
     all_offers = []
     
-    # 1. Κρητικός
     all_offers.extend(scrape_store(p, "https://kritikos-sm.gr/offers/", "Κρητικός"))
-    
-    # 2. Σκλαβενίτης
     all_offers.extend(scrape_store(p, "https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
-    
-    # 3. ΑΒ Βασιλόπουλος
     all_offers.extend(scrape_store(p, "https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
-    
-    # 4. Μασούτης
     all_offers.extend(scrape_store(p, "https://www.masoutis.gr/offers", "Μασούτης"))
-    
-    # 5. Γαλαξίας (με το ακριβές URL προσφορών e-shop)
     all_offers.extend(scrape_store(p, "https://galaxias.shop/eshop/2?promos=isExtraBonus&promos=isBravoBonus&promos=isKalathiNoikokiriou&promos=isSumferei&promos=isTileoptiko&promos=isGoldPrices", "Γαλαξίας"))
-    
-    # 6. My Market
     all_offers.extend(scrape_store(p, "https://www.mymarket.gr/", "My Market"))
-    
-    # 7. Lidl
     all_offers.extend(scrape_store(p, "https://www.lidl.gr/q/query/c/s10007771", "Lidl"))
 
     unique_offers = []
