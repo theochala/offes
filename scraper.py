@@ -17,20 +17,31 @@ def scrape_supermarket(page, url, supermarket_name):
     try:
         print(f"   [Playwright] Άνοιγμα σελίδας για {supermarket_name}: {url}")
         page.goto(url, timeout=30000, wait_until="domcontentloaded")
-        time.sleep(2)
+        time.sleep(3)
         
         cards = page.locator("article, div[class*='product'], div[class*='offer'], li[class*='product']").all()
         print(f"   [Playwright] Βρέθηκαν {len(cards)} πιθανές κάρτες προϊόντων στο {supermarket_name}.")
 
         for card in cards:
             try:
+                # Αναζήτηση τίτλου
                 title_elem = card.locator("h2, h3, h4, a[class*='title'], div[class*='title']").first
                 title = title_elem.inner_text(timeout=200).strip() if title_elem.count() > 0 else ""
 
+                # Αναζήτηση τιμής προσφοράς
                 price_elem = card.locator("span[class*='price'], div[class*='price'], span[class*='amount']").first
                 price = price_elem.inner_text(timeout=200).strip() if price_elem.count() > 0 else ""
 
-                if title and price:
+                # Αναζήτηση παλιάς/αρχικής τιμής (δείχνει ότι είναι όντως προσφορά)
+                orig_price_elem = card.locator("span[class*='old'], span[class*='original'], del, span[class*='line-through']").first
+                orig_price = orig_price_elem.inner_text(timeout=200).strip() if orig_price_elem.count() > 0 else "—"
+
+                # Έλεγχος ετικέτας προσφοράς / ποσοστού έκπτωσης
+                badge_elem = card.locator("div[class*='badge'], span[class*='discount'], div[class*='tag']").first
+                badge_text = badge_elem.inner_text(timeout=200).strip() if badge_elem.count() > 0 else ""
+
+                # Αυστηρό φίλτρο: Κρατάμε μόνο προϊόντα με τίτλο, τιμή και ένδειξη προσφοράς (αρχική τιμή ή ποσοστό έκπτωσης)
+                if title and price and (orig_price != "—" or "%" in badge_text or "προσφορά" in badge_text.lower() or "προσφορα" in title.lower()):
                     img_elem = card.locator("img").first
                     img_url = "https://via.placeholder.com/150"
                     if img_elem.count() > 0:
@@ -43,24 +54,34 @@ def scrape_supermarket(page, url, supermarket_name):
                         "image_url": img_url,
                         "product_title": title,
                         "offer_price": price,
-                        "unit_or_original_price": "—",
+                        "unit_or_original_price": orig_price,
                         "source_link": url
                     })
             except Exception:
                 continue
     except Exception as e:
-        print(f"   [Προειδοποίηση] Παράκαμψη σφάλματος στο {supermarket_name}: {e}")
+        print(f"   [Προειδοποίηση] Σφάλμα στο {supermarket_name}: {e}")
 
-    # Fallback αν δεν βρει τίποτα
+    # Fallback: Αν δεν βρει αυστηρές προσφορές, παίρνει λίγα διαθέσιμα για να μην μείνει κενό
     if not offers:
-        offers.append({
-            "supermarket": supermarket_name,
-            "image_url": "https://via.placeholder.com/150",
-            "product_title": f"Διαθέσιμες προσφορές ({supermarket_name})",
-            "offer_price": "0.00 €",
-            "unit_or_original_price": "—",
-            "source_link": url
-        })
+        print(f"   [Info] Δεν βρέθηκαν αυστηρές προσφορές με φίλτρο στο {supermarket_name}, λήψη γενικών προϊόντων...")
+        try:
+            for card in cards[:5]:
+                title_elem = card.locator("h2, h3, h4, a[class*='title'], div[class*='title']").first
+                title = title_elem.inner_text(timeout=200).strip() if title_elem.count() > 0 else f"Προϊόν {supermarket_name}"
+                price_elem = card.locator("span[class*='price'], div[class*='price'], span[class*='amount']").first
+                price = price_elem.inner_text(timeout=200).strip() if price_elem.count() > 0 else "0.00 €"
+                
+                offers.append({
+                    "supermarket": supermarket_name,
+                    "image_url": "https://via.placeholder.com/150",
+                    "product_title": title,
+                    "offer_price": price,
+                    "unit_or_original_price": "—",
+                    "source_link": url
+                })
+        except Exception:
+            pass
 
     return offers
 
@@ -70,25 +91,40 @@ def upload_via_ftp(filename):
     ftp_pass = os.getenv("FTP_PASSWORD")
 
     if not ftp_server or not ftp_user or not ftp_pass:
-        print("ℹ️ Τα FTP secrets δεν βρέθηκαν στο περιβάλλον, παραλείπεται το FTP upload.")
+        print("❌ Σφάλμα: Τα FTP secrets δεν βρέθηκαν στο περιβάλλον!")
         return
 
     try:
         print(f"📡 Σύνδεση στο FTP server: {ftp_server}...")
-        with ftplib.FTP(ftp_server) as ftp:
+        with ftplib.FTP(ftp_server, timeout=30) as ftp:
             ftp.login(ftp_user, ftp_pass)
-            print("📁 Μετάβαση στον φάκελο htdocs...")
-            try:
-                ftp.cwd("htdocs")
-            except Exception:
-                pass
+            print("✅ Επιτυχής σύνδεση FTP!")
+            
+            # Δοκιμή φακέλων για το InfinityFree
+            folders_to_try = ["htdocs", "public_html", "."]
+            uploaded = False
+            for folder in folders_to_try:
+                try:
+                    ftp.cwd(folder)
+                    print(f"📁 Μετάβαση στον φάκελο: {folder}")
+                    with open(filename, "rb") as f:
+                        ftp.storbinary(f"STOR {filename}", f)
+                    print(f"🚀 Το αρχείο {filename} ανέβηκε επιτυχώς στον φάκελο {folder}!")
+                    uploaded = True
+                    break
+                except Exception:
+                    try:
+                        ftp.cwd("/")
+                    except:
+                        pass
+            
+            if not uploaded:
+                with open(filename, "rb") as f:
+                    ftp.storbinary(f"STOR {filename}", f)
+                print(f"🚀 Το αρχείο {filename} ανέβηκε στο root!")
 
-            print(f"📤 Ανέβασμα του αρχείου {filename}...")
-            with open(filename, "rb") as f:
-                ftp.storbinary(f"STOR {filename}", f)
-            print("✅ Το αρχείο ανέβηκε επιτυχώς στο InfinityFree μέσω FTP!")
     except Exception as e:
-        print(f"⚠️ Σφάλμα κατά το FTP upload: {e}")
+        print(f"❌ Κρίσιμο σφάλμα κατά το FTP upload: {e}")
 
 def main():
     store_offers = {}
@@ -107,7 +143,7 @@ def main():
 
         browser.close()
 
-    # Εναλλάξ συλλογή προϊόντων (Round-robin) από κάθε σούπερ μάρκετ
+    # Round-robin ανάμιξη: 1 προϊόν από κάθε μάρκετ εναλλάξ
     interleaved_offers = []
     max_len = max(len(lst) for lst in store_offers.values()) if store_offers else 0
 
@@ -122,7 +158,7 @@ def main():
             json.dump(interleaved_offers, f, ensure_ascii=False, indent=4)
         print(f"\nΕπιτυχία! Αποθηκεύτηκαν συνολικά {len(interleaved_offers)} προσφορές εναλλάξ στο '{output_filename}'.")
         
-        # Αυτόματο ανέβασμα μέσω FTP απευθείας στον InfinityFree server
+        # Αυτόνομη αποστολή μέσω FTP στον InfinityFree
         upload_via_ftp(output_filename)
 
     except Exception as e:
