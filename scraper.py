@@ -70,22 +70,24 @@ def scrape_store(p, url, supermarket_name):
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         
         page.goto(url, timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
+        page.wait_for_timeout(7000)
         
-        for _ in range(4):
+        # Scroll down multiple times to load dynamic contents
+        for _ in range(6):
             page.evaluate("window.scrollBy(0, 1000)")
             page.wait_for_timeout(2000)
             
         raw = page.evaluate("""() => {
             const results = [];
-            const elements = document.querySelectorAll('article, div[class*="product"], div[class*="item"], li[class*="product"]');
+            // Ευρύτεροι selectors για να πιάνουμε όλα τα πιθανά containers προϊόντων
+            const elements = document.querySelectorAll('article, div[class*="product"], div[class*="item"], li[class*="product"], div.cell, div.card');
             elements.forEach(el => {
                 const text = el.innerText;
-                if (text && text.includes('€') && text.length < 300 && text.length > 10) {
+                if (text && text.includes('€') && text.length < 350 && text.length > 8) {
                     const cleanText = text.replace(/\\n/g, ' | ').trim();
                     const img = el.querySelector('img');
                     let imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
-                    if (imgSrc.startsWith('//')) {
+                    if (imgSrc.startswith('//')) {
                         imgSrc = 'https:' + imgSrc;
                     }
                     if (!results.some(r => r.text === cleanText)) {
@@ -103,18 +105,29 @@ def scrape_store(p, url, supermarket_name):
         print(f"Σφάλμα {supermarket_name}: {e}")
         return []
 
-# Μοναδική κεντρική διαχείριση του sync_playwright
 with sync_playwright() as p:
     all_offers = []
     
-    # Εκτέλεση διαδοχικά για όλα τα σούπερ μάρκετ χρησιμοποιώντας την ίδια παρουσία p
+    # 1. Κρητικός
     all_offers.extend(scrape_store(p, "https://kritikos-sm.gr/offers/", "Κρητικός"))
-    all_offers.extend(scrape_store(p, "https://www.sklavenitis.gr/", "Σκλαβενίτης"))
-    all_offers.extend(scrape_store(p, "https://www.ab.gr/", "ΑΒ Βασιλόπουλος"))
+    
+    # 2. Σκλαβενίτης (Ειδική σελίδα προσφορών)
+    all_offers.extend(scrape_store(p, "https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
+    
+    # 3. ΑΒ Βασιλόπουλος (Ειδική σελίδα προσφορών)
+    all_offers.extend(scrape_store(p, "https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
+    
+    # 4. Μασούτης
     all_offers.extend(scrape_store(p, "https://www.masoutis.gr/offers", "Μασούτης"))
-    all_offers.extend(scrape_store(p, "https://www.galaxiasnet.gr/", "Γαλαξίας"))
+    
+    # 5. Γαλαξίας (Διορθωμένο URL)
+    all_offers.extend(scrape_store(p, "https://www.galaxias-sm.gr/", "Γαλαξίας"))
+    
+    # 6. My Market
     all_offers.extend(scrape_store(p, "https://www.mymarket.gr/", "My Market"))
-    all_offers.extend(scrape_store(p, "https://www.lidl.gr/", "Lidl"))
+    
+    # 7. Lidl
+    all_offers.extend(scrape_store(p, "https://www.lidl.gr/c/prosfores/s10007771", "Lidl"))
 
     unique_offers = []
     seen_titles = set()
