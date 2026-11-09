@@ -9,7 +9,6 @@ jobs:
   run-scraper:
     runs-on: ubuntu-24.04
     
-    # 1. Απαραίτητα δικαιώματα για να επιτρέπεται το Push
     permissions:
       contents: write
 
@@ -17,7 +16,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0 # Διατηρεί ολόκληρο το ιστορικό για αποφυγή exit code 128
+        fetch-depth: 0
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -31,7 +30,6 @@ jobs:
         playwright install --with-deps chromium
 
     - name: Run Scraper Script
-      continue-on-error: true
       run: |
         python supermarket_scraper.py
 
@@ -39,7 +37,11 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add clean_offers.json
-        # Αποφυγή σφάλματος αν δεν υπάρχουν αλλαγές
-        git diff --staged --quiet || git commit -m "Auto-update clean_offers.json [skip ci]"
-        git push
+        
+        if [ -f clean_offers.json ]; then
+          git add clean_offers.json
+          git diff --staged --quiet || git commit -m "Auto-update clean_offers.json [skip ci]"
+          git push
+        else
+          echo "Προειδοποίηση: Το clean_offers.json δεν βρέθηκε, παραλείπεται το push."
+        fi
