@@ -112,17 +112,78 @@ def scrape_store(p, url, supermarket_name):
         print(f"Σφάλμα {supermarket_name}: {e}")
         return []
 
+# Ειδική συνάρτηση αποκλειστικά για τη Lidl με προσαρμοσμένους selectors
+def scrape_lidl(p):
+    print("Συλλογή από Lidl...")
+    url = "https://www.lidl.gr/c/ebdomadiaies-prosfores/s10007771"
+    try:
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--disable-blink-features=AutomationControlled", "--no-sandbox", "--disable-setuid-sandbox"]
+        )
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080},
+            locale="el-GR",
+            ignore_https_errors=True
+        )
+        page = context.new_page()
+        page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        
+        page.goto(url, timeout=60000, wait_until="domcontentloaded")
+        page.wait_for_timeout(6000)
+        
+        try:
+            page.click("button:has-text('Αποδοχή'), button:has-text('Accept'), button[id*='cookie']", timeout=3000)
+        except:
+            pass
+        
+        # Περισσότερο scrolling για τη Lidl ώστε να φορτώσουν τα lazy items του grid
+        for _ in range(10):
+            page.evaluate("window.scrollBy(0, 1000)")
+            page.wait_for_timeout(2000)
+            
+        raw = page.evaluate("""() => {
+            const results = [];
+            // Στοχεύουμε συγκεκριμένα τα grid items και τις κάρτες προϊόντων της Lidl
+            const elements = document.querySelectorAll('article, div[class*="product"], div[class*="grid"], li[class*="product"], [data-grid-item], div[class*="card"]');
+            elements.forEach(el => {
+                const text = el.innerText;
+                if (text && text.includes('€') && text.length < 350 && text.length > 8) {
+                    const cleanText = text.replace(/\\n/g, ' | ').trim();
+                    const img = el.querySelector('img');
+                    let rawSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+                    let imgSrc = String(rawSrc || '');
+                    if (imgSrc.startsWith('//')) {
+                        imgSrc = 'https:' + imgSrc;
+                    }
+                    if (imgSrc.startsWith('http') && !results.some(r => r.text === cleanText)) {
+                        results.push({ text: cleanText, image: imgSrc });
+                    }
+                }
+            });
+            return results;
+        }""")
+        browser.close()
+        parsed = parse_products(raw, "Lidl")
+        print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Lidl.")
+        return parsed
+    except Exception as e:
+        print(f"Σφάλμα Lidl: {e}")
+        return []
+
 with sync_playwright() as p:
     all_offers = []
     
     all_offers.extend(scrape_store(p, "https://kritikos-sm.gr/offers/", "Κρητικός"))
-    # Ενημερωμένα, άμεσα URLs καταλόγου προσφορών για Σκλαβενίτη & ΑΒ
     all_offers.extend(scrape_store(p, "https://www.sklavenitis.gr/e-shop/prosfores/", "Σκλαβενίτης"))
     all_offers.extend(scrape_store(p, "https://www.ab.gr/e-shop/ekptoseis-prosfores", "ΑΒ Βασιλόπουλος"))
     all_offers.extend(scrape_store(p, "https://www.masoutis.gr/offers", "Μασούτης"))
     all_offers.extend(scrape_store(p, "https://galaxias.shop/eshop/2?promos=isExtraBonus&promos=isBravoBonus&promos=isKalathiNoikokiriou&promos=isSumferei&promos=isTileoptiko&promos=isGoldPrices", "Γαλαξίας"))
     all_offers.extend(scrape_store(p, "https://www.mymarket.gr/", "My Market"))
-    all_offers.extend(scrape_store(p, "https://www.lidl.gr/c/ebdomadiaies-prosfores/s10007771", "Lidl"))
+    
+    # Ειδική κλήση για τη Lidl με τον νέο dedicated scraper
+    all_offers.extend(scrape_lidl(p))
 
     unique_offers = []
     seen_titles = set()
