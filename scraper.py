@@ -1,16 +1,3 @@
-import requests
-from bs4 import BeautifulSoup
-import json
-import time
-
-def get_e_katanalotis_promotions():
-    """
-    Παράδειγμα ανάκτησης προσφορών/τιμών από την επίσημη πλατφόρμα e-Katanalotis (API).
-    Η πλατφόρμα συγκεντρώνει τιμές και προσφορές από τα μεγάλα σούπερ μάρκετ της Ελλάδας 
-    (Σκλαβενίτης, ΑΒ Βασιλόπουλος, Μασούτης, Lidl, Κρητικός, κ.ά.).
-    """
-    url = "https://ekatanalotis.gov.gr/api/products" # Εικονικό/Ενδεικτικό endpoint
-    headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
     }
     
@@ -46,7 +33,7 @@ def get_e_katanalotis_promotions():
     
     return promotions
 
-def save_to_json(data, filename="supermarket_offers.json"):
+def save_to_json(data, filename="clean_offers.json"):
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
     print(f"Τα δεδομένα αποθηκεύτηκαν στο {filename}")
@@ -55,4 +42,4 @@ if __name__ == "__main__":
     offers = get_e_katanalotis_promotions()
     for offer in offers:
         print(f"[{offer['supermarket']}] {offer['product']}: Από {offer['original_price']}€ -> {offer['offer_price']}€ ({offer['discount']})")
-    save_to_json(offers)
+    save_to_json(offers, filename="clean_offers.json")
