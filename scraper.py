@@ -7,7 +7,8 @@ from playwright.sync_api import sync_playwright
 def clean_title(title):
     artifacts = [
         "playlist_add", "favorite", "add", "remove", "Χρυσές Τιμές", 
-        "Λίτ", "Τεμ", "/", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση"
+        "Λίτ", "Τεμ", "/", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση",
+        "με Lidl Plus", "Χωρίς Lidl Plus", "Προσθήκη", "Καλάθι"
     ]
     for art in artifacts:
         title = title.replace(art, "")
@@ -24,10 +25,20 @@ def clean_title(title):
 
 def parse_products(raw_products, supermarket_name):
     parsed = []
+    # Λίστα με λέξεις-κλειδιά που αποκλείουν άχρηστα γενικά κείμενα σελίδας
+    invalid_keywords = [
+        "Διαγωνισμοί", "ώρα παράδοσης", "items in cart", "Επίλεξε", 
+        "Σούπερ Μάρκετ", "Καλάθι", "Σύνδεση", "Εγγραφή", "POLITIQUE", "Cookies"
+    ]
+    
     for item in raw_products:
         text = item["text"]
         img_url = item["image"]
         
+        # Αν ο τίτλος περιέχει άσχετες φράσεις πλοήγησης, τον αγνοούμε
+        if any(kw.lower() in text.lower() for kw in invalid_keywords):
+            continue
+            
         prices = re.findall(r'(\d+[\.,]\d+\s*€)', text)
         title = text
         for price in prices:
@@ -82,7 +93,7 @@ def scrape_kritikos(p):
         print(f"Σφάλμα Κρητικός: {e}")
         return []
 
-# 2. Υπόλοιπα καταστήματα με Requests mode
+# 2. Γενική συνάρτηση Requests για τα υπόλοιπα καταστήματα με στοχευμένα URLs προσφορών
 def scrape_with_requests(url, supermarket_name):
     print(f"Συλλογή από {supermarket_name} (Requests mode)...")
     headers = {
@@ -101,7 +112,8 @@ def scrape_with_requests(url, supermarket_name):
         soup = BeautifulSoup(response.text, 'html.parser')
         
         raw = []
-        elements = soup.select('article, div.product, div[class*="product"], div[class*="item"]')
+        # Στοχεύουμε σε containers που περιέχουν συνήθως προϊόντα
+        elements = soup.select('article, div.product, div[class*="product"], div[class*="item"], li[class*="product"]')
         for el in elements:
             text = el.get_text(separator=' | ', strip=True)
             if text and '€' in text and len(text) < 300 and len(text) > 10:
@@ -122,17 +134,30 @@ def scrape_with_requests(url, supermarket_name):
         print(f"Σφάλμα {supermarket_name}: {e}")
         return []
 
-# Εκτέλεση όλων
+# Εκτέλεση όλων με τις ενημερωμένες διευθύνσεις προσφορών
 with sync_playwright() as p:
     all_offers = []
     
+    # Κρητικός
     all_offers.extend(scrape_kritikos(p))
+    
+    # Σκλαβενίτης (Ειδική σελίδα προσφορών)
     all_offers.extend(scrape_with_requests("https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
+    
+    # ΑΒ Βασιλόπουλος (Ειδική σελίδα προσφορών)
     all_offers.extend(scrape_with_requests("https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
+    
+    # Μασούτης (Ειδική σελίδα προσφορών)
     all_offers.extend(scrape_with_requests("https://www.masoutis.gr/offers", "Μασούτης"))
+    
+    # Γαλαξίας
     all_offers.extend(scrape_with_requests("https://www.galaxiasnet.gr/", "Γαλαξίας"))
-    all_offers.extend(scrape_with_requests("https://www.mymarket.gr/", "My Market"))
-    all_offers.extend(scrape_with_requests("https://www.lidl.gr/", "Lidl"))
+    
+    # My Market (Σελίδα προσφορών/φυλλαδίων αν υπάρχει ή κεντρική)
+    all_offers.extend(scrape_with_requests("https://www.mymarket.gr/prosfors", "My Market"))
+    
+    # Lidl (Ειδική κατηγορία προσφορών)
+    all_offers.extend(scrape_with_requests("https://www.lidl.gr/c/prosfores/s10007771", "Lidl"))
 
     unique_offers = []
     seen_titles = set()
