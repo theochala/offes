@@ -1,1 +1,1200 @@
-[]
+[
+    {
+        "title": "Φρούτα | - Αβοκάντο Συσκευασμένο Ready to Eat 2τεμ. κιλό €2.59 € 2.75",
+        "price": "7.00 €",
+        "all_prices": [
+            "0.16 €",
+            "7.00 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1760539393_81009495.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "- | Αβοκάντο Συσκευασμένο Ready to Eat 2τεμ. κιλό €2.59 € 2.75",
+        "price": "7.00 €",
+        "all_prices": [
+            "0.16 €",
+            "7.00 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1760539393_81009495.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "- | Αβοκάντο Συσκευασμένο Ready to Eat 2τεμ. κιλό",
+        "price": "7.00 €",
+        "all_prices": [
+            "0.16 €",
+            "7.00 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1760539393_81009495.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "Λαχανικά | -20% ΧΑΛΒΑΤΖΗΣ Κους Λαχανικά 220gr κιλό €2.63 € 3.29 ΧΑΛΒΑΤΖΗΣ Ρεβύθια & Κινόα Λαχανικά 220gr €2.63 ΧΑΛΒΑΤΖΗΣ Πληγούρι Κινόα Λαχανικά 220gr €2.63",
+        "price": "11.95 €",
+        "all_prices": [
+            "11.95 €",
+            "11.95 €",
+            "11.95 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@985487.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Κους Λαχανικά 220gr κιλό €2.63 € 3.29 ΧΑΛΒΑΤΖΗΣ Ρεβύθια & Κινόα Λαχανικά 220gr €2.63 ΧΑΛΒΑΤΖΗΣ Πληγούρι Κινόα Λαχανικά 220gr €2.63",
+        "price": "11.95 €",
+        "all_prices": [
+            "11.95 €",
+            "11.95 €",
+            "11.95 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@985487.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Κους Λαχανικά 220gr κιλό €2.63 € 3.29",
+        "price": "11.95 €",
+        "all_prices": [
+            "11.95 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@985487.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Κους Λαχανικά 220gr κιλό",
+        "price": "11.95 €",
+        "all_prices": [
+            "11.95 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@985487.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Ρεβύθια & Κινόα Λαχανικά 220gr κιλό €2.63 € 3.29",
+        "price": "11.95 €",
+        "all_prices": [
+            "11.95 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@985486.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Ρεβύθια & Κινόα Λαχανικά 220gr κιλό",
+        "price": "11.95 €",
+        "all_prices": [
+            "11.95 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@985486.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Πληγούρι & Κινόα Λαχανικά 220gr κιλό €2.63 € 3.29",
+        "price": "11.95 €",
+        "all_prices": [
+            "11.95 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@985488.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Πληγούρι & Κινόα Λαχανικά 220gr κιλό",
+        "price": "11.95 €",
+        "all_prices": [
+            "11.95 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@985488.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "Έτοιμες Σαλάτες | -15% ΦΡΕΣΚΟΥΛΗΣ Ιταλική Σαλάτα 200γρ. κιλό €1.40 € 1.65",
+        "price": "7.00 €",
+        "all_prices": [
+            "7.00 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1772011014_702059.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-15% | ΦΡΕΣΚΟΥΛΗΣ Ιταλική Σαλάτα 200γρ. κιλό €1.40 € 1.65",
+        "price": "7.00 €",
+        "all_prices": [
+            "7.00 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1772011014_702059.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-15% | ΦΡΕΣΚΟΥΛΗΣ Ιταλική Σαλάτα 200γρ. κιλό",
+        "price": "7.00 €",
+        "all_prices": [
+            "7.00 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1772011014_702059.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Μπουκιές Παντζαριού Στον Ατμό 250γρ. κιλό €1.44 € 1.80",
+        "price": "5.76 €",
+        "all_prices": [
+            "5.76 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@742208.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Μπουκιές Παντζαριού Στον Ατμό 250γρ. κιλό",
+        "price": "5.76 €",
+        "all_prices": [
+            "5.76 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@742208.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Παντζάρια Ατμού Συσκευασία 500γρ. κιλό €1.82 € 2.28",
+        "price": "3.64 €",
+        "all_prices": [
+            "3.64 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1622206416_703513.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Παντζάρια Ατμού Συσκευασία 500γρ. κιλό",
+        "price": "3.64 €",
+        "all_prices": [
+            "3.64 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1622206416_703513.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Καλαμπόκι Ατμού Συσκευασία 400γρ. κιλό €2.68 € 3.35",
+        "price": "6.70 €",
+        "all_prices": [
+            "6.70 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1622447955_703514.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Καλαμπόκι Ατμού Συσκευασία 400γρ. κιλό",
+        "price": "6.70 €",
+        "all_prices": [
+            "6.70 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1622447955_703514.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Φρουτοσαλάτα Ροδάκινο Φέτες Σε Χυμό Φρούτου 400γρ. κιλό €3.20 € 4.00",
+        "price": "8.00 €",
+        "all_prices": [
+            "8.00 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1752073170_724959.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Φρουτοσαλάτα Ροδάκινο Φέτες Σε Χυμό Φρούτου 400γρ. κιλό",
+        "price": "8.00 €",
+        "all_prices": [
+            "8.00 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1752073170_724959.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Φρουτοσαλάτα Ανανάς Φέτες Σε Χυμό Φρούτου 400γρ. κιλό €3.12 € 3.90",
+        "price": "7.80 €",
+        "all_prices": [
+            "7.80 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1752073170_724960.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Φρουτοσαλάτα Ανανάς Φέτες Σε Χυμό Φρούτου 400γρ. κιλό",
+        "price": "7.80 €",
+        "all_prices": [
+            "7.80 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1752073170_724960.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Κολοκύθα Ατμού Ελληνική 400γρ. κιλό €2.72 € 3.40",
+        "price": "6.80 €",
+        "all_prices": [
+            "6.80 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@742210.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "-20% | ΧΑΛΒΑΤΖΗΣ Κολοκύθα Ατμού Ελληνική 400γρ. κιλό",
+        "price": "6.80 €",
+        "all_prices": [
+            "6.80 €"
+        ],
+        "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@742210.jpg",
+        "supermarket": "Κρητικός"
+    },
+    {
+        "title": "ΣΥΝΔΕΣΗ | ΕΓΓΡΑΦΗ 0 Η εταιρεία EN",
+        "price": "0.00€",
+        "all_prices": [
+            "0.00€"
+        ],
+        "image": "https://www.masoutis.gr/assets/img/mas50.webp",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΣΥΝΔΕΣΗ | ΕΓΓΡΑΦΗ 0",
+        "price": "0.00€",
+        "all_prices": [
+            "0.00€"
+        ],
+        "image": "https://www.masoutis.gr/assets/img/mas50.webp",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΜΠΡΙΖΟΛΕΣ ΧΟΙΡΙΝΕΣ ΛΑΙΜΟΥ ΟΛΛΑΝΔΙΑΣ ΜΕ ΚΟΚΑΛΟ ΤΟ ΚΙΛΟ MONO",
+        "price": "3.99€",
+        "all_prices": [
+            "3.99€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/WVGKSJHJVB20261106154001.jpeg",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΕΞΑΙΡΕΤΙΚΟ ΠΑΡΘΕΝΟ ΕΛΑΙΟΛΑΔΟ ΞΥΛΟΥΡΗΣ 5 ΛΙΤΡΑ ΜΟΝΟ *ΤΙΜΗ ΛΙΤΡΟΥ:",
+        "price": "6.30€",
+        "all_prices": [
+            "31.50€",
+            "6.30€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/MUTPAYSCNG20261106154039.jpeg",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΒΑΡΕΛΙΣΙΟ ΑΓΕΛΑΔΙΝΟ ΤΥΡΙ ΤΟ ΚΙΛΟ MONO",
+        "price": "7.95€",
+        "all_prices": [
+            "7.95€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/PNXOIIWDNX20261106161435.jpeg",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΓΚΟΥΝΤΑ ROYAL CREM 48% ΦΡΑΝΤΖΟΛΑ ΧΥΜΑ ΤΟ ΚΙΛΟ MONO",
+        "price": "5,95€",
+        "all_prices": [
+            "5,95€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/QDHKOILOYV20261106154329.jpeg",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΣΤΡΑΓΓΙΣΤΑ ΓΙΑΟΥΡΤΙΑ ΚΟΛΙΟΣ ΠΛΗΡΕΣ & 2% 850ΓΡ. ΜΟΝΟ *ΤΙΜΗ ΚΙΛΟΥ:",
+        "price": "3.25€",
+        "all_prices": [
+            "2.76€",
+            "3.25€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/JDWMPLEFWJ20261106154439.jpeg",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΚΡΟΥΑΣΑΝ 7DAYS MINI ΚΑΚΑΟ, ΜΙΛΦΕΙΓ 103ΓΡ ΜΟΝΟ *ΤΙΜΗ ΚΙΛΟΥ: | *ΣΥΜΜΕΤΕΧΟΥΝ ΣΕ ΑΠΙΣΤΕΥΤΕΣ ΤΙΜΕΣ ΕΠΙΛΕΓΜΕΝΑ ΠΡΟΪΟΝΤΑ 7DAYS",
+        "price": "10.78€",
+        "all_prices": [
+            "1.11€",
+            "10.78€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/KEPLAHIJXW20261106154514.jpeg",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΟΛΑ ΤΑ ENERGY DRINKS HELL 250ML. ΜΟΝΟ *ΤΙΜΗ ΛΙΤΡΟΥ:",
+        "price": "2.36€",
+        "all_prices": [
+            "0.59€",
+            "2.36€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/ARILPZDHUM20261106154638.jpeg",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΟΛΑ ΤΑ ΜΑΛΑΚΤΙΚΑ SOUPLINE INFINITE-ELIXIR 52ΜΕΖ ΜΟΝΟ *ΤΙΜΗ ΜΕΖ:",
+        "price": "0,07€",
+        "all_prices": [
+            "3,74€",
+            "0,07€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/RWAIOHFMMR20261104145353.png",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΟΔΟΝΤΟΚΡΕΜΕΣ COLGATE MAX WHITE ONE & OPTIC 75ML. MONO *TIΜΗ ΛΙΤΡΟΥ:",
+        "price": "23,06€",
+        "all_prices": [
+            "1,73€",
+            "23,06€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/AGJDPYRFLN20261106154722.png",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "AJAX ΚΑΘΑΡΙΣΤΙΚΟ ΕΠΙΦΑΝΕΙΩΝ WC EXPERT ΑΝΤΛΙΑ 500ML ΜΟΝΟ *ΤΙΜΗ ΛΙΤΡΟΥ:",
+        "price": "3,94€",
+        "all_prices": [
+            "1,97€",
+            "3,94€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/HIJXUKXNNX20261104145443.png",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΕΠΙΛΕΓΜΕΝΕΣ ΠΑΝΕΣ PAMPERS PREMIUM CARE JUMBO ΜΟΝΟ & ΜΕ 2 ΤΕΜ ΟΜΟΙΑ 'Η ΣΥΝΔ -10% ΦΘΗΝΟΤΕΡΑ",
+        "price": "13,99€",
+        "all_prices": [
+            "13,99€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/HKWQYBATYG20261104145510.png",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΑΠΟΣΜHTIKO NIVEA ROLL ON BLACK &WHITE EPIC NIGHT ΜΕΝ 50ML ΜΟΝΟ *ΤΙΜΗ ΛΙΤΡΟΥ: & ΜΕ 2 ΤΕΜ. ΟΜΟΙΑ Ή ΣΥΝΔ 10% ΦΘΗΝΟΤΕΡΑ",
+        "price": "59,60€",
+        "all_prices": [
+            "2,98€",
+            "59,60€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/AQWOKJOTHN20261104145539.png",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΣΑΜΠΟΥΑΝ PANTENE GLOWTOX 400ML ΜΟΝΟ *TIMH ΛΙΤΡΟΥ: & ΜΕ 2 ΤΕΜ. ΟΜΟΙΑ Ή ΣΥΝΔ 10% ΦΘΗΝΟΤΕΡΑ",
+        "price": "9,70€",
+        "all_prices": [
+            "3,88€",
+            "9,70€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/AICAKRJXJG20261104145623.png",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΕΠΙΛΕΓΜΕΝΕΣ ΒΑΦΕΣ ΜΑΛΛΙΩΝ KOLESTON MONO",
+        "price": "5.40€",
+        "all_prices": [
+            "5.40€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/CWDYIGENRE20261104145649.png",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΟΛΑ ΤΑ ΑΦΡΟΛΟΥΤΡΑ SANEX DERMO 600ML ΜΟΝΟ *ΤΙΜΗ ΛΙΤΡΟΥ:",
+        "price": "3.98€",
+        "all_prices": [
+            "2.39€",
+            "3.98€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/GNNKZGYHCF20261106120633.png",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "ΥΓΡΟ ΠΙΑΤΩΝ PALMOLIVE ORIGINAL, LIME 500ML ΜΟΝΟ *ΤΙΜΗ ΛΙΤΡΟΥ:",
+        "price": "2.46€",
+        "all_prices": [
+            "1.23€",
+            "2.46€"
+        ],
+        "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/MFRZIEDPQQ20261106120707.png",
+        "supermarket": "Μασούτης"
+    },
+    {
+        "title": "| Κιλ LURPAK ΑΝΑΛΑΤΟ ΑΛΟΥΜΙΝΟΦΥΛΛΟ 250g",
+        "price": "14,96 €",
+        "all_prices": [
+            "3,74 €",
+            "14,96 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/lurpak-unsalted-block-250g-125th-ann-3-6ae07e479417c9d2597cac65_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Κιλ LURPAK SOFT ΑΝΑΛΑΤΟ ΣΚΑΦΑΚΙ 225g.",
+        "price": "13,96 €",
+        "all_prices": [
+            "3,14 €",
+            "13,96 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5740900402119-67989fdbd1129c420b64ec43_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| AGE PERFECT ΚΡΕΜΑ ΗΜΕΡΑΣ ΕΝΑΝΤΙΑ ΣΤΗ ΧΑΛΑΡΩΣΗ & ΤΙΣ ΚΗΛΙΔΕΣ",
+        "price": "257,40 €",
+        "all_prices": [
+            "12,87 €",
+            "257,40 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201100872855-1-65327aa9ff4aede2c568604e_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| ΧΡΥΣΕΛΙΑ ΚΛΑΣΙΚΟ ΕΛΑΙΟΛΑΔΟ 1LT.",
+        "price": "6,48 €",
+        "all_prices": [
+            "6,48 €",
+            "6,48 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201330220099-l-63ce7a5bf920aa048bf1e04e_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| ΑΔΙΑΒΡΟΧΟ ΝΤΕΜΑΚΙΓΙΑΖ ΜΑΤΙΩΝ & ΧΕΙΛΙΩΝ",
+        "price": "4,87 €",
+        "all_prices": [
+            "4,87 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201100873579-1-65327b16ff4aede2c5686055_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| REVITALIFT LASER ΟΡΟΣ ΡΕΤΙΝΟΛΗΣ ΝΥΚΤΟΣ",
+        "price": "615,33 €",
+        "all_prices": [
+            "18,46 €",
+            "615,33 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600523971954-1-65322fdeff4aede2c5685d68_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| L'OREAL PARIS REVITALIFT FILLER WATER CREAM DAY 50ML",
+        "price": "369,20 €",
+        "all_prices": [
+            "18,46 €",
+            "369,20 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600524070588-1-65324002ff4aede2c5685df4_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| L'OREAL PARIS REVITALIFT CLINICAL VITAMIN C ΟΡΟΣ ΠΡΟΣΩΠΟΥ ΜΕ ΒΙΤΑΜΙΝΗ 30ML",
+        "price": "619,33 €",
+        "all_prices": [
+            "18,58 €",
+            "619,33 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600524069810-1-65323dfeff4aede2c5685de2_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| GARNIER TISSUE MASK ΥΦΑΣΜΑΤΙΝΗ ΜΑΣΚΑ ΕΝΥΔΑΤΩΣΗΣ ΠΡΟΣΩΠΟΥ ΜΕ ΡΟΔΙ & ΥΑΛΟΥΡΟΝΙΚΟ...",
+        "price": "1,78 €",
+        "all_prices": [
+            "1,78 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600541943759-1-65324e8bff4aede2c5685e87_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| GARNIER MICELLAIRE ΚΛΑΣΙΚΟ ΝΕΡΟ ΚΑΘΑΡΙΣΜΟΥ ΚΑΙ ΓΙΑ ΕΥΑΙΣΘΗΤΕΣ ΕΠΙΔΕΡΜΙΔΕΣ 100M...",
+        "price": "19,10 €",
+        "all_prices": [
+            "1,91 €",
+            "19,10 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600542081313-1-65325780ff4aede2c5685eb5_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| GARNIER TISSUE MASK ΥΦΑΣΜΑΤΙΝΗ ΜΑΣΚΑ ΕΝΥΔΑΤΩΣΗΣ ΠΡΟΣΩΠΟΥ ΜΕ ΕΝΕΡΓΟ ΑΝΘΡΑΚΑ",
+        "price": "1,78 €",
+        "all_prices": [
+            "1,78 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600542097147-1-653257c2ff4aede2c5685eba_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| WRINKLE EXPERT 45+ ΚΡΕΜΑ ΗΜΕΡΑΣ 50ML",
+        "price": "7,93 €",
+        "all_prices": [
+            "7,93 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/36005231837771-6531252eff4aede2c5685c6f_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| GLADE ELECTRIC SCENTED OIL SET ROMANTIC VANILLA BLOSSOM",
+        "price": "6,91 €",
+        "all_prices": [
+            "6,91 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5000204333732-368288-1198843n-6707c35d800441d13971bcce_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| GLADE AUTOMATIC SPRAY ΑΝΤΚΟ CALM LAVENDER & JASMINE",
+        "price": "24,76 €",
+        "all_prices": [
+            "6,66 €",
+            "24,76 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/01-63ff8ccfd051bfa92b82856f_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| GLADE AUTOMATIC SPRAY ΑΝΤΚΟ RELAXING ZEN",
+        "price": "6,66 €",
+        "all_prices": [
+            "6,66 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/01-63ff8bc4d051bfa92b82856c_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| GARNIER MICELLAIRE ΚΛΑΣΣΙΚΟ ΝΕΡΟ ΚΑΘΑΡΙΣΜΟΥ ΚΑΙ ΓΙΑ ΕΥΑΙΣΘΗΤΕΣ ΕΠΙΔΕΡΜΙΔΕΣ 400...",
+        "price": "5,16 €",
+        "all_prices": [
+            "5,16 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600541358546-1-6532488bff4aede2c5685e49_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| BOTANIC THERAPY AVOCADO ΜΑΣΚΑ ΜΑΛΛΙΩΝ 340ML",
+        "price": "15,71 €",
+        "all_prices": [
+            "5,34 €",
+            "15,71 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/36005425101411-65364046ff4aede2c56860d0_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| ΕLVIVE EXTRAORDINARY ΕΛΑΙΟ ΠΕΡΙΠΟΙΗΣΗΣ ΓΙΑ ΞΗΡΑ ΜΑΛΛΙΑ",
+        "price": "8,78 €",
+        "all_prices": [
+            "8,78 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600522387411-1-653121a3ff4aede2c5685c5c_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| ELVIVE EXTRAORDINARY OIL ΒΑΜΜΕΝΑ",
+        "price": "8,78 €",
+        "all_prices": [
+            "8,78 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600522387374-1-6531214cff4aede2c5685c55_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Cellular Expert Lift Αντιγηραντική Κρέμα Ημέρας SPF30",
+        "price": "260,80 €",
+        "all_prices": [
+            "13,04 €",
+            "260,80 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/4005900600721-01-6659f58f2962611cf4a2a30f_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| ELVIVE COLOR VIVE ΜΑΣΚΑ ΓΙΑ ΒΑΜΜΕΝΑ ΜΑΛΛΙΑ",
+        "price": "8,38 €",
+        "all_prices": [
+            "8,38 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600521708606-1-65311ccaff4aede2c5685c2e_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| ELVIVE HYDRA HYALURONIC ΜΑΣΚΑ ΕΝΥΔΑΤΩΣΗΣ",
+        "price": "8,38 €",
+        "all_prices": [
+            "8,38 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600524030766-1-65323bf7ff4aede2c5685dc7_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| ELVIVE HYDRA HYALURONIC SERUM ΕΝΥΔΑΤΩΣΗΣ",
+        "price": "8,15 €",
+        "all_prices": [
+            "8,15 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600524030841-1-65323cafff4aede2c5685dd1_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "-15% | schedule Ημερομηνίες Προσφορών Σαλάτα Φρεσκούλης Λάχανο - Καρότο 300gr",
+        "price": "1,57 €",
+        "all_prices": [
+            "1,33 €",
+            "1,57 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5205461304352-68f23cbe941cf1053a404538_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| ELVIVE DREAM LONG ΜΑΣΚΑ ΓΙΑ ΜΑΚΡΙΑ ΜΑΛΛΙΑ",
+        "price": "8,38 €",
+        "all_prices": [
+            "8,38 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600523587353-1-653228deff4aede2c5685d11_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| EveryDay All Cotton Σερβιετάκια XL 24 τεμ.",
+        "price": "0,11 €",
+        "all_prices": [
+            "2,62 €",
+            "0,11 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263001536-hero-69f9eb8adc4b02f7b4858a45_1_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| EveryDay All Cotton Σερβιετάκια Large 30 τεμ.",
+        "price": "0,09 €",
+        "all_prices": [
+            "2,62 €",
+            "0,09 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263011474-hero-69f9ea89dc4b02f7b4858a21_1_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| EveryDay All Cotton Σερβιετάκια Normal 20 τεμ.",
+        "price": "0,08 €",
+        "all_prices": [
+            "1,60 €",
+            "0,08 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263011801-hero-69f9e8c9dc4b02f7b48589f3_1_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| EveryDay Sensitive with cotton Σερβιέτες Maxi Night 10 τεμ.",
+        "price": "0,19 €",
+        "all_prices": [
+            "1,85 €",
+            "0,19 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263018374-hero-69cf9e8a72191242fc3b224e_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| EveryDay Sensitive with cotton Σερβιέτες Mini 18 τεμ.",
+        "price": "2,26 €",
+        "all_prices": [
+            "2,26 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263008610-hero-69d4b9f572191242fc3b2420_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Εκπαιδευτικό Κρεμοσάπουνο ΜΕΓΑ Hygiene Kids Blue που αλλάζει χρώμα – 250ml",
+        "price": "6,28 €",
+        "all_prices": [
+            "1,57 €",
+            "6,28 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263021800-primary-6960ba00941cf1053a407c7a_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| EveryDay Σερβιέτες Sensitive with Cotton XL Ultra Plus 10 τεμ.",
+        "price": "2,20 €",
+        "all_prices": [
+            "2,20 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263004216-hero-69cfabda72191242fc3b2275_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| EveryDay Sensitive with cotton Σερβιέτες Normal 18 τεμ.",
+        "price": "0,14 €",
+        "all_prices": [
+            "2,57 €",
+            "0,14 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263006371-hero-69d4baa872191242fc3b242a_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| EveryDay Sensitive with cotton Σερβιέτες Super 18 τεμ.",
+        "price": "0,14 €",
+        "all_prices": [
+            "2,57 €",
+            "0,14 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263006388-hero-69d4bb5372191242fc3b2434_1_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "ΛΙΣΤΑ ΑΓΟΡΩΝclose Η λίστα αγορών σας είναι άδεια. ΣΥΝΟΛΟ:",
+        "price": "0.00 €",
+        "all_prices": [
+            "0.00 €"
+        ],
+        "image": "https://galaxias.shop/assets/img/cart/kalathi.png",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "Η λίστα αγορών σας είναι άδεια. ΣΥΝΟΛΟ:",
+        "price": "0.00 €",
+        "all_prices": [
+            "0.00 €"
+        ],
+        "image": "https://galaxias.shop/assets/img/cart/kalathi.png",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "Terra Επαναφορτιζόμενη ΣκούπαΣκουπάκι | € 65 98 Τελ. τιμή Κωδ: 955062 Ad",
+        "price": "65,98€",
+        "all_prices": [
+            "65,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/10_07_26/33aacd01-4e7f-446f-ae4f-243298da786a_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 65 98 Τελ. τιμή Κωδ: 955062 Ad",
+        "price": "65,98€",
+        "all_prices": [
+            "65,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/10_07_26/33aacd01-4e7f-446f-ae4f-243298da786a_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Baker's Secret Belle Αντικολλητική Φόρμα 26cm | € 10 45 Τελ. τιμή Κωδ: 999596 Ad",
+        "price": "10,45€",
+        "all_prices": [
+            "10,45€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/30_04_26/22e8b503-3abc-44bb-abe2-f88f59550eac_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 10 45 Τελ. τιμή Κωδ: 999596 Ad",
+        "price": "10,45€",
+        "all_prices": [
+            "10,45€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/30_04_26/22e8b503-3abc-44bb-abe2-f88f59550eac_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Baker's Secret Belle Τηγάνι Αντικολλητικό 24cm | € 21 98 Τελ. τιμή Κωδ: 999590 Ad",
+        "price": "21,98€",
+        "all_prices": [
+            "21,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/30_04_26/c6da3bbb-6346-4ccf-bd3b-29f13beca867_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 21 98 Τελ. τιμή Κωδ: 999590 Ad",
+        "price": "21,98€",
+        "all_prices": [
+            "21,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/30_04_26/c6da3bbb-6346-4ccf-bd3b-29f13beca867_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Conceptum Σύστημα Σιδερώματος CCS-DG199 2700W | € 61 95 Τελ. τιμή Κωδ: 955033 Ad",
+        "price": "61,95€",
+        "all_prices": [
+            "61,95€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/09_09_24/c96a5681-e03b-4e18-b76b-27b93f451917_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 61 95 Τελ. τιμή Κωδ: 955033 Ad",
+        "price": "61,95€",
+        "all_prices": [
+            "61,95€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/09_09_24/c96a5681-e03b-4e18-b76b-27b93f451917_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Baker's Secret Belle Τηγάνι Aντικολλητικό 28cm | € 26 98 Τελ. τιμή Κωδ: 999591 Ad",
+        "price": "26,98€",
+        "all_prices": [
+            "26,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/30_04_26/a6b68cd5-0c88-4dd9-9b3c-29989808fd06_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 26 98 Τελ. τιμή Κωδ: 999591 Ad",
+        "price": "26,98€",
+        "all_prices": [
+            "26,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/30_04_26/a6b68cd5-0c88-4dd9-9b3c-29989808fd06_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Baker's Secret Belle Τηγάνι Aντικολλητικό 20cm | € 17 98 Τελ. τιμή Κωδ: 999589 Ad",
+        "price": "17,98€",
+        "all_prices": [
+            "17,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/30_04_26/a4c78ade-323e-4e98-936e-e750c44915f9_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 17 98 Τελ. τιμή Κωδ: 999589 Ad",
+        "price": "17,98€",
+        "all_prices": [
+            "17,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/30_04_26/a4c78ade-323e-4e98-936e-e750c44915f9_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Baker's Secret Belle Γκριλιέρα 26cm | € 31 98 Τελ. τιμή Κωδ: 999592 Ad",
+        "price": "31,98€",
+        "all_prices": [
+            "31,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/30_04_26/f89b6c0b-b2cd-4093-aa1d-356e600ca9a8_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 31 98 Τελ. τιμή Κωδ: 999592 Ad",
+        "price": "31,98€",
+        "all_prices": [
+            "31,98€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/30_04_26/f89b6c0b-b2cd-4093-aa1d-356e600ca9a8_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Γάργαρο Επιτραπέζιο Νερό 6x1,5lt | € 1 46 Τιμή λίτρου Κωδ: 404410",
+        "price": "0,16€",
+        "all_prices": [
+            "0,16€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_05_21/47959109-1796-4a5d-99cd-5e5a30c254d1_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 1 46 Τιμή λίτρου Κωδ: 404410",
+        "price": "0,16€",
+        "all_prices": [
+            "0,16€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/07_05_21/47959109-1796-4a5d-99cd-5e5a30c254d1_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Soft Jumbo Χαρτοπετσέτες 100Φύλλα 0,175kg | € 0 75 SUPER ΤΙΜΗ Τιμή κιλού Κωδ: 608794",
+        "price": "4,29€",
+        "all_prices": [
+            "4,29€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/f9e7824e-789c-4405-9e66-022d4e6728b4_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 0 75 SUPER ΤΙΜΗ Τιμή κιλού Κωδ: 608794",
+        "price": "4,29€",
+        "all_prices": [
+            "4,29€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/11_06_21/f9e7824e-789c-4405-9e66-022d4e6728b4_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Feel Good! Aroma Therapy Relax Αφρόλουτρο 750ml | € 1 60 SUPER ΤΙΜΗ Τιμή λίτρου Κωδ: 775239",
+        "price": "2,13€",
+        "all_prices": [
+            "2,13€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/15_03_24/75e17311-1fd1-4bbf-a8cf-3a82258bc997_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 1 60 SUPER ΤΙΜΗ Τιμή λίτρου Κωδ: 775239",
+        "price": "2,13€",
+        "all_prices": [
+            "2,13€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/15_03_24/75e17311-1fd1-4bbf-a8cf-3a82258bc997_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Soft Jumbo Ρολό Κουζίνας 600gr | € 2 42 SUPER ΤΙΜΗ Τιμή κιλού Κωδ: 609410",
+        "price": "4,03€",
+        "all_prices": [
+            "4,03€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/d73dbbf6-e1c6-494b-98e7-5e082cf8c53c_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 2 42 SUPER ΤΙΜΗ Τιμή κιλού Κωδ: 609410",
+        "price": "4,03€",
+        "all_prices": [
+            "4,03€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/07_07_21/d73dbbf6-e1c6-494b-98e7-5e082cf8c53c_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Feel Good! Μωρομάντηλα Χαμομήλι 72 τεμ | € 1 22 SUPER ΤΙΜΗ Τιμή τεμαχίου Κωδ: 611150",
+        "price": "0,02€",
+        "all_prices": [
+            "0,02€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/10_12_25/17db8554-5ffd-49e3-89ea-c818483d67d8_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 1 22 SUPER ΤΙΜΗ Τιμή τεμαχίου Κωδ: 611150",
+        "price": "0,02€",
+        "all_prices": [
+            "0,02€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/10_12_25/17db8554-5ffd-49e3-89ea-c818483d67d8_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "Feel Good! Σαμπουάν Λιπαρά Μαλλιά 400ml | € 2 11 Τιμή λίτρου Κωδ: 751823",
+        "price": "5,27€",
+        "all_prices": [
+            "5,27€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/ed841778-5172-4b68-af37-d8835ad04b17_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 2 11 Τιμή λίτρου Κωδ: 751823",
+        "price": "5,27€",
+        "all_prices": [
+            "5,27€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/11_06_21/ed841778-5172-4b68-af37-d8835ad04b17_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Friends Κροκέτες Γάτας Κοκτέιλ 2Kg | € 4 49 Τιμή κιλού Κωδ: 292092",
+        "price": "2,25€",
+        "all_prices": [
+            "2,25€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/03_01_23/a5b79804-0240-4694-89f8-c4c65047d5dd_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 4 49 Τιμή κιλού Κωδ: 292092",
+        "price": "2,25€",
+        "all_prices": [
+            "2,25€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/03_01_23/a5b79804-0240-4694-89f8-c4c65047d5dd_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Gusto Gouda Φέτες 200gr | € 1 93 Τιμή κιλού Κωδ: 128431",
+        "price": "9,65€",
+        "all_prices": [
+            "9,65€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/18_01_24/ae8ca274-66f7-4fcc-a98c-04adb2a2ddca_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 1 93 Τιμή κιλού Κωδ: 128431",
+        "price": "9,65€",
+        "all_prices": [
+            "9,65€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/18_01_24/ae8ca274-66f7-4fcc-a98c-04adb2a2ddca_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Gusto Line Dark Chocolate Δημητριακά 375gr | € 2 72 Τιμή κιλού Κωδ: 272543",
+        "price": "7,25€",
+        "all_prices": [
+            "7,25€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/21_10_25/a2037c51-f201-4869-ac55-92597e6fb58d_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 2 72 Τιμή κιλού Κωδ: 272543",
+        "price": "7,25€",
+        "all_prices": [
+            "7,25€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/21_10_25/a2037c51-f201-4869-ac55-92597e6fb58d_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Gusto Καφές Φίλτρου Classic 500gr | € 8 91 Τιμή κιλού Κωδ: 262538",
+        "price": "17,82€",
+        "all_prices": [
+            "17,82€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/05_01_24/46fd75f6-906e-4eda-b693-372e0b77ac80_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 8 91 Τιμή κιλού Κωδ: 262538",
+        "price": "17,82€",
+        "all_prices": [
+            "17,82€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/05_01_24/46fd75f6-906e-4eda-b693-372e0b77ac80_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 1 21 Τιμή κιλού Κωδ: 333818",
+        "price": "6,91€",
+        "all_prices": [
+            "6,91€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/20_02_23/dc11061c-45e8-4dcd-a36c-a2d03510b43f_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Home Chloro Ultra Lemon 1250ml | € 1 03 Τιμή λίτρου Κωδ: 511724",
+        "price": "0,82€",
+        "all_prices": [
+            "0,82€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/83e73608-212a-4ee6-9a77-8c4b55358799_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 1 03 Τιμή λίτρου Κωδ: 511724",
+        "price": "0,82€",
+        "all_prices": [
+            "0,82€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/07_07_21/83e73608-212a-4ee6-9a77-8c4b55358799_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Home Αγριολούλουδα Υγρό Γενικού Καθαρισμού 1lt | € 1 72 Τιμή λίτρου Κωδ: 512568",
+        "price": "1,72€",
+        "all_prices": [
+            "1,72€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/a67cc030-08d5-4748-8ba1-3339b1c9b1bb_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 1 72 Τιμή λίτρου Κωδ: 512568",
+        "price": "1,72€",
+        "all_prices": [
+            "1,72€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/07_07_21/a67cc030-08d5-4748-8ba1-3339b1c9b1bb_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Home Μαλακτικό Lavender 15μεζ 1,5lt | € 2 11 Τιμή μεζούρας Κωδ: 506421",
+        "price": "0,14€",
+        "all_prices": [
+            "0,14€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/e4790e33-2a37-4ae7-8690-8f078913a764_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 2 11 Τιμή μεζούρας Κωδ: 506421",
+        "price": "0,14€",
+        "all_prices": [
+            "0,14€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/07_07_21/e4790e33-2a37-4ae7-8690-8f078913a764_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Kouzina Τομάτα Ψιλοκομμένη 400gr (Στραγγ .Βάρος 240gr) | € 0 57 Τιμή κιλού Κωδ: 226002",
+        "price": "2,38€",
+        "all_prices": [
+            "2,38€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/07_01_21/953faac7-0f97-4957-84b4-f3535ac7227d_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 0 57 Τιμή κιλού Κωδ: 226002",
+        "price": "2,38€",
+        "all_prices": [
+            "2,38€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/07_01_21/953faac7-0f97-4957-84b4-f3535ac7227d_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Kouzina Ρύζι Γλασσέ Ελληνικό 500gr | € 0 78 Τιμή κιλού Κωδ: 230314",
+        "price": "1,56€",
+        "all_prices": [
+            "1,56€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/10_06_21/3a25d63c-f27b-4a9a-abdf-70f420599e9a_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 0 78 Τιμή κιλού Κωδ: 230314",
+        "price": "1,56€",
+        "all_prices": [
+            "1,56€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/10_06_21/3a25d63c-f27b-4a9a-abdf-70f420599e9a_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Kouzina Σπαγγέτι No6 500gr | € 0 58 Τιμή κιλού Κωδ: 233435",
+        "price": "1,16€",
+        "all_prices": [
+            "1,16€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/13_01_21/9817d5eb-0827-4c8d-80ba-a17c296e3376_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 0 58 Τιμή κιλού Κωδ: 233435",
+        "price": "1,16€",
+        "all_prices": [
+            "1,16€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/13_01_21/9817d5eb-0827-4c8d-80ba-a17c296e3376_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "My Kouzina Φακές Χονδρές 500gr | € 1 18 Τιμή κιλού Κωδ: 232335",
+        "price": "2,36€",
+        "all_prices": [
+            "2,36€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/de194d6e-796d-42ad-863e-28179ff72f34_E1.jpg",
+        "supermarket": "My Market"
+    },
+    {
+        "title": "€ | 1 18 Τιμή κιλού Κωδ: 232335",
+        "price": "2,36€",
+        "all_prices": [
+            "2,36€"
+        ],
+        "image": "https://cdn.mymarket.gr/images/styles/alt_thumbnail/11_06_21/de194d6e-796d-42ad-863e-28179ff72f34_E1.jpg",
+        "supermarket": "My Market"
+    }
+]
