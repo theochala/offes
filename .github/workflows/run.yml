@@ -24,22 +24,13 @@ jobs:
         pip install requests beautifulsoup4 playwright
         playwright install --with-deps chromium
 
-    - name: Run Scraper
+    - name: Run Scraper & Upload
       env:
         WP_URL: ${{ secrets.WP_URL }}
         WP_USER: ${{ secrets.WP_USER }}
         WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       run: |
         python scraper.py
-
-    - name: Upload clean_offers.json to InfinityFree via FTP
-      uses: SamKirkland/FTP-Deploy-Action@4.3.3
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./
-        server-dir: /htdocs/
-        exclude: |
-          **/*
-          !clean_offers.json
