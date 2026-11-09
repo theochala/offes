@@ -5,7 +5,7 @@ import re
 def clean_title(title):
     artifacts = [
         "playlist_add", "favorite", "add", "remove", "Χρυσές Τιμές", 
-        "Λίτ", "Τεμ", "/", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση", "με Lidl Plus", "Χωρίς Lidl Plus"
+        "Λίτ", "Τεμ", "/", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση"
     ]
     for art in artifacts:
         title = title.replace(art, "")
@@ -63,7 +63,6 @@ def create_stealth_page(p):
         timezone_id="Europe/Athens"
     )
     page = context.new_page()
-    # Απόκρυψη του ότι πρόκειται για αυτοματοποιημένο πρόγραμμα (Playwright/Selenium)
     page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     return browser, page
 
@@ -71,26 +70,29 @@ def scrape_sklavenitis(p):
     print("Συλλογή από Σκλαβενίτη...")
     browser, page = create_stealth_page(p)
     try:
-        page.goto("https://www.sklavenitis.gr/prosporous-prosfores/", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
+        # Δοκιμάζουμε απευθείας την κεντρική σελίδα προσφορών με μεγαλύτερο timeout
+        page.goto("https://www.sklavenitis.gr/prosporous-prosfores/", timeout=60000, wait_until="networkidle")
+        page.wait_for_timeout(5000)
     except Exception as e:
-        print(f"Σφάλμα Σκλαβενίτης: {e}")
+        print(f"Σφάλμα πλοήγησης Σκλαβενίτης: {e}")
         browser.close()
         return []
     
-    for _ in range(4):
+    # Scroll για να φορτώσουν τα δυναμικά προϊόντα (Lazy loading)
+    for _ in range(5):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
+        page.wait_for_timeout(2500)
         
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], div[class*="item"]');
+        // Ψάχνουμε για ευρύτερα containers προϊόντων στον Σκλαβενίτη
+        const elements = document.querySelectorAll('article, div[class*="product"], div.item, li[class*="product"]');
         elements.forEach(el => {
             const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
+            if (text && text.includes('€') && text.length < 300 && text.length > 10) {
                 const cleanText = text.replace(/\\n/g, ' | ').trim();
                 const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
                 if (!results.some(r => r.text === cleanText)) {
                     results.push({ text: cleanText, image: imgSrc });
                 }
@@ -107,23 +109,23 @@ def scrape_ab(p):
     print("Συλλογή από ΑΒ Βασιλόπουλο...")
     browser, page = create_stealth_page(p)
     try:
-        page.goto("https://www.ab.gr/e-shop/prosfopoi-prosfores", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
+        page.goto("https://www.ab.gr/e-shop/prosfopoi-prosfores", timeout=60000, wait_until="networkidle")
+        page.wait_for_timeout(5000)
     except Exception as e:
-        print(f"Σφάλμα ΑΒ: {e}")
+        print(f"Σφάλμα πλοήγησης ΑΒ: {e}")
         browser.close()
         return []
         
-    for _ in range(4):
+    for _ in range(5):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
+        page.wait_for_timeout(2500)
         
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"]');
+        const elements = document.querySelectorAll('article, div[class*="product"], app-product-tile, div[data-productid]');
         elements.forEach(el => {
             const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
+            if (text && text.includes('€') && text.length < 300 && text.length > 10) {
                 const cleanText = text.replace(/\\n/g, ' | ').trim();
                 const img = el.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
@@ -143,23 +145,23 @@ def scrape_masoutis(p):
     print("Συλλογή από Μασούτη...")
     browser, page = create_stealth_page(p)
     try:
-        page.goto("https://www.masoutis.gr/offers", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
+        page.goto("https://www.masoutis.gr/offers", timeout=60000, wait_until="networkidle")
+        page.wait_for_timeout(5000)
     except Exception as e:
-        print(f"Σφάλμα Μασούτης: {e}")
+        print(f"Σφάλμα πλοήγησης Μασούτης: {e}")
         browser.close()
         return []
         
-    for _ in range(4):
+    for _ in range(5):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
+        page.wait_for_timeout(2500)
         
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"]');
+        const elements = document.querySelectorAll('article, div[class*="product"], div[class*="item"]');
         elements.forEach(el => {
             const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
+            if (text && text.includes('€') && text.length < 300 && text.length > 10) {
                 const cleanText = text.replace(/\\n/g, ' | ').trim();
                 const img = el.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
@@ -174,171 +176,3 @@ def scrape_masoutis(p):
     parsed = parse_products(raw, "Μασούτης")
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Μασούτη.")
     return parsed
-
-def scrape_kritikos(p):
-    print("Συλλογή από Κρητικό...")
-    browser, page = create_stealth_page(p)
-    try:
-        page.goto("https://kritikos-sm.gr/offers/?srsltid=AYCX9vJWXPLOaa4mCSyC7xt-dwrv1ovQ7pkBaLPHp-8tjTfpPrQCT6pA", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(5000)
-    except Exception as e:
-        print(f"Σφάλμα Κρητικός: {e}")
-        browser.close()
-        return []
-
-    for _ in range(4):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-    
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"]');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    browser.close()
-    parsed = parse_products(raw, "Κρητικός")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Κρητικό.")
-    return parsed
-
-def scrape_galaxias(p):
-    print("Συλλογή από Γαλαξία...")
-    browser, page = create_stealth_page(p)
-    try:
-        page.goto("https://www.galaxiasnet.gr/", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
-    except Exception as e:
-        print(f"Σφάλμα Γαλαξίας: {e}")
-        browser.close()
-        return []
-        
-    for _ in range(4):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-        
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"]');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    browser.close()
-    parsed = parse_products(raw, "Γαλαξίας")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Γαλαξία.")
-    return parsed
-
-def scrape_mymarket(p):
-    print("Συλλογή από My Market...")
-    browser, page = create_stealth_page(p)
-    try:
-        page.goto("https://www.mymarket.gr/", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
-    except Exception as e:
-        print(f"Σφάλμα My Market: {e}")
-        browser.close()
-        return []
-        
-    for _ in range(4):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-        
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"]');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    browser.close()
-    parsed = parse_products(raw, "My Market")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από My Market.")
-    return parsed
-
-def scrape_lidl(p):
-    print("Συλλογή από Lidl...")
-    browser, page = create_stealth_page(p)
-    try:
-        page.goto("https://www.lidl.gr/", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
-    except Exception as e:
-        print(f"Σφάλμα Lidl: {e}")
-        browser.close()
-        return []
-        
-    for _ in range(4):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-        
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"]');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    browser.close()
-    parsed = parse_products(raw, "Lidl")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Lidl.")
-    return parsed
-
-# Εκτέλεση για όλα τα σούπερ μάρκετ με stealth mode
-with sync_playwright() as p:
-    all_offers = []
-    
-    all_offers.extend(scrape_sklavenitis(p))
-    all_offers.extend(scrape_ab(p))
-    all_offers.extend(scrape_masoutis(p))
-    all_offers.extend(scrape_kritikos(p))
-    all_offers.extend(scrape_galaxias(p))
-    all_offers.extend(scrape_mymarket(p))
-    all_offers.extend(scrape_lidl(p))
-    
-    unique_offers = []
-    seen_titles = set()
-    for offer in all_offers:
-        key = (offer["supermarket"], offer["title"])
-        if key not in seen_titles:
-            seen_titles.add(key)
-            unique_offers.append(offer)
-
-    with open("clean_offers.json", "w", encoding="utf-8") as f:
-        json.dump(unique_offers, f, ensure_ascii=False, indent=4)
-        print(f"\nΑποθήκευση {len(unique_offers)} συνολικών μοναδικών προσφορών στο clean_offers.json!")
