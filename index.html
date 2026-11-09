@@ -3,215 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Σούπερ Μάρκετ Προσφορές</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-        body {
-            background-color: #f4f6f9;
-            color: #333;
-        }
-        header {
-            background-color: #2563eb;
-            color: white;
-            padding: 2rem 1rem;
-            text-align: left;
-        }
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        header h1 {
-            font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 0.5rem;
-        }
-        header p {
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-        main {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        .offers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.5rem;
-        }
-        .card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .badge {
-            align-self: flex-start;
-            background-color: #e0e7ff;
-            color: #3730a3;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            margin: 1rem 1rem 0.5rem 1rem;
-            text-transform: uppercase;
-        }
-        .card-img-container {
-            width: 100%;
-            height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        .card-img-container img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-        .card-content {
-            padding: 1rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .card-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            line-height: 1.4;
-            color: #1f2937;
-        }
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-top: auto;
-            padding-top: 0.5rem;
-            border-top: 1px solid #f3f4f6;
-        }
-        .price-container {
-            display: flex;
-            flex-direction: column;
-        }
-        .original-price {
-            font-size: 0.8rem;
-            color: #6b7280;
-            text-decoration: line-through;
-        }
-        .offer-price {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #dc2626;
-        }
-        .btn-link {
-            background-color: #2563eb;
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 0.85rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-        .btn-link:hover {
-            background-color: #1d4ed8;
-        }
-        .loading, .error-msg {
-            text-align: center;
-            padding: 3rem;
-            font-size: 1.1rem;
-            color: #6b7280;
-            grid-column: 1 / -1;
-        }
-    </style>
+    <title>SuperMarket Offers Finder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen font-sans">
 
-    <header>
-        <div class="header-container">
-            <h1>🛒 Σούπερ Μάρκετ Προσφορές</h1>
-            <p>Συγκέντρωση τιμών και εικόνων προϊόντων σε πραγματικό χρόνο</p>
+    <!-- Header -->
+    <header class="bg-blue-600 text-white py-6 shadow-md">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-3xl font-bold">🛒 SuperOffer Finder</h1>
+            <p class="text-blue-100 text-sm mt-1">Σύγκριση προσφορών από όλα τα Σούπερ Μάρκετ</p>
         </div>
     </header>
 
-    <main>
-        <div id="offers-container" class="offers-grid">
-            <div class="loading">Φόρτωση προσφορών...</div>
+    <!-- Filters & Search -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="bg-white p-4 rounded-xl shadow mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
+            <!-- Search Bar -->
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Αναζήτηση προϊόντος (π.χ. Γάλα, Καφές)..." 
+                class="w-full md:w-1/2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                oninput="filterProducts()"
+            >
+            
+            <!-- Supermarket Filter -->
+            <select id="marketFilter" onchange="filterProducts()" class="w-full md:w-1/3 p-3 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="ALL">Όλα τα Σούπερ Μάρκετ</option>
+                <option value="Σκλαβενίτης">Σκλαβενίτης</option>
+                <option value="ΑΒ Βασιλόπουλος">ΑΒ Βασιλόπουλος</option>
+                <option value="Μασούτης">Μασούτης</option>
+                <option value="MyMarket">MyMarket</option>
+            </select>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Τα προϊόντα φορτώνονται δυναμικά από την JS -->
         </div>
     </main>
 
     <script>
-        function renderOffers(data) {
-            const container = document.getElementById('offers-container');
-            container.innerHTML = '';
+        let allProducts = [];
 
-            if (!data || data.length === 0) {
-                container.innerHTML = '<div class="loading">Δεν βρέθηκαν διαθέσιμες προσφορές αυτή τη στιγμή.</div>';
+        // Φόρτωση δεδομένων από το JSON
+        async function loadProducts() {
+            try {
+                const response = await fetch('offers.json');
+                allProducts = await response.json();
+                renderProducts(allProducts);
+            } catch (error) {
+                console.error("Σφάλμα φόρτωσης δεδομένων:", error);
+            }
+        }
+
+        // Εμφάνιση προϊόντων
+        function renderProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+
+            if (products.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8">Δεν βρέθηκαν προσφορές.</p>`;
                 return;
             }
 
-            data.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card';
-
-                card.innerHTML = `
-                    <span class="badge">${item.supermarket || 'SUPERMARKET'}</span>
-                    <div class="card-img-container">
-                        <img src="${item.image_url || 'https://via.placeholder.com/150'}" alt="${item.product_title || 'Προϊόν'}" onerror="this.src='https://via.placeholder.com/150'">
-                    </div>
-                    <div class="card-content">
-                        <div class="card-title">${item.product_title || 'Προσφορά'}</div>
-                        <div class="card-footer">
-                            <div class="price-container">
-                                ${item.unit_or_original_price && item.unit_or_original_price !== '—' ? `<span class="original-price">${item.unit_or_original_price}</span>` : ''}
-                                <span class="offer-price">${item.offer_price || '0.00 €'}</span>
+            products.forEach(p => {
+                const card = `
+                    <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-5 flex flex-col justify-between relative border">
+                        <span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                            -${p.discount_percent}%
+                        </span>
+                        <div>
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-40 object-cover rounded-md mb-4">
+                            <span class="text-xs text-gray-400 font-semibold uppercase">${p.category}</span>
+                            <h2 class="font-bold text-lg text-gray-800 leading-snug">${p.name}</h2>
+                            <p class="text-sm text-gray-500 mb-3">${p.brand}</p>
+                        </div>
+                        
+                        <div class="border-t pt-3 flex justify-between items-end">
+                            <div>
+                                <span class="text-xs text-gray-500 block">${p.supermarket}</span>
+                                <span class="text-gray-400 line-through text-sm">€${p.original_price.toFixed(2)}</span>
+                                <span class="text-2xl font-black text-green-600 block">€${p.offer_price.toFixed(2)}</span>
                             </div>
-                            <a href="${item.source_link || '#'}" target="_blank" class="btn-link">Δείτε το</a>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition">
+                                Σύγκριση
+                            </button>
                         </div>
                     </div>
                 `;
-                container.appendChild(card);
+                grid.innerHTML += card;
             });
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('clean_offers.json?t=' + new Date().getTime())
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('HTTP status: ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    renderOffers(data);
-                })
-                .catch(error => {
-                    console.warn('Αποτυχία φόρτωσης JSON:', error);
-                    const fallbackData = [
-                        { "supermarket": "AB_VASSILOPOULOS", "image_url": "https://via.placeholder.com/150", "product_title": "Διαθέσιμες προσφορές (AB Vassilopoulos)", "offer_price": "0.00 €", "unit_or_original_price": "—", "source_link": "https://www.ab.gr/promotions" },
-                        { "supermarket": "MASOUTIS", "image_url": "https://via.placeholder.com/150", "product_title": "Διαθέσιμες προσφορές (Masoutis)", "offer_price": "0.00 €", "unit_or_original_price": "—", "source_link": "https://www.masoutis.gr/offers" }
-                    ];
-                    renderOffers(fallbackData);
-                });
-        });
-    </script>
+        // Φιλτράρισμα
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const selectedMarket = document.getElementById('marketFilter').value;
 
+            const filtered = allProducts.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query);
+                const matchesMarket = selectedMarket === "ALL" || p.supermarket === selectedMarket;
+                return matchesSearch && matchesMarket;
+            });
+
+            renderProducts(filtered);
+        }
+
+        // Εκκίνηση
+        loadProducts();
+    </script>
 </body>
 </html>
