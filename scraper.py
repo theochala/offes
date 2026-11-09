@@ -25,17 +25,15 @@ def clean_title(title):
 
 def parse_products(raw_products, supermarket_name):
     parsed = []
-    # Λίστα με λέξεις-κλειδιά που αποκλείουν άχρηστα γενικά κείμενα σελίδας
     invalid_keywords = [
         "Διαγωνισμοί", "ώρα παράδοσης", "items in cart", "Επίλεξε", 
-        "Σούπερ Μάρκετ", "Καλάθι", "Σύνδεση", "Εγγραφή", "POLITIQUE", "Cookies"
+        "Σούπερ Μάρκετ", "Καλάθι", "Σύνδεση", "Εγγραφή", "Cookies", "Πολιτική"
     ]
     
     for item in raw_products:
         text = item["text"]
         img_url = item["image"]
         
-        # Αν ο τίτλος περιέχει άσχετες φράσεις πλοήγησης, τον αγνοούμε
         if any(kw.lower() in text.lower() for kw in invalid_keywords):
             continue
             
@@ -58,7 +56,7 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-# 1. Κρητικός (με Playwright)
+# 1. Κρητικός (Playwright)
 def scrape_kritikos(p):
     print("Συλλογή από Κρητικό...")
     try:
@@ -93,18 +91,25 @@ def scrape_kritikos(p):
         print(f"Σφάλμα Κρητικός: {e}")
         return []
 
-# 2. Γενική συνάρτηση Requests για τα υπόλοιπα καταστήματα με στοχευμένα URLs προσφορών
-def scrape_with_requests(url, supermarket_name):
-    print(f"Συλλογή από {supermarket_name} (Requests mode)...")
+# 2. Γενική συνάρτηση με requests session και advanced headers για τα υπόλοιπα μαγαζιά
+def scrape_store_requests(url, supermarket_name):
+    print(f"Συλλογή από {supermarket_name}...")
+    session = requests.Session()
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "Accept-Language": "el-GR,el;q=0.9,en;q=0.8",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Connection": "keep-alive"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "el-GR,el;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        "DNT": "1",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1"
     }
     
     try:
-        response = requests.get(url, headers=headers, timeout=30)
+        # Πρώτα κάνουμε ένα request στην αρχική για να πάρουμε cookies αν χρειαστεί
+        session.get(url, headers=headers, timeout=30)
+        response = session.get(url, headers=headers, timeout=30)
+        
         if response.status_code != 200:
             print(f"-> Αποτυχία {supermarket_name}: Status code {response.status_code}")
             return []
@@ -112,8 +117,7 @@ def scrape_with_requests(url, supermarket_name):
         soup = BeautifulSoup(response.text, 'html.parser')
         
         raw = []
-        # Στοχεύουμε σε containers που περιέχουν συνήθως προϊόντα
-        elements = soup.select('article, div.product, div[class*="product"], div[class*="item"], li[class*="product"]')
+        elements = soup.select('article, div.product, div[class*="product"], div[class*="item"], li[class*="product"], div[data-product]')
         for el in elements:
             text = el.get_text(separator=' | ', strip=True)
             if text and '€' in text and len(text) < 300 and len(text) > 10:
@@ -134,30 +138,30 @@ def scrape_with_requests(url, supermarket_name):
         print(f"Σφάλμα {supermarket_name}: {e}")
         return []
 
-# Εκτέλεση όλων με τις ενημερωμένες διευθύνσεις προσφορών
+# Εκτέλεση για ΟΛΑ τα σούπερ μάρκετ
 with sync_playwright() as p:
     all_offers = []
     
-    # Κρητικός
+    # 1. Κρητικός
     all_offers.extend(scrape_kritikos(p))
     
-    # Σκλαβενίτης (Ειδική σελίδα προσφορών)
-    all_offers.extend(scrape_with_requests("https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
+    # 2. Σκλαβενίτης
+    all_offers.extend(scrape_store_requests("https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
     
-    # ΑΒ Βασιλόπουλος (Ειδική σελίδα προσφορών)
-    all_offers.extend(scrape_with_requests("https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
+    # 3. ΑΒ Βασιλόπουλος
+    all_offers.extend(scrape_store_requests("https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
     
-    # Μασούτης (Ειδική σελίδα προσφορών)
-    all_offers.extend(scrape_with_requests("https://www.masoutis.gr/offers", "Μασούτης"))
+    # 4. Μασούτης
+    all_offers.extend(scrape_store_requests("https://www.masoutis.gr/offers", "Μασούτης"))
     
-    # Γαλαξίας
-    all_offers.extend(scrape_with_requests("https://www.galaxiasnet.gr/", "Γαλαξίας"))
+    # 5. Γαλαξίας
+    all_offers.extend(scrape_store_requests("https://www.galaxiasnet.gr/", "Γαλαξίας"))
     
-    # My Market (Σελίδα προσφορών/φυλλαδίων αν υπάρχει ή κεντρική)
-    all_offers.extend(scrape_with_requests("https://www.mymarket.gr/prosfors", "My Market"))
+    # 6. My Market
+    all_offers.extend(scrape_store_requests("https://www.mymarket.gr/", "My Market"))
     
-    # Lidl (Ειδική κατηγορία προσφορών)
-    all_offers.extend(scrape_with_requests("https://www.lidl.gr/c/prosfores/s10007771", "Lidl"))
+    # 7. Lidl
+    all_offers.extend(scrape_store_requests("https://www.lidl.gr/", "Lidl"))
 
     unique_offers = []
     seen_titles = set()
