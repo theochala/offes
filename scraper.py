@@ -100,3 +100,199 @@ def scrape_ab(page):
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
                 if (!results.some(r => r.text === cleanText)) {
                     results.push({ text: cleanText, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    parsed = parse_products(raw, "ΑΒ Βασιλόπουλος")
+    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από ΑΒ.")
+    return parsed
+
+def scrape_masoutis(page):
+    print("Συλλογή από Μασούτη...")
+    try:
+        page.goto("https://www.masoutis.gr/offers", timeout=60000)
+        page.wait_for_timeout(5000)
+    except:
+        return []
+        
+    for _ in range(3):
+        page.evaluate("window.scrollBy(0, 1000)")
+        page.wait_for_timeout(2000)
+        
+    raw = page.evaluate("""() => {
+        const results = [];
+        const elements = document.querySelectorAll('article, div[class*="product"]');
+        elements.forEach(el => {
+            const text = el.innerText;
+            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
+                const cleanText = text.replace(/\\n/g, ' | ').trim();
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (!results.some(r => r.text === cleanText)) {
+                    results.push({ text: cleanText, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    parsed = parse_products(raw, "Μασούτης")
+    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Μασούτη.")
+    return parsed
+
+def scrape_kritikos(page):
+    print("Συλλογή από Κρητικό...")
+    try:
+        page.goto("https://kritikos-sm.gr/offers/?srsltid=AYCX9vJWXPLOaa4mCSyC7xt-dwrv1ovQ7pkBaLPHp-8tjTfpPrQCT6pA", timeout=60000)
+        page.wait_for_timeout(5000)
+    except:
+        return []
+
+    for _ in range(4):
+        page.evaluate("window.scrollBy(0, 1000)")
+        page.wait_for_timeout(2000)
+    
+    raw = page.evaluate("""() => {
+        const results = [];
+        const elements = document.querySelectorAll('article, div[class*="product"]');
+        elements.forEach(el => {
+            const text = el.innerText;
+            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
+                const cleanText = text.replace(/\\n/g, ' | ').trim();
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (!results.some(r => r.text === cleanText)) {
+                    results.push({ text: cleanText, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    parsed = parse_products(raw, "Κρητικός")
+    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Κρητικό.")
+    return parsed
+
+def scrape_galaxias(page):
+    print("Συλλογή από Γαλαξία...")
+    try:
+        page.goto("https://www.galaxiasnet.gr/", timeout=60000)
+        page.wait_for_timeout(5000)
+    except:
+        return []
+        
+    for _ in range(3):
+        page.evaluate("window.scrollBy(0, 1000)")
+        page.wait_for_timeout(2000)
+        
+    raw = page.evaluate("""() => {
+        const results = [];
+        const elements = document.querySelectorAll('article, div[class*="product"]');
+        elements.forEach(el => {
+            const text = el.innerText;
+            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
+                const cleanText = text.replace(/\\n/g, ' | ').trim();
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (!results.some(r => r.text === cleanText)) {
+                    results.push({ text: cleanText, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    parsed = parse_products(raw, "Γαλαξίας")
+    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Γαλαξία.")
+    return parsed
+
+def scrape_mymarket(page):
+    print("Συλλογή από My Market...")
+    try:
+        page.goto("https://www.mymarket.gr/", timeout=60000)
+        page.wait_for_timeout(5000)
+    except:
+        return []
+        
+    for _ in range(3):
+        page.evaluate("window.scrollBy(0, 1000)")
+        page.wait_for_timeout(2000)
+        
+    raw = page.evaluate("""() => {
+        const results = [];
+        const elements = document.querySelectorAll('article, div[class*="product"]');
+        elements.forEach(el => {
+            const text = el.innerText;
+            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
+                const cleanText = text.replace(/\\n/g, ' | ').trim();
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (!results.some(r => r.text === cleanText)) {
+                    results.push({ text: cleanText, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    parsed = parse_products(raw, "My Market")
+    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από My Market.")
+    return parsed
+
+def scrape_lidl(page):
+    print("Συλλογή από Lidl...")
+    try:
+        page.goto("https://www.lidl.gr/", timeout=60000)
+        page.wait_for_timeout(5000)
+    except:
+        return []
+        
+    for _ in range(3):
+        page.evaluate("window.scrollBy(0, 1000)")
+        page.wait_for_timeout(2000)
+        
+    raw = page.evaluate("""() => {
+        const results = [];
+        const elements = document.querySelectorAll('article, div[class*="product"]');
+        elements.forEach(el => {
+            const text = el.innerText;
+            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
+                const cleanText = text.replace(/\\n/g, ' | ').trim();
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (!results.some(r => r.text === cleanText)) {
+                    results.push({ text: cleanText, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    parsed = parse_products(raw, "Lidl")
+    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Lidl.")
+    return parsed
+
+# Εκτέλεση για όλα τα σούπερ μάρκετ
+with sync_playwright() as p:
+    browser = p.chromium.launch(headless=True)
+    page = browser.new_page()
+    
+    all_offers = []
+    all_offers.extend(scrape_sklavenitis(page))
+    all_offers.extend(scrape_ab(page))
+    all_offers.extend(scrape_masoutis(page))
+    all_offers.extend(scrape_kritikos(page))
+    all_offers.extend(scrape_galaxias(page))
+    all_offers.extend(scrape_mymarket(page))
+    all_offers.extend(scrape_lidl(page))
+
+    browser.close()
+    
+    unique_offers = []
+    seen_titles = set()
+    for offer in all_offers:
+        key = (offer["supermarket"], offer["title"])
+        if key not in seen_titles:
+            seen_titles.add(key)
+            unique_offers.append(offer)
+
+    with open("clean_offers.json", "w", encoding="utf-8") as f:
+        json.dump(unique_offers, f, ensure_ascii=False, indent=4)
+        print(f"\nΑποθήκευση {len(unique_offers)} συνολικών μοναδικών προσφορών στο clean_offers.json!")
