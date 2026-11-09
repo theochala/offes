@@ -1,4 +1,4 @@
-workflow_code = '''name: Supermarket Scraper & Auto-Upload
+name: Supermarket Scraper & Auto-Upload
 
 on:
   schedule:
@@ -41,6 +41,7 @@ jobs:
         if [ -f clean_offers.json ]; then
           git add clean_offers.json
           git diff --staged --quiet || git commit -m "Auto-update clean_offers.json [skip ci]"
+          git pull --rebase origin main || true
           git push
         else
           echo "Προειδοποίηση: Το clean_offers.json δεν βρέθηκε, παραλείπεται το push."
@@ -56,9 +57,3 @@ jobs:
         server-dir: ./htdocs/
         include: |
           clean_offers.json
-'''
-
-with open(".github/workflows/scraper.yml", "w", encoding="utf-8") as f:
-    f.write(workflow_code)
-
-print("scraper.yml updated successfully.")
