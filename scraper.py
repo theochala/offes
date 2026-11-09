@@ -1,6 +1,8 @@
-from playwright.sync_api import sync_playwright
 import json
 import re
+import requests
+from bs4cript import BeautifulSoup # ή BeautifulSoup από bs4
+from playwright.sync_api import sync_playwright
 
 def clean_title(title):
     artifacts = [
@@ -45,94 +47,97 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-def get_browser_page(p):
-    browser = p.chromium.launch(
-        headless=True,
-        args=[
-            "--disable-blink-features=AutomationControlled",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-infobars",
-            "--window-size=1920,1080",
-            "--disable-dev-shm-usage"
-        ]
-    )
-    context = browser.new_context(
-        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        viewport={"width": 1920, "height": 1080},
-        locale="el-GR",
-        timezone_id="Europe/Athens"
-    )
-    page = context.new_page()
-    page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-    return browser, page
-
-def scrape_generic(p, name, url):
-    print(f"Συλλογή από {name}...")
-    browser, page = get_browser_page(p)
+# 1. Κρητικός (με Playwright αφού δουλεύει άψογα)
+def scrape_kritikos(p):
+    print("Συλλογή από Κρητικό...")
     try:
-        page.goto(url, timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(7000)
-    except Exception as e:
-        print(f"Σφάλμα σύνδεσης στο {name}: {e}")
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto("https://kritikos-sm.gr/offers/", timeout=60000, wait_until="domcontentloaded")
+        page.wait_for_timeout(5000)
+        for _ in range(4):
+            page.evaluate("window.scrollBy(0, 1000)")
+            page.wait_for_timeout(2000)
+        
+        raw = page.evaluate("""() => {
+            const results = [];
+            document.querySelectorAll('article, div[class*="product"]').forEach(el => {
+                const text = el.innerText;
+                if (text && text.includes('€') && text.length < 300 && text.length > 10) {
+                    const cleanText = text.replace(/\\n/g, ' | ').trim();
+                    const img = el.querySelector('img');
+                    const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                    if (!results.some(r => r.text === cleanText)) {
+                        results.push({ text: cleanText, image: imgSrc });
+                    }
+                }
+            });
+            return results;
+        }""")
         browser.close()
+        parsed = parse_products(raw, "Κρητικός")
+        print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Κρητικό.")
+        return parsed
+    except Exception as e:
+        print(f"Σφάλμα Κρητικός: {e}")
         return []
 
-    # Scroll down to trigger lazy loading
-    for _ in range(4):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], div[class*="item"], li[class*="product"]');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 350 && text.length > 8) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                let imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+# 2. Για Σκλαβενίτη, ΑΒ, Μασούτη κ.λπ. δοκιμάζουμε requests με κανονικά headers περιήγησης
+def scrape_with_requests(url, supermarket_name):
+    print(f"Συλλογή από {supermarket_name} (Requests mode)...")
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept-Language": "el-GR,el;q=0.9,en;q=0.8",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Connection": "keep-alive"
+    }
+    
+    try:
+        response = requests.get(url, headers=headers, timeout=30)
+        if response.status_code != 200:
+            print(f"-> Αποτυχία {supermarket_name}: Status code {response.status_code}")
+            return []
+            
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        raw = []
+        # Ψάχνουμε γενικά για κάρτες προϊόντων
+        elements = soup.select('article, div.product, div[class*="product"], div[class*="item"]')
+        for el in elements:
+            text = el.get_text(separator=' | ', strip=True)
+            if text and '€' in text and len(text) < 300 and len(text) > 10:
+                img = el.find('img')
+                imgSrc = ""
+                if img:
+                    imgSrc = img.get('src') or img.get('data-src') or img.get('data-lazy-src') or ''
+                    if imgSrc.startswith('//'):
+                        imgSrc = 'https:' + imgSrc
                 
-                if (imgSrc.startsWith('//')) {
-                    imgSrc = 'https:' + imgSrc;
-                }
-                
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    browser.close()
-    parsed = parse_products(raw, name)
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από {name}.")
-    return parsed
+                if not any(r['text'] == text for r in raw):
+                    raw.append({ "text": text, "image": imgSrc })
+                    
+        parsed = parse_products(raw, supermarket_name)
+        print(f"-> Επιτυχία: {len(parsed)} προϊόντα από {supermarket_name}.")
+        return parsed
+    except Exception as e:
+        print(f"Σφάλμα {supermarket_name}: {e}")
+        return []
 
-# Εκτέλεση για όλα τα καταστήματα με τις σωστές διευθύνσεις προσφορών
+# Εκτέλεση όλων
 with sync_playwright() as p:
     all_offers = []
     
-    # 1. Κρητικός
-    all_offers.extend(scrape_generic(p, "Κρητικός", "https://kritikos-sm.gr/offers/"))
+    # Κρητικός (Playwright)
+    all_offers.extend(scrape_kritikos(p))
     
-    # 2. Σκλαβενίτης (Χρησιμοποιούμε την κεντρική και εναλλακτική σελίδα προσφορών)
-    all_offers.extend(scrape_generic(p, "Σκλαβενίτης", "https://www.sklavenitis.gr/prosporous-prosfores/"))
-    
-    # 3. ΑΒ Βασιλόπουλος
-    all_offers.extend(scrape_generic(p, "ΑΒ Βασιλόπουλος", "https://www.ab.gr/e-shop/prosfopoi-prosfores"))
-    
-    # 4. Μασούτης
-    all_offers.extend(scrape_generic(p, "Μασούτης", "https://www.masoutis.gr/offers"))
-    
-    # 5. Γαλαξίας
-    all_offers.extend(scrape_generic(p, "Γαλαξίας", "https://www.galaxiasnet.gr/"))
-    
-    # 6. My Market
-    all_offers.extend(scrape_generic(p, "My Market", "https://www.mymarket.gr/"))
-    
-    # 7. Lidl
-    all_offers.extend(scrape_generic(p, "Lidl", "https://www.lidl.gr/"))
+    # Υπόλοιπα καταστήματα με Requests mode για αποφυγή headless blocks
+    all_offers.extend(scrape_with_requests("https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
+    all_offers.extend(scrape_with_requests("https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
+    all_offers.extend(scrape_with_requests("https://www.masoutis.gr/offers", "Μασούτης"))
+    all_offers.extend(scrape_with_requests("https://www.galaxiasnet.gr/", "Γαλαξίας"))
+    all_offers.extend(scrape_with_requests("https://www.mymarket.gr/", "My Market"))
+    all_offers.extend(scrape_with_requests("https://www.lidl.gr/", "Lidl"))
 
     unique_offers = []
     seen_titles = set()
