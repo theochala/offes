@@ -64,7 +64,8 @@ def scrape_store(p, url, supermarket_name):
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
             viewport={"width": 1920, "height": 1080},
-            locale="el-GR"
+            locale="el-GR",
+            ignore_https_errors=True
         )
         page = context.new_page()
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
@@ -107,13 +108,26 @@ def scrape_store(p, url, supermarket_name):
 with sync_playwright() as p:
     all_offers = []
     
+    # 1. Κρητικός
     all_offers.extend(scrape_store(p, "https://kritikos-sm.gr/offers/", "Κρητικός"))
+    
+    # 2. Σκλαβενίτης
     all_offers.extend(scrape_store(p, "https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
+    
+    # 3. ΑΒ Βασιλόπουλος
     all_offers.extend(scrape_store(p, "https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
+    
+    # 4. Μασούτης
     all_offers.extend(scrape_store(p, "https://www.masoutis.gr/offers", "Μασούτης"))
-    all_offers.extend(scrape_store(p, "https://www.galaxias.gr/", "Γαλαξίας"))
+    
+    # 5. Γαλαξίας (με το ακριβές URL προσφορών e-shop)
+    all_offers.extend(scrape_store(p, "https://galaxias.shop/eshop/2?promos=isExtraBonus&promos=isBravoBonus&promos=isKalathiNoikokiriou&promos=isSumferei&promos=isTileoptiko&promos=isGoldPrices", "Γαλαξίας"))
+    
+    # 6. My Market
     all_offers.extend(scrape_store(p, "https://www.mymarket.gr/", "My Market"))
-    all_offers.extend(scrape_store(p, "https://www.lidl.gr/c/prosfores/s10007771", "Lidl"))
+    
+    # 7. Lidl
+    all_offers.extend(scrape_store(p, "https://www.lidl.gr/q/query/c/s10007771", "Lidl"))
 
     unique_offers = []
     seen_titles = set()
