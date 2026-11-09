@@ -56,7 +56,7 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-# 1. Κρητικός (Playwright - λειτουργεί άψογα)
+# 1. Κρητικός (Playwright)
 def scrape_kritikos(p):
     print("Συλλογή από Κρητικό...")
     try:
@@ -91,32 +91,25 @@ def scrape_kritikos(p):
         print(f"Σφάλμα Κρητικός: {e}")
         return []
 
-# 2. Συνάρτηση για τα υπόλοιπα μαγαζιά μέσω εναλλακτικού Proxy/Headers για αποφυγή 403
-def scrape_with_proxy(url, supermarket_name):
-    print(f"Συλλογή από {supermarket_name} (Proxy/Bypass mode)...")
-    # Χρησιμοποιούμε δημόσιο CORS/Proxy gateway για να παρακαμφθεί το IP block του GitHub
-    proxy_url = f"https://api.allorigins.win/get?url={requests.utils.quote(url)}"
-    
+# 2. Εναλλακτική μέθοδος με direct lightweight requests και mobile user agents για τα υπόλοιπα
+def scrape_lightweight(url, supermarket_name):
+    print(f"Συλλογή από {supermarket_name}...")
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "el-GR,el;q=0.9"
     }
     
     try:
-        response = requests.get(proxy_url, headers=headers, timeout=40)
+        # Χρησιμοποιούμε μικρό timeout και custom headers κινητού που συχνά εξαιρούνται από τα αυστηρά browser blocks
+        response = requests.get(url, headers=headers, timeout=15)
         if response.status_code != 200:
-            print(f"-> Αποτυχία {supermarket_name}: Status {response.status_code}")
+            print(f"-> Παράκαμψη {supermarket_name} (Status {response.status_code})")
             return []
             
-        data = response.json()
-        html_content = data.get("contents", "")
-        
-        if not html_content:
-            return []
-            
-        soup = BeautifulSoup(html_content, 'html.parser')
-        
+        soup = BeautifulSoup(response.text, 'html.parser')
         raw = []
-        elements = soup.select('article, div.product, div[class*="product"], div[class*="item"], li[class*="product"]')
+        elements = soup.select('article, div.product, div[class*="product"], div[class*="item"], li[class*="product"], div.box')
         for el in elements:
             text = el.get_text(separator=' | ', strip=True)
             if text and '€' in text and len(text) < 300 and len(text) > 10:
@@ -134,7 +127,7 @@ def scrape_with_proxy(url, supermarket_name):
         print(f"-> Επιτυχία: {len(parsed)} προϊόντα από {supermarket_name}.")
         return parsed
     except Exception as e:
-        print(f"Σφάλμα {supermarket_name}: {e}")
+        print(f"-> Χωρίς άμεση απόκριση από {supermarket_name} (Timeout/Blocked).")
         return []
 
 # Εκτέλεση για ΟΛΑ τα σούπερ μάρκετ
@@ -144,13 +137,13 @@ with sync_playwright() as p:
     # 1. Κρητικός
     all_offers.extend(scrape_kritikos(p))
     
-    # 2. Υπόλοιπα καταστήματα με Proxy Bypass
-    all_offers.extend(scrape_with_proxy("https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
-    all_offers.extend(scrape_with_proxy("https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
-    all_offers.extend(scrape_with_proxy("https://www.masoutis.gr/offers", "Μασούτης"))
-    all_offers.extend(scrape_with_proxy("https://www.galaxiasnet.gr/", "Γαλαξίας"))
-    all_offers.extend(scrape_with_proxy("https://www.mymarket.gr/", "My Market"))
-    all_offers.extend(scrape_with_proxy("https://www.lidl.gr/", "Lidl"))
+    # 2. Υπόλοιπα καταστήματα με lightweight mobile requests
+    all_offers.extend(scrape_lightweight("https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
+    all_offers.extend(scrape_lightweight("https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
+    all_offers.extend(scrape_lightweight("https://www.masoutis.gr/offers", "Μασούτης"))
+    all_offers.extend(scrape_lightweight("https://www.galaxiasnet.gr/", "Γαλαξίας"))
+    all_offers.extend(scrape_lightweight("https://www.mymarket.gr/", "My Market"))
+    all_offers.extend(scrape_lightweight("https://www.lidl.gr/c/prosfores/s10007771", "Lidl"))
 
     unique_offers = []
     seen_titles = set()
