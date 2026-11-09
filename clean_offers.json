@@ -1,1 +1,42 @@
-[]
+[
+    {
+        "supermarket": "sklevenitis",
+        "product": "Αποτυχία πρόσβασης (Πιθανός αποκλεισμός βοτ/Cloudflare)",
+        "original_price": null,
+        "offer_price": null,
+        "discount": null,
+        "source_link": "https://www.sklavenitis.gr/prosfores/"
+    },
+    {
+        "supermarket": "ab_vassilopoulos",
+        "product": "Σελίδα προσφορών προσπελάσιμη",
+        "original_price": null,
+        "offer_price": null,
+        "discount": null,
+        "source_link": "https://www.ab.gr/promotions"
+    },
+    {
+        "supermarket": "masoutis",
+        "product": "Σελίδα προσφορών προσπελάσιμη",
+        "original_price": null,
+        "offer_price": null,
+        "discount": null,
+        "source_link": "https://www.masoutis.gr/offers"
+    },
+    {
+        "supermarket": "lidl",
+        "product": "Αποτυχία πρόσβασης (Πιθανός αποκλεισμός βοτ/Cloudflare)",
+        "original_price": null,
+        "offer_price": null,
+        "discount": null,
+        "source_link": "https://www.lidl-hellas.gr/c/prosfores/a100000"
+    },
+    {
+        "supermarket": "kritikos",
+        "product": "Σελίδα προσφορών προσπελάσιμη",
+        "original_price": null,
+        "offer_price": null,
+        "discount": null,
+        "source_link": "https://kritikos-sm.gr/prosfores/"
+    }
+]
