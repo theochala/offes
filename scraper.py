@@ -1,5 +1,7 @@
 import json
 import time
+import os
+import ftplib
 from playwright.sync_api import sync_playwright
 
 TARGET_SOURCES = {
@@ -65,6 +67,32 @@ def scrape_supermarket(page, url, supermarket_name):
 
     return offers
 
+def upload_via_ftp(filename):
+    ftp_server = os.getenv("FTP_SERVER")
+    ftp_user = os.getenv("FTP_USERNAME")
+    ftp_pass = os.getenv("FTP_PASSWORD")
+
+    if not ftp_server or not ftp_user or not ftp_pass:
+        print("ℹ️ Τα FTP secrets δεν βρέθηκαν στο περιβάλλον, παραλείπεται το FTP upload.")
+        return
+
+    try:
+        print(f"📡 Σύνδεση στο FTP server: {ftp_server}...")
+        with ftplib.FTP(ftp_server) as ftp:
+            ftp.login(ftp_user, ftp_pass)
+            print("📁 Μετάβαση στον φάκελο htdocs...")
+            try:
+                ftp.cwd("htdocs")
+            except Exception:
+                pass # Ανεβάζει στο root αν δεν υπάρχει ο φάκελος htdocs
+
+            print(f"📤 Ανέβασμα του αρχείου {filename}...")
+            with open(filename, "rb") as f:
+                ftp.storbinary(f"STOR {filename}", f)
+            print("✅ Το αρχείο ανέβηκε επιτυχώς στο InfinityFree μέσω FTP!")
+    except Exception as e:
+        print(f"⚠️ Σφάλμα κατά το FTP upload: {e}")
+
 def main():
     all_offers = []
 
@@ -88,6 +116,10 @@ def main():
         with open(output_filename, "w", encoding="utf-8") as f:
             json.dump(all_offers, f, ensure_ascii=False, indent=4)
         print(f"\nΕπιτυχία! Αποθηκεύτηκαν συνολικά {len(all_offers)} προσφορές στο '{output_filename}'.")
+        
+        # Αυτόματο ανέβασμα μέσω FTP απευθείας από την Python
+        upload_via_ftp(output_filename)
+
     except Exception as e:
         print(f"Σφάλμα αποθήκευσης αρχείου: {e}")
         exit(1)
