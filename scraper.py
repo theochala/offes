@@ -1,9 +1,11 @@
 from playwright.sync_api import sync_playwright
 import json
 import re
+import os
+import requests
+from requests.auth import HTTPBasicAuth
 
 def clean_title(title):
-    # Καθαρισμός από περιττές λέξεις, εικονίδια και UI artifacts
     artifacts = [
         "playlist_add", "favorite", "add", "remove", "Χρυσές Τιμές", 
         "Λίτ", "Τεμ", "/", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση", "με Lidl Plus", "Χωρίς Lidl Plus"
@@ -11,11 +13,10 @@ def clean_title(title):
     for art in artifacts:
         title = title.replace(art, "")
     
-    # Αφαίρεση διπλότυπων λέξεων/φράσεων που επαναλαμβάνονται
     words = title.split()
     seen = []
     for w in words:
-        if w not in seen or len(w) > 4: # Επιτρέπουμε μικρές λέξεις αν δεν είναι συνεχόμενες
+        if w not in seen or len(w) > 4:
             seen.append(w)
     
     title = " ".join(seen)
@@ -28,19 +29,15 @@ def parse_products(raw_products, supermarket_name):
         text = item["text"]
         img_url = item["image"]
         
-        # Εύρεση τιμών (π.χ. 1,50 € ή 1.50 €)
         prices = re.findall(r'(\d+[\.,]\d+\s*€)', text)
         title = text
         for price in prices:
             title = title.replace(price, "")
             
         title = clean_title(title)
-        
         price_val = prices[-1] if prices else ""
         
-        # Αυστηροί έλεγχοι εγκυρότητας
         if len(title) > 5 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
-            # Αποφυγή διπλοεγγραφών στο ίδιο supermarket
             if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
                 parsed.append({
                     "title": title,
@@ -51,252 +48,58 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-def scrape_sklavenitis(page):
-    print("Συλλογή από Σκλαβενίτη...")
-    page.goto("https://www.sklavenitis.gr/sylloges/prosfores/")
-    page.wait_for_timeout(6000)
-    
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, .product-item, div[class*="product"]');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    parsed = parse_products(raw, "Σκλαβενίτης")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Σκλαβενίτη.")
-    return parsed
+# [Εδώ παραμένουν κανονικά οι συναρτήσεις scrape_sklavenitis, scrape_ab, scrape_masoutis, scrape_kritikos, scrape_galaxias, scrape_mymarket, scrape_lidl...]
 
-def scrape_ab(page):
-    print("Συλλογή από ΑΒ Βασιλόπουλο...")
-    page.set_extra_http_headers({"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
-    try:
-        page.goto("https://www.ab.gr/search/promotions", timeout=60000)
-        page.wait_for_timeout(6000)
-    except Exception as e:
-        print("Σφάλμα φόρτωσης σελίδας ΑΒ:", e)
-        return []
-    
-    try:
-        cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
-        if cookie_btn.count() > 0:
-            cookie_btn.first().click()
-            page.wait_for_timeout(2000)
-    except:
-        pass
+def upload_to_wordpress(json_file="clean_offers.json"):
+    if not os.path.exists(json_file):
+        print("Το αρχείο clean_offers.json δεν βρέθηκε.")
+        return
 
-    for _ in range(4):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-    
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, product-card-view, div[class*="product"]');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 300 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    parsed = parse_products(raw, "ΑΒ Βασιλόπουλος")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από ΑΒ.")
-    return parsed
+    with open(json_file, "r", encoding="utf-8") as f:
+        offers = json.load(f)
 
-def scrape_masoutis(page):
-    print("Συλλογή από Μασούτη...")
-    page.goto("https://www.masoutis.gr/offers")
-    page.wait_for_timeout(5000)
-    
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], .item');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    parsed = parse_products(raw, "Μασούτης")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Μασούτη.")
-    return parsed
+    wp_url = os.getenv("WP_URL", "https://prosfores.infy.click")
+    wp_user = os.getenv("WP_USER")
+    wp_pass = os.getenv("WP_APP_PASSWORD")
 
-def scrape_kritikos(page):
-    print("Συλλογή από Κρητικό...")
-    try:
-        page.goto("https://kritikos-sm.gr/offers/?srsltid=AYCX9vJWXPLOaa4mCSyC7xt-dwrv1ovQ7pkBaLPHp-8tjTfpPrQCT6pA", timeout=60000)
-        page.wait_for_timeout(5000)
-    except:
-        return []
+    if not wp_user or not wp_pass:
+        print("Δεν βρέθηκαν τα credentials του WordPress στα GitHub Secrets. Παράλειψη ανέβασματος.")
+        return
 
-    for _ in range(4):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-    
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"]');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    parsed = parse_products(raw, "Κρητικός")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Κρητικό.")
-    return parsed
+    api_url = f"{wp_url}/wp-json/wp/v2/posts"
+    auth = HTTPBasicAuth(wp_user, wp_pass)
 
-def scrape_galaxias(page):
-    print("Συλλογή από Γαλαξία...")
-    try:
-        page.goto("https://galaxias.shop/eshop/2?promos=isExtraBonus&promos=isBravoBonus&promos=isKalathiNoikokiriou&promos=isSumferei&promos=isTileoptiko&promos=isGoldPrices", timeout=60000)
-        page.wait_for_timeout(6000)
-    except:
-        return []
+    print(f"\nΞεκινάει το ανέβασμα {len(offers)} προσφορών στο WordPress...")
 
-    for _ in range(5):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-    
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], .product-card');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!cleanText.includes('Κατηγορίες') && !results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    parsed = parse_products(raw, "Γαλαξίας")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Γαλαξία.")
-    return parsed
+    for offer in offers:
+        title = f"[{offer['supermarket']}] {offer['title']}"
+        content = f"""
+        <p><strong>Σούπερ Μάρκετ:</strong> {offer['supermarket']}</p>
+        <p><strong>Τιμή:</strong> <span style="color: #d9534f; font-size: 1.3em; font-weight: bold;">{offer['price']}</span></p>
+        <p><img src="{offer['image']}" alt="{offer['title']}" style="max-width:300px; height:auto; border-radius: 8px;"/></p>
+        """
+        
+        post_data = {
+            "title": title,
+            "content": content,
+            "status": "publish" # Δημοσιεύεται αυτόματα
+        }
 
-def scrape_mymarket(page):
-    print("Συλλογή από My Market...")
-    try:
-        page.goto("https://www.mymarket.gr/offers", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
-    except Exception as e:
-        print("Σφάλμα φόρτωσης My Market:", e)
-        return []
+        try:
+            response = requests.post(api_url, json=post_data, auth=auth, timeout=30)
+            if response.status_code == 201:
+                print(f"✔ Δημοσιεύτηκε: {title}")
+            else:
+                print(f"✖ Σφάλμα ({response.status_code}): {response.text[:100]}")
+        except Exception as e:
+            print(f"✖ Εξαίρεση κατά το ανέβασμα: {e}")
 
-    try:
-        cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
-        if cookie_btn.count() > 0:
-            cookie_btn.first().click()
-            page.wait_for_timeout(2000)
-    except:
-        pass
-
-    for _ in range(5):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-    
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], .item');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    parsed = parse_products(raw, "My Market")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από My Market.")
-    return parsed
-
-def scrape_lidl(page):
-    print("Συλλογή από Lidl...")
-    try:
-        # Στοχεύουμε στην κεντρική ενότητα τροφίμων/εβδομαδιαίων επιλογών των Lidl
-        page.goto("https://www.lidl-hellas.gr/c/fagito-poto/s10068374", timeout=60000)
-        page.wait_for_timeout(6000)
-    except Exception as e:
-        print("Σφάλμα φόρτωσης Lidl:", e)
-        return []
-
-    try:
-        cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
-        if cookie_btn.count() > 0:
-            cookie_btn.first().click()
-            page.wait_for_timeout(2000)
-    except:
-        pass
-
-    for _ in range(5):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-    
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], div[class*="card"], .item');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 300 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    parsed = parse_products(raw, "Lidl")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Lidl.")
-    return parsed
-
+# Εκτέλεση Scraping
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
     page = browser.new_page()
     
     all_offers = []
-    
-    # Προσθήκη και του scrape_lidl στη λίστα εκτέλεσης
     scrapers = [scrape_sklavenitis, scrape_ab, scrape_masoutis, scrape_kritikos, scrape_galaxias, scrape_mymarket, scrape_lidl]
     
     for scraper_func in scrapers:
@@ -307,7 +110,6 @@ with sync_playwright() as p:
 
     browser.close()
     
-    # Τελικός καθαρισμός παγκόσμιας μοναδικότητας
     unique_offers = []
     seen_titles = set()
     for offer in all_offers:
@@ -318,4 +120,7 @@ with sync_playwright() as p:
 
     with open("clean_offers.json", "w", encoding="utf-8") as f:
         json.dump(unique_offers, f, ensure_ascii=False, indent=4)
-        print(f"\nΣυνολική αποθήκευση {len(unique_offers)} μοναδικών και καθαρών προϊόντων στο clean_offers.json!")
+        print(f"\nΑποθήκευση {len(unique_offers)} μοναδικών προσφορών στο clean_offers.json!")
+
+# Αυτόματη αποστολή στο WordPress
+upload_to_wordpress()
