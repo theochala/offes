@@ -1,4 +1,4 @@
-name: Supermarket Scraper & Auto-Upload
+workflow_code = '''name: Supermarket Scraper & Auto-Upload
 
 on:
   schedule:
@@ -33,7 +33,7 @@ jobs:
       run: |
         python scraper.py
 
-    - name: Commit and push clean_offers.json if changed
+    - name: Commit and push clean_offers.json to GitHub
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -45,3 +45,20 @@ jobs:
         else
           echo "Προειδοποίηση: Το clean_offers.json δεν βρέθηκε, παραλείπεται το push."
         fi
+
+    - name: Upload clean_offers.json to InfinityFree via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./
+        server-dir: ./htdocs/
+        include: |
+          clean_offers.json
+'''
+
+with open(".github/workflows/scraper.yml", "w", encoding="utf-8") as f:
+    f.write(workflow_code)
+
+print("scraper.yml updated successfully.")
