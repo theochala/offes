@@ -1,9 +1,7 @@
 import json
-import os
 import time
 from playwright.sync_api import sync_playwright
 
-# 1. Ορισμός πηγών (Σελίδες προσφορών)
 TARGET_SOURCES = {
     "kritikos": "https://kritikos-sm.gr/prosfores/",
     "sklevenitis": "https://www.sklavenitis.gr/prosfores/",
@@ -16,36 +14,40 @@ def scrape_supermarket(page, url, supermarket_name):
     offers = []
     try:
         print(f"   [Playwright] Άνοιγμα σελίδας για {supermarket_name}: {url}")
-        page.goto(url, timeout=40000, wait_until="domcontentloaded")
+        # Χρήση waitUntil networkidle για να περιμένει να φορτώσει η σελίδα πλήρως
+        page.goto(url, timeout=60000, wait_until="networkidle")
         
-        # Κύλιση (scroll) για να φορτώσει δυναμικά το περιεχόμενο (lazy loading)
-        for _ in range(3):
-            page.mouse.wheel(0, 1000)
-            time.sleep(1)
+        # Κύλιση στη σελίδα για να ενεργοποιηθεί το lazy loading των εικόνων
+        for i in range(4):
+            page.mouse.wheel(0, 800)
+            time.sleep(1.5)
 
-        # Εντοπισμός καρτελών προϊόντων (προσαρμοσμένοι selectors ανάλογα με τη δομή)
-        # Αναζητούμε κοινά στοιχεία καρτελών (article, div με κλάσεις προϊόντων)
-        cards = page.locator("article, .product-card, .item-card, li.product, .product-item").all()
+        # Διευρυμένοι selectors για κάρτες προϊόντων
+        cards = page.locator("article, div[class*='product'], div[class*='offer'], li[class*='product']").all()
         print(f"   [Playwright] Βρέθηκαν {len(cards)} πιθανές κάρτες προϊόντων στο {supermarket_name}.")
 
-        for card in cards[:15]: # Παίρνουμε έως 15 προϊόντα ανά σούπερ μάρκετ
+        count = 0
+        for card in cards:
+            if count >= 15:
+                break
             try:
-                # 1. Τίτλος προϊόντος
-                title_elem = card.locator("h2, h3, h4, .product-title, .title, a.title").first
-                title = title_elem.inner_text(timeout=500).strip() if title_elem.count() > 0 else "Προϊόν Προσφοράς"
+                # Αναζήτηση τίτλου
+                title_elem = card.locator("h2, h3, h4, a[class*='title'], div[class*='title']").first
+                title = title_elem.inner_text(timeout=500).strip() if title_elem.count() > 0 else ""
 
-                # 2. Τιμή προσφοράς
-                price_elem = card.locator(".price, .offer-price, .amount, .current-price").first
-                price = price_elem.inner_text(timeout=500).strip() if price_elem.count() > 0 else "0.00 €"
+                # Αναζήτηση τιμής
+                price_elem = card.locator("span[class*='price'], div[class*='price'], span[class*='amount']").first
+                price = price_elem.inner_text(timeout=500).strip() if price_elem.count() > 0 else ""
 
-                # 3. Εικόνα προϊόντος
-                img_elem = card.locator("img").first
-                img_url = img_elem.get_attribute("src") or img_elem.get_attribute("data-src") if img_elem.count() > 0 else "https://via.placeholder.com/150"
-                if img_url and img_url.startswith("//"):
-                    img_url = "https:" + img_url
-
-                # Προσθήκη στη λίστα αν βρέθηκε έγκυρος τίτλος ή τιμή
+                # Αντλούμε μόνο όσες κάρτες έχουν πραγματικά στοιχεία (αποφυγή κενών)
                 if title and price:
+                    img_elem = card.locator("img").first
+                    img_url = "https://via.placeholder.com/150"
+                    if img_elem.count() > 0:
+                        src = img_elem.get_attribute("src") or img_elem.get_attribute("data-src")
+                        if src:
+                            img_url = "https:" + src if src.startswith("//") else src
+
                     offers.append({
                         "supermarket": supermarket_name.upper(),
                         "image_url": img_url,
@@ -54,22 +56,12 @@ def scrape_supermarket(page, url, supermarket_name):
                         "unit_or_original_price": "—",
                         "source_link": url
                     })
+                    count += 1
             except Exception:
                 continue
 
     except Exception as e:
         print(f"   [Σφάλμα] Αποτυχία σάρωσης για {supermarket_name}: {e}")
-
-    # Fallback αν δεν επιστράφηκαν προϊόντα λόγω αυστηρών anti-bot
-    if not offers:
-        offers.append({
-            "supermarket": supermarket_name.upper(),
-            "image_url": "https://via.placeholder.com/150",
-            "product_title": f"Ενεργή σελίδα προσφορών ({supermarket_name})",
-            "offer_price": "0.00 €",
-            "unit_or_original_price": "—",
-            "source_link": url
-        })
 
     return offers
 
@@ -78,11 +70,13 @@ def main():
 
     print("Ξεκινάει η αναλυτική συλλογή προσφορών...")
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page(
+        # Χρήση channel="chromium" ή headless=True με επιπλέον arguments για αποφυγή ανίχνευσης
+        browser = p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-setuid-sandbox"])
+        context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-            viewport={"width": 1280, "height": 800}
+            viewport={"width": 1366, "height": 768}
         )
+        page = context.new_page()
 
         for name, link in TARGET_SOURCES.items():
             site_offers = scrape_supermarket(page, link, name)
@@ -92,13 +86,10 @@ def main():
 
     # Αποθήκευση στο clean_offers.json
     output_filename = "clean_offers.json"
-    try:
-        with open(output_filename, "w", encoding="utf-8") as f:
-            json.dump(all_offers, f, ensure_ascii=False, indent=4)
-        print(f"\nΕπιτυχία! Αποθηκεύτηκαν συνολικά {len(all_offers)} προσφορές στο '{output_filename}'.")
-    except Exception as e:
-        print(f"Σφάλμα αποθήκευσης αρχείου: {e}")
-        exit(1)
+    with open(output_filename, "w", encoding="utf-8") as f:
+        json.dump(all_offers, f, ensure_ascii=False, indent=4)
+    
+    print(f"\nΕπιτυχία! Αποθηκεύτηκαν συνολικά {len(all_offers)} προσφορές στο '{output_filename}'.")
 
 if __name__ == "__main__":
     main()
