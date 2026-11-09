@@ -118,18 +118,27 @@ def scrape_ab(page):
 
 def scrape_masoutis(page):
     print("Συλλογή από Μασούτη...")
-    page.goto("https://www.masoutis.gr/offers")
-    page.wait_for_timeout(5000)
+    page.set_extra_http_headers({"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"})
+    try:
+        page.goto("https://www.masoutis.gr/offers", timeout=60000)
+        page.wait_for_timeout(8000)
+    except Exception as e:
+        print("Σφάλμα φόρτωσης Μασούτη:", e)
+        return []
+
+    for _ in range(5):
+        page.evaluate("window.scrollBy(0, 1000)")
+        page.wait_for_timeout(2000)
     
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], .item');
+        const elements = document.querySelectorAll('article, div[class*="product"], div[class*="item"], .card');
         elements.forEach(el => {
             const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
+            if (text && text.includes('€') && text.length < 300 && text.length > 5) {
                 const cleanText = text.replace(/\\n/g, ' | ').trim();
                 const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
                 if (!results.some(r => r.text === cleanText)) {
                     results.push({ text: cleanText, image: imgSrc });
                 }
@@ -248,9 +257,10 @@ def scrape_mymarket(page):
 
 def scrape_lidl(page):
     print("Συλλογή από Lidl...")
+    page.set_extra_http_headers({"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"})
     try:
-        page.goto("https://www.lidl-hellas.gr/c/fagito-poto/s10068374", timeout=60000)
-        page.wait_for_timeout(7000)
+        page.goto("https://www.lidl-hellas.gr/c/prosfores/s10022790", timeout=60000)
+        page.wait_for_timeout(8000)
     except Exception as e:
         print("Σφάλμα φόρτωσης Lidl:", e)
         return []
@@ -269,14 +279,14 @@ def scrape_lidl(page):
     
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('.ret-o-card, div[class*="product"], div[class*="Grid"], article, li.ret-m-product-grid__item');
+        const elements = document.querySelectorAll('div, article, section, li');
         elements.forEach(el => {
             const text = el.innerText;
-            if (text && text.includes('€') && text.length < 350 && text.length > 5) {
+            if (text && text.includes('€') && text.length < 300 && text.length > 8) {
                 const cleanText = text.replace(/\\n/g, ' | ').trim();
                 const img = el.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
+                if (imgSrc && imgSrc.startsWith('http') && !results.some(r => r.text === cleanText)) {
                     results.push({ text: cleanText, image: imgSrc });
                 }
             }
@@ -378,6 +388,5 @@ with sync_playwright() as p:
         json.dump(unique_offers, f, ensure_ascii=False, indent=4)
         print(f"\nΑποθήκευση {len(unique_offers)} μοναδικών προσφορών στο clean_offers.json!")
 
-# Αυτόματη αποστολή
 upload_to_wordpress()
 upload_to_ftp()
