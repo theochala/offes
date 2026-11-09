@@ -5,11 +5,11 @@ import ftplib
 from playwright.sync_api import sync_playwright
 
 TARGET_SOURCES = {
-    "kritikos": "https://kritikos-sm.gr/prosfores/",
-    "sklevenitis": "https://www.sklavenitis.gr/prosfores/",
-    "ab_vassilopoulos": "https://www.ab.gr/promotions",
-    "masoutis": "https://www.masoutis.gr/offers",
-    "lidl": "https://www.lidl-hellas.gr/c/prosfores/a100000"
+    "KRITIKOS": "https://kritikos-sm.gr/prosfores/",
+    "SKLEVENITIS": "https://www.sklavenitis.gr/prosfores/",
+    "AB_VASSILOPOULOS": "https://www.ab.gr/promotions",
+    "MASOUTIS": "https://www.masoutis.gr/offers",
+    "LIDL": "https://www.lidl-hellas.gr/c/prosfores/a100000"
 }
 
 def scrape_supermarket(page, url, supermarket_name):
@@ -22,10 +22,7 @@ def scrape_supermarket(page, url, supermarket_name):
         cards = page.locator("article, div[class*='product'], div[class*='offer'], li[class*='product']").all()
         print(f"   [Playwright] Βρέθηκαν {len(cards)} πιθανές κάρτες προϊόντων στο {supermarket_name}.")
 
-        count = 0
         for card in cards:
-            if count >= 10:
-                break
             try:
                 title_elem = card.locator("h2, h3, h4, a[class*='title'], div[class*='title']").first
                 title = title_elem.inner_text(timeout=200).strip() if title_elem.count() > 0 else ""
@@ -42,22 +39,22 @@ def scrape_supermarket(page, url, supermarket_name):
                             img_url = "https:" + src if src.startswith("//") else src
 
                     offers.append({
-                        "supermarket": supermarket_name.upper(),
+                        "supermarket": supermarket_name,
                         "image_url": img_url,
                         "product_title": title,
                         "offer_price": price,
                         "unit_or_original_price": "—",
                         "source_link": url
                     })
-                    count += 1
             except Exception:
                 continue
     except Exception as e:
         print(f"   [Προειδοποίηση] Παράκαμψη σφάλματος στο {supermarket_name}: {e}")
 
+    # Fallback αν δεν βρει τίποτα
     if not offers:
         offers.append({
-            "supermarket": supermarket_name.upper(),
+            "supermarket": supermarket_name,
             "image_url": "https://via.placeholder.com/150",
             "product_title": f"Διαθέσιμες προσφορές ({supermarket_name})",
             "offer_price": "0.00 €",
@@ -84,7 +81,7 @@ def upload_via_ftp(filename):
             try:
                 ftp.cwd("htdocs")
             except Exception:
-                pass # Ανεβάζει στο root αν δεν υπάρχει ο φάκελος htdocs
+                pass
 
             print(f"📤 Ανέβασμα του αρχείου {filename}...")
             with open(filename, "rb") as f:
@@ -94,9 +91,9 @@ def upload_via_ftp(filename):
         print(f"⚠️ Σφάλμα κατά το FTP upload: {e}")
 
 def main():
-    all_offers = []
+    store_offers = {}
 
-    print("Ξεκινάει η συλλογή προσφορών...")
+    print("Ξεκινάει η συλλογή προσφορών ανά μάρκετ...")
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-setuid-sandbox"])
         context = browser.new_context(
@@ -106,18 +103,26 @@ def main():
         page = context.new_page()
 
         for name, link in TARGET_SOURCES.items():
-            site_offers = scrape_supermarket(page, link, name)
-            all_offers.extend(site_offers)
+            store_offers[name] = scrape_supermarket(page, link, name)
 
         browser.close()
+
+    # Εναλλάξ συλλογή προϊόντων (Round-robin) από κάθε σούπερ μάρκετ
+    interleaved_offers = []
+    max_len = max(len(lst) for lst in store_offers.values()) if store_offers else 0
+
+    for i in range(max_len):
+        for name in TARGET_SOURCES.keys():
+            if i < len(store_offers[name]):
+                interleaved_offers.append(store_offers[name][i])
 
     output_filename = "clean_offers.json"
     try:
         with open(output_filename, "w", encoding="utf-8") as f:
-            json.dump(all_offers, f, ensure_ascii=False, indent=4)
-        print(f"\nΕπιτυχία! Αποθηκεύτηκαν συνολικά {len(all_offers)} προσφορές στο '{output_filename}'.")
+            json.dump(interleaved_offers, f, ensure_ascii=False, indent=4)
+        print(f"\nΕπιτυχία! Αποθηκεύτηκαν συνολικά {len(interleaved_offers)} προσφορές εναλλάξ στο '{output_filename}'.")
         
-        # Αυτόματο ανέβασμα μέσω FTP απευθείας από την Python
+        # Αυτόματο ανέβασμα μέσω FTP απευθείας στον InfinityFree server
         upload_via_ftp(output_filename)
 
     except Exception as e:
