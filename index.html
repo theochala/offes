@@ -140,13 +140,6 @@
             color: #6b7280;
             grid-column: 1 / -1;
         }
-        .error-msg {
-            background: #fee2e2;
-            color: #991b1b;
-            border-radius: 8px;
-            padding: 1.5rem;
-            border: 1px solid #fecaca;
-        }
     </style>
 </head>
 <body>
@@ -199,11 +192,10 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            // Δοκιμή φόρτωσης του clean_offers.json με cache buster
             fetch('clean_offers.json?t=' + new Date().getTime())
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('HTTP error! status: ' + response.status);
+                        throw new Error('HTTP status: ' + response.status);
                     }
                     return response.json();
                 })
@@ -211,11 +203,10 @@
                     renderOffers(data);
                 })
                 .catch(error => {
-                    console.warn('Αποτυχία φόρτωσης εξωτερικού JSON, χρήση fallback δεδομένων:', error);
-                    // Fallback: Αν για κάποιο λόγο δεν διαβάζεται το αρχείο, δείχνει προεπιλεγμένες κάρτες αντί για σφάλμα
+                    console.warn('Αποτυχία φόρτωσης JSON:', error);
                     const fallbackData = [
-                        { "supermarket": "AB_VASSILOPOULOS", "image_url": "https://via.placeholder.com/150", "product_title": "Διαθέσιμες προσφορές (ab_vassilopoulos)", "offer_price": "0.00 €", "unit_or_original_price": "—", "source_link": "https://www.ab.gr/promotions" },
-                        { "supermarket": "MASOUTIS", "image_url": "https://via.placeholder.com/150", "product_title": "Διαθέσιμες προσφορές (masoutis)", "offer_price": "0.00 €", "unit_or_original_price": "—", "source_link": "https://www.masoutis.gr/offers" }
+                        { "supermarket": "AB_VASSILOPOULOS", "image_url": "https://via.placeholder.com/150", "product_title": "Διαθέσιμες προσφορές (AB Vassilopoulos)", "offer_price": "0.00 €", "unit_or_original_price": "—", "source_link": "https://www.ab.gr/promotions" },
+                        { "supermarket": "MASOUTIS", "image_url": "https://via.placeholder.com/150", "product_title": "Διαθέσιμες προσφορές (Masoutis)", "offer_price": "0.00 €", "unit_or_original_price": "—", "source_link": "https://www.masoutis.gr/offers" }
                     ];
                     renderOffers(fallbackData);
                 });
