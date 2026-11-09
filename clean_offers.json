@@ -434,308 +434,297 @@
         "supermarket": "Γαλαξίας"
     },
     {
-        "title": "| AGE PERFECT ΚΡΕΜΑ ΗΜΕΡΑΣ ΕΝΑΝΤΙΑ ΣΤΗ ΧΑΛΑΡΩΣΗ & ΤΙΣ ΚΗΛΙΔΕΣ",
+        "title": "| Babylino Pants Unisex No5 Junior 10-16kg (34τεμ) – Πάνες Βρακάκι για Άνεση & Ε...",
+        "price": "0,27 €",
+        "all_prices": [
+            "9,07 €",
+            "0,27 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263890260-primary-6960dc14941cf1053a40819b_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Βρεφική πάνα Babylino Sensitive No6 13-18 Kg 38 τμχ – Φροντίδα για Ευαίσθητο Δ...",
+        "price": "10,79 €",
+        "all_prices": [
+            "10,79 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263826108-primary-6960db80941cf1053a408142_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Βρεφική πάνα Babylino Sensitive No3 4-9 Kg 56 τμχ – Φροντίδα για Ευαίσθητο Δέρ...",
+        "price": "10,79 €",
+        "all_prices": [
+            "10,79 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263082573-primary-6960da12941cf1053a408087_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Βρεφική πάνα Babylino Sensitive No5 11-16 Kg 44 τμχ – Φροντίδα για Ευαίσθητο Δ...",
+        "price": "10,79 €",
+        "all_prices": [
+            "10,79 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263082603-primary-6960da3a941cf1053a408099_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Βρεφική πάνα Babylino Sensitive No4 8-13 Kg 50 τμχ – Φροντίδα για Ευαίσθητο Δέ...",
+        "price": "10,79 €",
+        "all_prices": [
+            "10,79 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263082580-primary-6960da1a941cf1053a40808d_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Babylino Pants Unisex No6 Extra Large 13-18kg (31τεμ) – Πάνες Βρακάκι για Άνεσ...",
+        "price": "0,29 €",
+        "all_prices": [
+            "9,07 €",
+            "0,29 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263890277-primary-6960dc1b941cf1053a4081a5_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Babylino Pants Unisex No7 Extra Large Plus 15-25kg (28τεμ) – Πάνες Βρακάκι για...",
+        "price": "0,32 €",
+        "all_prices": [
+            "9,07 €",
+            "0,32 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263890284-primary-6960dc3f941cf1053a4081af_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Βρεφική πάνα Babylino Sensitive No5+ 12-17 Kg 42 τμχ – Φροντίδα για Ευαίσθητο ...",
+        "price": "10,79 €",
+        "all_prices": [
+            "10,79 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263082634-primary-6960da49941cf1053a4080a5_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Babylino Pants Unisex No4 Maxi 7-13kg (38τεμ) – Πάνες Βρακάκι για Άνεση & Εκμά...",
+        "price": "0,24 €",
+        "all_prices": [
+            "9,07 €",
+            "0,24 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263890253-primary-6960dc0d941cf1053a408191_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| EveryDay Fresh Care Υγρό καθαρισμού ευαίσθητης περιοχής 250ml",
+        "price": "11,72 €",
+        "all_prices": [
+            "2,93 €",
+            "11,72 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263021480-hero-6a06c7ac4418e4b3b6cba393_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| EveryDay Chamomile Care Υγρό καθαρισμού ευαίσθητης περιοχής 250ml",
+        "price": "11,72 €",
+        "all_prices": [
+            "2,93 €",
+            "11,72 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263021473-hero-6a06c3e14418e4b3b6cba386_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| EveryDay Intensive Care υγρό καθαρισμού για την ευαίσθητη περιοχή 250ml",
+        "price": "11,72 €",
+        "all_prices": [
+            "2,93 €",
+            "11,72 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263021497-hero-6a06ca854418e4b3b6cba3a1_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Κιλ Mousline Πουρές Πατάτας 250gr (2x125gr)",
+        "price": "9,12 €",
+        "all_prices": [
+            "2,28 €",
+            "9,12 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3760381261854-40000014-34-hd-67b2e8fad1129c420b64f364_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Κιλ Mousline Πουρές Πατάτας 125gr",
+        "price": "11,12 €",
+        "all_prices": [
+            "1,39 €",
+            "11,12 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3760381261830-40000012-face-hd-67b2e9b7d1129c420b64f374_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| ΜΕΓΑ Αντισηπτική λοσιόν για τα χέρια με 70% αιθυλική αλκοόλη και επιπλέον αν...",
+        "price": "1,39 €",
+        "all_prices": [
+            "1,39 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263021565-hero-6a3517ee486cf108a79a5f92_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Wet Hankies Antibacterial Υγρά αντιβακτηριδιακά μαντήλια χεριών (72 τεμ. με ...",
+        "price": "2,08 €",
+        "all_prices": [
+            "2,08 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263007064-hero-6a144c8c4418e4b3b6cbac88_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| Wet Hankies Antibacterial Extra Safe| Υγρά αντιβακτηριδιακά μαντήλια χεριών εν...",
+        "price": "0,03 €",
+        "all_prices": [
+            "2,18 €",
+            "0,03 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201263008054-hero-6a1578513c080711ce80f888_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| GLADE AUTOMATIC SPRAY SET RELAXING ZEN",
+        "price": "8,51 €",
+        "all_prices": [
+            "8,51 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/01-63ff8831d051bfa92b828566_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "-15% | Κιλ schedule Ημερομηνίες Προσφορών Σαλάτα Φρεσκούλης Ιταλική 200gr",
+        "price": "8,25 €",
+        "all_prices": [
+            "1,40 €",
+            "1,65 €",
+            "7,00 €",
+            "8,25 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/5205461304208-68f23b69941cf1053a404533_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| GARNIER ΟΡΟΣ ΛΑΜΨΗΣ 3.5% ΒΙΤΑΜΙΝΗ C, ΝΙΑΣΙΝΑΜΙΔΗ, ΣΑΛΙΚΥΛΙΚΟ, 30ML",
+        "price": "7,86 €",
+        "all_prices": [
+            "7,86 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600542453189-1-65326bb6ff4aede2c5685fb5_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| WRINKLE EXPERT 65+ ΑΝΤΙΡΥΤΙΔΙΚΗ ΚΡΕΜΑ ΗΜΕΡΑΣ",
+        "price": "7,93 €",
+        "all_prices": [
+            "7,93 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600523428052-1-65312764ff4aede2c5685c84_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| REVITALIFT CLASSIC ΑΝΤΙΡΥΤΙΔΙΚΗ & ΣΥΣΦΙΚΤΙΚΗ ΚΡΕΜΑ ΗΜΕΡΑΣ",
         "price": "257,40 €",
         "all_prices": [
             "12,87 €",
             "257,40 €"
         ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201100872855-1-65327aa9ff4aede2c568604e_product_small_image.webp",
+        "image": "https://galaxias.shop/api/media/tmp/webps/5201100873586-1-65327b82ff4aede2c568605b_product_small_image.webp",
         "supermarket": "Γαλαξίας"
     },
     {
-        "title": "| ΧΡΥΣΕΛΙΑ ΚΛΑΣΙΚΟ ΕΛΑΙΟΛΑΔΟ 1LT.",
-        "price": "6,48 €",
+        "title": "| GARNIER ΚΡΕΜΑ ΤΖΕΛ ΜΕ ΒΙΤΑΜΙΝΗ C ΓΙΑ ΛΑΜΠΕΡΗ ΕΠΙΔΕΡΜΙΔΑ",
+        "price": "5,78 €",
         "all_prices": [
-            "6,48 €",
-            "6,48 €"
+            "5,78 €"
         ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201330220099-l-63ce7a5bf920aa048bf1e04e_product_small_image.webp",
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600542471046-1-65326ce6ff4aede2c5685fc7_product_small_image.webp",
         "supermarket": "Γαλαξίας"
     },
     {
-        "title": "| ΑΔΙΑΒΡΟΧΟ ΝΤΕΜΑΚΙΓΙΑΖ ΜΑΤΙΩΝ & ΧΕΙΛΙΩΝ",
-        "price": "4,87 €",
+        "title": "| GARNIER ΝΕΡΟ ΝΤΕΜΑΚΙΓΙΑΖ ΜΕ ΡΟΔΟΝΕΡΟ 3-ΣΕ-1",
+        "price": "5,16 €",
         "all_prices": [
-            "4,87 €"
+            "5,16 €"
         ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201100873579-1-65327b16ff4aede2c5686055_product_small_image.webp",
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600542326575-1-65325cddff4aede2c5685eea_product_small_image.webp",
         "supermarket": "Γαλαξίας"
     },
     {
-        "title": "| REVITALIFT LASER ΟΡΟΣ ΡΕΤΙΝΟΛΗΣ ΝΥΚΤΟΣ",
+        "title": "| GARNIER HYALURONIC ALOE GEL ΚΑΘΑΡΙΣΜΟΥ ΠΡΟΣΩΠΟΥ ΜΕ ΥΑΛΟΥΡΟΝΙΚΟ ΟΞΥ",
+        "price": "4,29 €",
+        "all_prices": [
+            "4,29 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600542328722-1-65325d66ff4aede2c5685ef3_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| REVITALIFT LASER ΚΡΕΜΑ ΗΜΕΡΑΣ ΔΡΑΣΤΙΚΗΣ ΑΝΤΙΓΗΡΑΝΣΗΣ",
+        "price": "18,33 €",
+        "all_prices": [
+            "18,33 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600522249078-1-65312088ff4aede2c5685c4c_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| GARNIER MICELLAIRE ΔΙΦΑΣΙΚΟ ΝΕΡΟ ΝΤΕΜΑΚΙΓΙΑΖ ΓΙΑ ΕΝΤΟΝΟ ΑΔΙΑΒΡΟΧΟ MAKE-UP 400M...",
+        "price": "5,16 €",
+        "all_prices": [
+            "5,16 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600541744479-1-653249bfff4aede2c5685e5b_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| GARNIER HYALURONIC ALOE ΟΡΟΣ ΕΝΥΔΑΤΩΣΗΣ ΜΕ ΥΑΛΟΥΡΟΝΙΚΟ ΟΞΥ",
+        "price": "7,86 €",
+        "all_prices": [
+            "7,86 €"
+        ],
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600542432917-1-65326755ff4aede2c5685f7a_product_small_image.webp",
+        "supermarket": "Γαλαξίας"
+    },
+    {
+        "title": "| REVITALIFT FILLER ΟΡΟΣ ΓΙΑ ΕΝΤΑΤΙΚΗ ΕΝΥΔΑΤΩΣΗ & ΣΥΣΦΙΞΗ",
         "price": "615,33 €",
         "all_prices": [
             "18,46 €",
             "615,33 €"
         ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600523971954-1-65322fdeff4aede2c5685d68_product_small_image.webp",
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600523873968-1-65322c46ff4aede2c5685d3c_product_small_image.webp",
         "supermarket": "Γαλαξίας"
     },
     {
-        "title": "| L'OREAL PARIS REVITALIFT FILLER WATER CREAM DAY 50ML",
-        "price": "369,20 €",
-        "all_prices": [
-            "18,46 €",
-            "369,20 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600524070588-1-65324002ff4aede2c5685df4_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| L'OREAL PARIS REVITALIFT CLINICAL VITAMIN C ΟΡΟΣ ΠΡΟΣΩΠΟΥ ΜΕ ΒΙΤΑΜΙΝΗ 30ML",
-        "price": "619,33 €",
-        "all_prices": [
-            "18,58 €",
-            "619,33 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600524069810-1-65323dfeff4aede2c5685de2_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| GARNIER TISSUE MASK ΥΦΑΣΜΑΤΙΝΗ ΜΑΣΚΑ ΕΝΥΔΑΤΩΣΗΣ ΠΡΟΣΩΠΟΥ ΜΕ ΡΟΔΙ & ΥΑΛΟΥΡΟΝΙΚΟ...",
-        "price": "1,78 €",
-        "all_prices": [
-            "1,78 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600541943759-1-65324e8bff4aede2c5685e87_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| GARNIER MICELLAIRE ΚΛΑΣΙΚΟ ΝΕΡΟ ΚΑΘΑΡΙΣΜΟΥ ΚΑΙ ΓΙΑ ΕΥΑΙΣΘΗΤΕΣ ΕΠΙΔΕΡΜΙΔΕΣ 100M...",
-        "price": "19,10 €",
-        "all_prices": [
-            "1,91 €",
-            "19,10 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600542081313-1-65325780ff4aede2c5685eb5_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| GARNIER TISSUE MASK ΥΦΑΣΜΑΤΙΝΗ ΜΑΣΚΑ ΕΝΥΔΑΤΩΣΗΣ ΠΡΟΣΩΠΟΥ ΜΕ ΕΝΕΡΓΟ ΑΝΘΡΑΚΑ",
-        "price": "1,78 €",
-        "all_prices": [
-            "1,78 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600542097147-1-653257c2ff4aede2c5685eba_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| WRINKLE EXPERT 45+ ΚΡΕΜΑ ΗΜΕΡΑΣ 50ML",
+        "title": "| WRINKLE EXPERT 55+ ΚΡΕΜΑ ΗΜΕΡΑΣ",
         "price": "7,93 €",
         "all_prices": [
             "7,93 €"
         ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/36005231837771-6531252eff4aede2c5685c6f_product_small_image.webp",
+        "image": "https://galaxias.shop/api/media/tmp/webps/36005231837841-653125b7ff4aede2c5685c75_product_small_image.webp",
         "supermarket": "Γαλαξίας"
     },
     {
-        "title": "| GLADE ELECTRIC SCENTED OIL SET ROMANTIC VANILLA BLOSSOM",
-        "price": "6,91 €",
+        "title": "| GARNIER HYALURONIC ALOE JELLY ΕΝΥΔΑΤΙΚΗ ΚΡΕΜΑ-GEL",
+        "price": "5,78 €",
         "all_prices": [
-            "6,91 €"
+            "5,78 €"
         ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5000204333732-368288-1198843n-6707c35d800441d13971bcce_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| GLADE AUTOMATIC SPRAY ΑΝΤΚΟ CALM LAVENDER & JASMINE",
-        "price": "24,76 €",
-        "all_prices": [
-            "6,66 €",
-            "24,76 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/01-63ff8ccfd051bfa92b82856f_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| GLADE AUTOMATIC SPRAY ΑΝΤΚΟ RELAXING ZEN",
-        "price": "6,66 €",
-        "all_prices": [
-            "6,66 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/01-63ff8bc4d051bfa92b82856c_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| GARNIER MICELLAIRE ΚΛΑΣΣΙΚΟ ΝΕΡΟ ΚΑΘΑΡΙΣΜΟΥ ΚΑΙ ΓΙΑ ΕΥΑΙΣΘΗΤΕΣ ΕΠΙΔΕΡΜΙΔΕΣ 400...",
-        "price": "5,16 €",
-        "all_prices": [
-            "5,16 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600541358546-1-6532488bff4aede2c5685e49_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| BOTANIC THERAPY AVOCADO ΜΑΣΚΑ ΜΑΛΛΙΩΝ 340ML",
-        "price": "15,71 €",
-        "all_prices": [
-            "5,34 €",
-            "15,71 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/36005425101411-65364046ff4aede2c56860d0_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| ΕLVIVE EXTRAORDINARY ΕΛΑΙΟ ΠΕΡΙΠΟΙΗΣΗΣ ΓΙΑ ΞΗΡΑ ΜΑΛΛΙΑ",
-        "price": "8,78 €",
-        "all_prices": [
-            "8,78 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600522387411-1-653121a3ff4aede2c5685c5c_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| ELVIVE EXTRAORDINARY OIL ΒΑΜΜΕΝΑ",
-        "price": "8,78 €",
-        "all_prices": [
-            "8,78 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600522387374-1-6531214cff4aede2c5685c55_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| Cellular Expert Lift Αντιγηραντική Κρέμα Ημέρας SPF30",
-        "price": "260,80 €",
-        "all_prices": [
-            "13,04 €",
-            "260,80 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/4005900600721-01-6659f58f2962611cf4a2a30f_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| ELVIVE COLOR VIVE ΜΑΣΚΑ ΓΙΑ ΒΑΜΜΕΝΑ ΜΑΛΛΙΑ",
-        "price": "8,38 €",
-        "all_prices": [
-            "8,38 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600521708606-1-65311ccaff4aede2c5685c2e_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| ELVIVE HYDRA HYALURONIC ΜΑΣΚΑ ΕΝΥΔΑΤΩΣΗΣ",
-        "price": "8,38 €",
-        "all_prices": [
-            "8,38 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600524030766-1-65323bf7ff4aede2c5685dc7_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| ELVIVE HYDRA HYALURONIC SERUM ΕΝΥΔΑΤΩΣΗΣ",
-        "price": "8,15 €",
-        "all_prices": [
-            "8,15 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600524030841-1-65323cafff4aede2c5685dd1_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "-15% | schedule Ημερομηνίες Προσφορών Σαλάτα Φρεσκούλης Λάχανο - Καρότο 300gr",
-        "price": "1,57 €",
-        "all_prices": [
-            "1,33 €",
-            "1,57 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5205461304352-68f23cbe941cf1053a404538_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| ELVIVE DREAM LONG ΜΑΣΚΑ ΓΙΑ ΜΑΚΡΙΑ ΜΑΛΛΙΑ",
-        "price": "8,38 €",
-        "all_prices": [
-            "8,38 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/3600523587353-1-653228deff4aede2c5685d11_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| EveryDay All Cotton Σερβιετάκια XL 24 τεμ.",
-        "price": "0,11 €",
-        "all_prices": [
-            "2,62 €",
-            "0,11 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201263001536-hero-69f9eb8adc4b02f7b4858a45_1_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| EveryDay All Cotton Σερβιετάκια Large 30 τεμ.",
-        "price": "0,09 €",
-        "all_prices": [
-            "2,62 €",
-            "0,09 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201263011474-hero-69f9ea89dc4b02f7b4858a21_1_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| EveryDay All Cotton Σερβιετάκια Normal 20 τεμ.",
-        "price": "0,08 €",
-        "all_prices": [
-            "1,60 €",
-            "0,08 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201263011801-hero-69f9e8c9dc4b02f7b48589f3_1_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| EveryDay Sensitive with cotton Σερβιέτες Maxi Night 10 τεμ.",
-        "price": "0,19 €",
-        "all_prices": [
-            "1,85 €",
-            "0,19 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201263018374-hero-69cf9e8a72191242fc3b224e_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| EveryDay Sensitive with cotton Σερβιέτες Mini 18 τεμ.",
-        "price": "2,26 €",
-        "all_prices": [
-            "2,26 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201263008610-hero-69d4b9f572191242fc3b2420_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| Εκπαιδευτικό Κρεμοσάπουνο ΜΕΓΑ Hygiene Kids Blue που αλλάζει χρώμα – 250ml",
-        "price": "6,28 €",
-        "all_prices": [
-            "1,57 €",
-            "6,28 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201263021800-primary-6960ba00941cf1053a407c7a_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| EveryDay Σερβιέτες Sensitive with Cotton XL Ultra Plus 10 τεμ.",
-        "price": "2,20 €",
-        "all_prices": [
-            "2,20 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201263004216-hero-69cfabda72191242fc3b2275_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| EveryDay Sensitive with cotton Σερβιέτες Normal 18 τεμ.",
-        "price": "0,14 €",
-        "all_prices": [
-            "2,57 €",
-            "0,14 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201263006371-hero-69d4baa872191242fc3b242a_product_small_image.webp",
-        "supermarket": "Γαλαξίας"
-    },
-    {
-        "title": "| EveryDay Sensitive with cotton Σερβιέτες Super 18 τεμ.",
-        "price": "0,14 €",
-        "all_prices": [
-            "2,57 €",
-            "0,14 €"
-        ],
-        "image": "https://galaxias.shop/api/media/tmp/webps/5201263006388-hero-69d4bb5372191242fc3b2434_1_product_small_image.webp",
+        "image": "https://galaxias.shop/api/media/tmp/webps/3600542398237-1-65326309ff4aede2c5685f45_product_small_image.webp",
         "supermarket": "Γαλαξίας"
     },
     {
