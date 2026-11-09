@@ -54,80 +54,40 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-def create_stealth_page(p):
-    browser = p.chromium.launch(
-        headless=True,
-        args=["--disable-blink-features=AutomationControlled", "--no-sandbox", "--disable-setuid-sandbox"]
-    )
-    context = browser.new_context(
-        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        viewport={"width": 1920, "height": 1080},
-        locale="el-GR"
-    )
-    page = context.new_page()
-    page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-    return browser, page
-
-def scrape_store_playwright(url, supermarket_name):
+def scrape_store(p, url, supermarket_name):
     print(f"Συλλογή από {supermarket_name}...")
-    with sync_playwright() as p:
-        try:
-            browser, page = create_stealth_page(p)
-            page.goto(url, timeout=60000, wait_until="domcontentloaded")
-            page.wait_for_timeout(6000)
-            
-            for _ in range(4):
-                page.evaluate("window.scrollBy(0, 1000)")
-                page.wait_for_timeout(2000)
-                
-            raw = page.evaluate("""() => {
-                const results = [];
-                const elements = document.querySelectorAll('article, div[class*="product"], div[class*="item"], li[class*="product"]');
-                elements.forEach(el => {
-                    const text = el.innerText;
-                    if (text && text.includes('€') && text.length < 300 && text.length > 10) {
-                        const cleanText = text.replace(/\\n/g, ' | ').trim();
-                        const img = el.querySelector('img');
-                        let imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
-                        if (imgSrc.startsWith('//')) {
-                            imgSrc = 'https:' + imgSrc;
-                        }
-                        if (!results.some(r => r.text === cleanText)) {
-                            results.push({ text: cleanText, image: imgSrc });
-                        }
-                    }
-                });
-                return results;
-            }""")
-            browser.close()
-            parsed = parse_products(raw, supermarket_name)
-            print(f"-> Επιτυχία: {len(parsed)} προϊόντα από {supermarket_name}.")
-            return parsed
-        except Exception as e:
-            print(f"Σφάλμα {supermarket_name}: {e}")
-            return []
-
-# Εκτέλεση με ενημερωμένες διευθύνσεις
-with sync_playwright() as p:
-    all_offers = []
-    
-    # 1. Κρητικός
-    browser, page = create_stealth_page(p)
     try:
-        print("Συλλογή από Κρητικό...")
-        page.goto("https://kritikos-sm.gr/offers/", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(5000)
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--disable-blink-features=AutomationControlled", "--no-sandbox", "--disable-setuid-sandbox"]
+        )
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080},
+            locale="el-GR"
+        )
+        page = context.new_page()
+        page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        
+        page.goto(url, timeout=60000, wait_until="domcontentloaded")
+        page.wait_for_timeout(6000)
+        
         for _ in range(4):
             page.evaluate("window.scrollBy(0, 1000)")
             page.wait_for_timeout(2000)
+            
         raw = page.evaluate("""() => {
             const results = [];
-            document.querySelectorAll('article, div[class*="product"]').forEach(el => {
+            const elements = document.querySelectorAll('article, div[class*="product"], div[class*="item"], li[class*="product"]');
+            elements.forEach(el => {
                 const text = el.innerText;
                 if (text && text.includes('€') && text.length < 300 && text.length > 10) {
                     const cleanText = text.replace(/\\n/g, ' | ').trim();
                     const img = el.querySelector('img');
-                    const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                    let imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+                    if (imgSrc.startsWith('//')) {
+                        imgSrc = 'https:' + imgSrc;
+                    }
                     if (!results.some(r => r.text === cleanText)) {
                         results.push({ text: cleanText, image: imgSrc });
                     }
@@ -136,19 +96,25 @@ with sync_playwright() as p:
             return results;
         }""")
         browser.close()
-        all_offers.extend(parse_products(raw, "Κρητικός"))
-        print(f"-> Επιτυχία: {len(all_offers)} προϊόντα από Κρητικό.")
+        parsed = parse_products(raw, supermarket_name)
+        print(f"-> Επιτυχία: {len(parsed)} προϊόντα από {supermarket_name}.")
+        return parsed
     except Exception as e:
-        print(f"Σφάλμα Κρητικός: {e}")
-        browser.close()
+        print(f"Σφάλμα {supermarket_name}: {e}")
+        return []
 
-# 2. Υπόλοιπα καταστήματα με τις διορθωμένες κεντρικές/κατηγοριακές διευθύνσεις
-    all_offers.extend(scrape_store_playwright("https://www.sklavenitis.gr/", "Σκλαβενίτης"))
-    all_offers.extend(scrape_store_playwright("https://www.ab.gr/", "ΑΒ Βασιλόπουλος"))
-    all_offers.extend(scrape_store_playwright("https://www.masoutis.gr/offers", "Μασούτης"))
-    all_offers.extend(scrape_store_playwright("https://www.galaxiasnet.gr/", "Γαλαξίας"))
-    all_offers.extend(scrape_store_playwright("https://www.mymarket.gr/", "My Market"))
-    all_offers.extend(scrape_store_playwright("https://www.lidl.gr/", "Lidl"))
+# Μοναδική κεντρική διαχείριση του sync_playwright
+with sync_playwright() as p:
+    all_offers = []
+    
+    # Εκτέλεση διαδοχικά για όλα τα σούπερ μάρκετ χρησιμοποιώντας την ίδια παρουσία p
+    all_offers.extend(scrape_store(p, "https://kritikos-sm.gr/offers/", "Κρητικός"))
+    all_offers.extend(scrape_store(p, "https://www.sklavenitis.gr/", "Σκλαβενίτης"))
+    all_offers.extend(scrape_store(p, "https://www.ab.gr/", "ΑΒ Βασιλόπουλος"))
+    all_offers.extend(scrape_store(p, "https://www.masoutis.gr/offers", "Μασούτης"))
+    all_offers.extend(scrape_store(p, "https://www.galaxiasnet.gr/", "Γαλαξίας"))
+    all_offers.extend(scrape_store(p, "https://www.mymarket.gr/", "My Market"))
+    all_offers.extend(scrape_store(p, "https://www.lidl.gr/", "Lidl"))
 
     unique_offers = []
     seen_titles = set()
