@@ -91,7 +91,6 @@ def scrape_store(p, url, supermarket_name):
                     const cleanText = text.replace(/\\n/g, ' | ').trim();
                     const img = el.querySelector('img');
                     
-                    // Ασφαλής ανάκτηση και μετατροπή σε string για αποφυγή TypeError
                     let rawSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
                     let imgSrc = String(rawSrc || '');
                     
@@ -117,8 +116,9 @@ with sync_playwright() as p:
     all_offers = []
     
     all_offers.extend(scrape_store(p, "https://kritikos-sm.gr/offers/", "Κρητικός"))
+    # Ενημερωμένα, άμεσα URLs καταλόγου προσφορών για Σκλαβενίτη & ΑΒ
     all_offers.extend(scrape_store(p, "https://www.sklavenitis.gr/e-shop/prosfores/", "Σκλαβενίτης"))
-    all_offers.extend(scrape_store(p, "https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
+    all_offers.extend(scrape_store(p, "https://www.ab.gr/e-shop/ekptoseis-prosfores", "ΑΒ Βασιλόπουλος"))
     all_offers.extend(scrape_store(p, "https://www.masoutis.gr/offers", "Μασούτης"))
     all_offers.extend(scrape_store(p, "https://galaxias.shop/eshop/2?promos=isExtraBonus&promos=isBravoBonus&promos=isKalathiNoikokiriou&promos=isSumferei&promos=isTileoptiko&promos=isGoldPrices", "Γαλαξίας"))
     all_offers.extend(scrape_store(p, "https://www.mymarket.gr/", "My Market"))
