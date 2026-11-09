@@ -1,7 +1,7 @@
 import json
 import re
 import requests
-from bs4cript import BeautifulSoup # ή BeautifulSoup από bs4
+from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
 def clean_title(title):
@@ -47,7 +47,7 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-# 1. Κρητικός (με Playwright αφού δουλεύει άψογα)
+# 1. Κρητικός (με Playwright)
 def scrape_kritikos(p):
     print("Συλλογή από Κρητικό...")
     try:
@@ -82,7 +82,7 @@ def scrape_kritikos(p):
         print(f"Σφάλμα Κρητικός: {e}")
         return []
 
-# 2. Για Σκλαβενίτη, ΑΒ, Μασούτη κ.λπ. δοκιμάζουμε requests με κανονικά headers περιήγησης
+# 2. Υπόλοιπα καταστήματα με Requests mode
 def scrape_with_requests(url, supermarket_name):
     print(f"Συλλογή από {supermarket_name} (Requests mode)...")
     headers = {
@@ -98,11 +98,9 @@ def scrape_with_requests(url, supermarket_name):
             print(f"-> Αποτυχία {supermarket_name}: Status code {response.status_code}")
             return []
             
-        from bs4 import BeautifulSoup
         soup = BeautifulSoup(response.text, 'html.parser')
         
         raw = []
-        # Ψάχνουμε γενικά για κάρτες προϊόντων
         elements = soup.select('article, div.product, div[class*="product"], div[class*="item"]')
         for el in elements:
             text = el.get_text(separator=' | ', strip=True)
@@ -128,10 +126,7 @@ def scrape_with_requests(url, supermarket_name):
 with sync_playwright() as p:
     all_offers = []
     
-    # Κρητικός (Playwright)
     all_offers.extend(scrape_kritikos(p))
-    
-    # Υπόλοιπα καταστήματα με Requests mode για αποφυγή headless blocks
     all_offers.extend(scrape_with_requests("https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
     all_offers.extend(scrape_with_requests("https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
     all_offers.extend(scrape_with_requests("https://www.masoutis.gr/offers", "Μασούτης"))
