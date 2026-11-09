@@ -62,7 +62,7 @@ def scrape_with_playwright(url, supermarket_name):
         offers.append({
             "supermarket": supermarket_name.upper(),
             "image_url": "https://via.placeholder.com/150",
-            "product_title": f"Προσωρινός περιορισμός πρόσβασης / Anti-bot",
+            "product_title": "Προσωρινός περιορισμός πρόσβασης / Anti-bot",
             "offer_price": "0.00 €",
             "unit_or_original_price": "—",
             "source_link": url
@@ -72,9 +72,25 @@ def scrape_with_playwright(url, supermarket_name):
 def main():
     all_offers = []
 
-    print("1. Συλλογή προσφορών από e-Καταναλωτή...")
-    # Εδώ μπορείς να προσθέσεις κλήση με requests για το API αν χρειάζεται
+    print("1. Συλλογή προσφορών...")
     
     print("2. Σάρωση ιστοσελίδων σούπερ μάρκετ με Playwright...")
     for name, link in TARGET_SOURCES.items():
-        if name == "e_
+        if name == "e_katanalotis_api":
+            continue
+        print(f"   - Επεξεργασία: {name}")
+        site_offers = scrape_with_playwright(link, name)
+        all_offers.extend(site_offers)
+
+    # Αποθήκευση στο clean_offers.json με τη δομή καρτέλας
+    output_filename = "clean_offers.json"
+    try:
+        with open(output_filename, "w", encoding="utf-8") as f:
+            json.dump(all_offers, f, ensure_ascii=False, indent=4)
+        print(f"\nΗ διαδικασία ολοκληρώθηκε! Αποθηκεύτηκαν {len(all_offers)} καρτέλες στο '{output_filename}'.")
+    except Exception as e:
+        print(f"Σφάλμα αποθήκευσης αρχείου: {e}")
+        exit(1)
+
+if __name__ == "__main__":
+    main()
