@@ -1,8 +1,6 @@
+from playwright.sync_api import sync_playwright
 import json
 import re
-import requests
-from bs4 import BeautifulSoup
-from playwright.sync_api import sync_playwright
 
 def clean_title(title):
     artifacts = [
@@ -56,18 +54,72 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-# 1. Κρητικός (Playwright)
-def scrape_kritikos(p):
-    print("Συλλογή από Κρητικό...")
+def create_stealth_page(p):
+    browser = p.chromium.launch(
+        headless=True,
+        args=["--disable-blink-features=AutomationControlled", "--no-sandbox", "--disable-setuid-sandbox"]
+    )
+    context = browser.new_context(
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        viewport={"width": 1920, "height": 1080},
+        locale="el-GR"
+    )
+    page = context.new_page()
+    page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    return browser, page
+
+def scrape_store_playwright(url, supermarket_name):
+    print(f"Συλλογή από {supermarket_name}...")
+    with sync_playwright() as p:
+        try:
+            browser, page = create_stealth_page(p)
+            page.goto(url, timeout=60000, wait_until="domcontentloaded")
+            page.wait_for_timeout(6000)
+            
+            for _ in range(4):
+                page.evaluate("window.scrollBy(0, 1000)")
+                page.wait_for_timeout(2000)
+                
+            raw = page.evaluate("""() => {
+                const results = [];
+                const elements = document.querySelectorAll('article, div[class*="product"], div[class*="item"], li[class*="product"]');
+                elements.forEach(el => {
+                    const text = el.innerText;
+                    if (text && text.includes('€') && text.length < 300 && text.length > 10) {
+                        const cleanText = text.replace(/\\n/g, ' | ').trim();
+                        const img = el.querySelector('img');
+                        let imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+                        if (imgSrc.startsWith('//')) {
+                            imgSrc = 'https:' + imgSrc;
+                        }
+                        if (!results.some(r => r.text === cleanText)) {
+                            results.push({ text: cleanText, image: imgSrc });
+                        }
+                    }
+                });
+                return results;
+            }""")
+            browser.close()
+            parsed = parse_products(raw, supermarket_name)
+            print(f"-> Επιτυχία: {len(parsed)} προϊόντα από {supermarket_name}.")
+            return parsed
+        except Exception as e:
+            print(f"Σφάλμα {supermarket_name}: {e}")
+            return []
+
+# Εκτέλεση με ενημερωμένες διευθύνσεις
+with sync_playwright() as p:
+    all_offers = []
+    
+    # 1. Κρητικός
+    browser, page = create_stealth_page(p)
     try:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+        print("Συλλογή από Κρητικό...")
         page.goto("https://kritikos-sm.gr/offers/", timeout=60000, wait_until="domcontentloaded")
         page.wait_for_timeout(5000)
         for _ in range(4):
             page.evaluate("window.scrollBy(0, 1000)")
             page.wait_for_timeout(2000)
-        
         raw = page.evaluate("""() => {
             const results = [];
             document.querySelectorAll('article, div[class*="product"]').forEach(el => {
@@ -84,66 +136,19 @@ def scrape_kritikos(p):
             return results;
         }""")
         browser.close()
-        parsed = parse_products(raw, "Κρητικός")
-        print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Κρητικό.")
-        return parsed
+        all_offers.extend(parse_products(raw, "Κρητικός"))
+        print(f"-> Επιτυχία: {len(all_offers)} προϊόντα από Κρητικό.")
     except Exception as e:
         print(f"Σφάλμα Κρητικός: {e}")
-        return []
+        browser.close()
 
-# 2. Εναλλακτική μέθοδος με direct lightweight requests και mobile user agents για τα υπόλοιπα
-def scrape_lightweight(url, supermarket_name):
-    print(f"Συλλογή από {supermarket_name}...")
-    headers = {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "el-GR,el;q=0.9"
-    }
-    
-    try:
-        # Χρησιμοποιούμε μικρό timeout και custom headers κινητού που συχνά εξαιρούνται από τα αυστηρά browser blocks
-        response = requests.get(url, headers=headers, timeout=15)
-        if response.status_code != 200:
-            print(f"-> Παράκαμψη {supermarket_name} (Status {response.status_code})")
-            return []
-            
-        soup = BeautifulSoup(response.text, 'html.parser')
-        raw = []
-        elements = soup.select('article, div.product, div[class*="product"], div[class*="item"], li[class*="product"], div.box')
-        for el in elements:
-            text = el.get_text(separator=' | ', strip=True)
-            if text and '€' in text and len(text) < 300 and len(text) > 10:
-                img = el.find('img')
-                imgSrc = ""
-                if img:
-                    imgSrc = img.get('src') or img.get('data-src') or img.get('data-lazy-src') or ''
-                    if imgSrc.startswith('//'):
-                        imgSrc = 'https:' + imgSrc
-                
-                if not any(r['text'] == text for r in raw):
-                    raw.append({ "text": text, "image": imgSrc })
-                    
-        parsed = parse_products(raw, supermarket_name)
-        print(f"-> Επιτυχία: {len(parsed)} προϊόντα από {supermarket_name}.")
-        return parsed
-    except Exception as e:
-        print(f"-> Χωρίς άμεση απόκριση από {supermarket_name} (Timeout/Blocked).")
-        return []
-
-# Εκτέλεση για ΟΛΑ τα σούπερ μάρκετ
-with sync_playwright() as p:
-    all_offers = []
-    
-    # 1. Κρητικός
-    all_offers.extend(scrape_kritikos(p))
-    
-    # 2. Υπόλοιπα καταστήματα με lightweight mobile requests
-    all_offers.extend(scrape_lightweight("https://www.sklavenitis.gr/prosporous-prosfores/", "Σκλαβενίτης"))
-    all_offers.extend(scrape_lightweight("https://www.ab.gr/e-shop/prosfopoi-prosfores", "ΑΒ Βασιλόπουλος"))
-    all_offers.extend(scrape_lightweight("https://www.masoutis.gr/offers", "Μασούτης"))
-    all_offers.extend(scrape_lightweight("https://www.galaxiasnet.gr/", "Γαλαξίας"))
-    all_offers.extend(scrape_lightweight("https://www.mymarket.gr/", "My Market"))
-    all_offers.extend(scrape_lightweight("https://www.lidl.gr/c/prosfores/s10007771", "Lidl"))
+# 2. Υπόλοιπα καταστήματα με τις διορθωμένες κεντρικές/κατηγοριακές διευθύνσεις
+    all_offers.extend(scrape_store_playwright("https://www.sklavenitis.gr/", "Σκλαβενίτης"))
+    all_offers.extend(scrape_store_playwright("https://www.ab.gr/", "ΑΒ Βασιλόπουλος"))
+    all_offers.extend(scrape_store_playwright("https://www.masoutis.gr/offers", "Μασούτης"))
+    all_offers.extend(scrape_store_playwright("https://www.galaxiasnet.gr/", "Γαλαξίας"))
+    all_offers.extend(scrape_store_playwright("https://www.mymarket.gr/", "My Market"))
+    all_offers.extend(scrape_store_playwright("https://www.lidl.gr/", "Lidl"))
 
     unique_offers = []
     seen_titles = set()
