@@ -30,7 +30,7 @@ jobs:
         playwright install --with-deps chromium
 
     - name: Run Scraper & Upload
-      continue-on-error: true # Αποτρέπει το απόλυτο κρασάρισμα αν κολλήσει κάποιο site
+      continue-on-error: true
       env:
         WP_URL: ${{ secrets.WP_URL }}
         WP_USER: ${{ secrets.WP_USER }}
@@ -39,7 +39,7 @@ jobs:
         FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       run: |
-        python scraper.py
+        python supermarket_scraper.py
 
     - name: Commit and push clean_offers.json if changed
       run: |
