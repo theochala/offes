@@ -249,7 +249,7 @@ def scrape_lidl(page):
     print("Συλλογή από Lidl...")
     try:
         page.goto("https://www.lidl-hellas.gr/c/fagito-poto/s10068374", timeout=60000)
-        page.wait_for_timeout(6000)
+        page.wait_for_timeout(7000)
     except Exception as e:
         print("Σφάλμα φόρτωσης Lidl:", e)
         return []
@@ -262,19 +262,19 @@ def scrape_lidl(page):
     except:
         pass
 
-    for _ in range(5):
+    for _ in range(6):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(2000)
     
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], div[class*="card"], .item');
+        const elements = document.querySelectorAll('.ret-o-card, div[class*="product"], div[class*="Grid"], article, li.ret-m-product-grid__item');
         elements.forEach(el => {
             const text = el.innerText;
-            if (text && text.includes('€') && text.length < 300 && text.length > 10) {
+            if (text && text.includes('€') && text.length < 350 && text.length > 5) {
                 const cleanText = text.replace(/\\n/g, ' | ').trim();
                 const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
                 if (!results.some(r => r.text === cleanText)) {
                     results.push({ text: cleanText, image: imgSrc });
                 }
