@@ -13,7 +13,7 @@ TARGET_URLS = {
 }
 
 def scrape_all_supermarkets():
-    print("=== [1/3] Εκκίνηση Scraper με βελτιωμένους Selectors ===")
+    print("=== [1/3] Εκκίνηση Πλήρους Scraper ===")
     all_offers = []
 
     try:
@@ -41,67 +41,70 @@ def scrape_all_supermarkets():
             for market_name, url in TARGET_URLS.items():
                 print(f"-> Φόρτωση σελίδας {market_name}: {url}")
                 try:
-                    page.goto(url, wait_until="domcontentloaded", timeout=25000)
-                    page.mouse.wheel(0, 1000)
-                    page.wait_for_timeout(4000)
+                    page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                    
+                    # Πολλαπλό scroll για να φορτώσουν όλα τα δυναμικά προϊόντα (Lazy Loading)
+                    for _ in range(3):
+                        page.mouse.wheel(0, 1500)
+                        page.wait_for_timeout(1500)
 
                     market_offers = []
 
-                    # Ειδικές κάρτες ανάλογα με το site
-                    if "ab.gr" in url:
-                        cards = page.locator("div[data-testid*='product'], article, div[class*='product-card']").all()
-                    else:
-                        cards = page.locator(".product-item, .item-card, article, div[class*='product'], div[class*='Card']").all()
+                    # Γενικοί και ειδικοί selectors για να πιάσουμε κάθε πιθανή κάρτα προϊόντος
+                    cards = page.locator("article, div[class*='product'], div[class*='Card'], div[class*='item'], li[class*='product']").all()
 
-                    print(f"  [i] Εντοπίστηκαν {len(cards)} στοιχεία στο {market_name}.")
+                    print(f"  [i] Εντοπίστηκαν {len(cards)} υποψήφια στοιχεία στο {market_name}.")
 
-                    for card in cards[:25]:
+                    for card in cards[:30]:
                         try:
                             title_el = None
                             price_el = None
                             old_price_el = None
                             img_src = ""
 
-                            # Ειδική εξαγωγή για AB Βασιλόπουλος
-                            if "ab.gr" in url:
-                                t = card.locator("h3, h2, a[data-testid*='link'], [class*='title']").first
-                                if t.count() > 0: title_el = t.inner_text().strip()
+                            # Αναζήτηση τίτλου με πολλαπλάσια κριτήρια
+                            for t_sel in ["h2", "h3", "h4", ".product-title", ".title", "a[title]", "[class*='title']", "[class*='name']"]:
+                                el = card.locator(t_sel).first
+                                if el.count() > 0:
+                                    txt = el.inner_text().strip()
+                                    if len(txt) > 3 and not any(w in txt.lower() for w in ["καλάθι", "σούπερ", "αρχική"]):
+                                        title_el = txt
+                                        break
 
-                                p = card.locator("[class*='price'], [data-testid*='price']").first
-                                if p.count() > 0: price_el = p.inner_text().strip()
-                            else:
-                                # Γενική εξαγωγή για τα υπόλοιπα
-                                for t_sel in ["h2", "h3", ".product-title", ".title", "a[title]", "[class*='title']", "[class*='name']"]:
-                                    el = card.locator(t_sel).first
-                                    if el.count() > 0:
-                                        txt = el.inner_text().strip()
-                                        if len(txt) > 2:
-                                            title_el = txt
-                                            break
+                            # Αναζήτηση τιμής με πολλαπλάσια κριτήρια
+                            for p_sel in [".price", ".current-price", ".value", "[class*='price']", "[class*='amount']", "span"]:
+                                el = card.locator(p_sel).first
+                                if el.count() > 0:
+                                    txt = el.inner_text().strip()
+                                    if any(char.isdigit() for char in txt) and ('€' in txt or len(txt) < 8):
+                                        price_el = txt
+                                        break
 
-                                for p_sel in [".price", ".current-price", ".value", "[class*='price']", "span"]:
-                                    el = card.locator(p_sel).first
-                                    if el.count() > 0:
-                                        txt = el.inner_text().strip()
-                                        if any(char.isdigit() for char in txt) and ('€' in txt or len(txt) < 8):
-                                            price_el = txt
-                                            break
+                            # Αναζήτηση παλιάς τιμής
+                            for op_sel in [".old-price", ".original-price", "del", "[class*='old']"]:
+                                el = card.locator(op_sel).first
+                                if el.count() > 0:
+                                    old_price_el = el.inner_text().strip()
+                                    break
 
-                            # Εικόνα
+                            # Εικόνα προϊόντος
                             img_el = card.locator("img").first
                             if img_el.count() > 0:
                                 src = img_el.get_attribute("src") or img_el.get_attribute("data-src")
-                                if src: img_src = src
+                                if src and src.startswith("http"):
+                                    img_src = src
 
                             if title_el and price_el:
-                                market_offers.append({
-                                    "supermarket": market_name,
-                                    "title": title_el,
-                                    "price": price_el,
-                                    "old_price": old_price_el or "",
-                                    "image": img_src if img_src.startswith("http") else "https://via.placeholder.com/150?text=Offer",
-                                    "date": datetime.now().strftime("%Y-%m-%d")
-                                })
+                                # Αποφυγή διπλοεγγραφών
+                                if not any(o['title'] == title_el for o in market_offers):
+                                    market_offers.append({
+                                        "supermarket": market_name,
+                                        "title": title_el,
+                                        "price": price_el,
+                                        "old_price": old_price_el or "",
+                                        "image": img_src if img_src else "https://via.placeholder.com/150?text=Offer",
+                                        "date": datetime.now().strftime("%Y-%m-%d")
+                                    })
                         except:
                             continue
 
