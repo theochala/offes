@@ -1,82 +1,9 @@
-[
-    {
-        "supermarket": "AB_VASSILOPOULOS",
-        "image_url": "https://via.placeholder.com/150",
-        "product_title": "",
-        "offer_price": "0.00 €",
-        "unit_or_original_price": "—",
-        "source_link": "https://www.ab.gr/promotions"
-    },
-    {
-        "supermarket": "MASOUTIS",
-        "image_url": "https://via.placeholder.com/150",
-        "product_title": "Προϊόν MASOUTIS",
-        "offer_price": "0.00 €",
-        "unit_or_original_price": "—",
-        "source_link": "https://www.masoutis.gr/offers"
-    },
-    {
-        "supermarket": "AB_VASSILOPOULOS",
-        "image_url": "https://via.placeholder.com/150",
-        "product_title": "",
-        "offer_price": "0.00 €",
-        "unit_or_original_price": "—",
-        "source_link": "https://www.ab.gr/promotions"
-    },
-    {
-        "supermarket": "MASOUTIS",
-        "image_url": "https://via.placeholder.com/150",
-        "product_title": "Προϊόν MASOUTIS",
-        "offer_price": "0.00 €",
-        "unit_or_original_price": "—",
-        "source_link": "https://www.masoutis.gr/offers"
-    },
-    {
-        "supermarket": "AB_VASSILOPOULOS",
-        "image_url": "https://via.placeholder.com/150",
-        "product_title": "",
-        "offer_price": "0.00 €",
-        "unit_or_original_price": "—",
-        "source_link": "https://www.ab.gr/promotions"
-    },
-    {
-        "supermarket": "MASOUTIS",
-        "image_url": "https://via.placeholder.com/150",
-        "product_title": "Προϊόν MASOUTIS",
-        "offer_price": "0.00 €",
-        "unit_or_original_price": "—",
-        "source_link": "https://www.masoutis.gr/offers"
-    },
-    {
-        "supermarket": "AB_VASSILOPOULOS",
-        "image_url": "https://via.placeholder.com/150",
-        "product_title": "",
-        "offer_price": "0.00 €",
-        "unit_or_original_price": "—",
-        "source_link": "https://www.ab.gr/promotions"
-    },
-    {
-        "supermarket": "MASOUTIS",
-        "image_url": "https://via.placeholder.com/150",
-        "product_title": "Προϊόν MASOUTIS",
-        "offer_price": "0.00 €",
-        "unit_or_original_price": "—",
-        "source_link": "https://www.masoutis.gr/offers"
-    },
-    {
-        "supermarket": "AB_VASSILOPOULOS",
-        "image_url": "https://via.placeholder.com/150",
-        "product_title": "",
-        "offer_price": "0.00 €",
-        "unit_or_original_price": "—",
-        "source_link": "https://www.ab.gr/promotions"
-    },
-    {
-        "supermarket": "MASOUTIS",
-        "image_url": "https://via.placeholder.com/150",
-        "product_title": "Προϊόν MASOUTIS",
-        "offer_price": "0.00 €",
-        "unit_or_original_price": "—",
-        "source_link": "https://www.masoutis.gr/offers"
-    }
-]
+{
+    "updated_at": "2026-06-06",
+    "offers": [
+        {
+            "title": "Παράδειγμα Προϊόντος",
+            "price": "1.99€"
+        }
+    ]
+}
