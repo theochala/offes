@@ -1,85 +1,82 @@
 import json
-import time
+import os
+from ftplib import FTP
+from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
-# Σημείωση: Στην παραγωγή εδώ χρησιμοποιείς BeautifulSoup/Playwright για να κάνεις scrape τα eshop.
-# Για το παράδειγμα, δομούμε τα δεδομένα ακριβώς όπως θα επιστρέφονταν από τα σούπερ μάρκετ.
+# --- 1. Η λογική του Scraper (Παράδειγμα) ---
 
-products_data = [
-    {
-        "id": "1",
-        "name": "Γάλα Φρέσκο Πλήρες 1L",
-        "brand": "ΟΛΥΜΠΟΣ",
-        "category": "Γαλακτοκομικά",
-        "supermarket": "Σκλαβενίτης",
-        "original_price": 1.75,
-        "offer_price": 1.35,
-        "image": "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=300"
-    },
-    {
-        "id": "2",
-        "name": "Γάλα Φρέσκο Πλήρες 1L",
-        "brand": "ΟΛΥΜΠΟΣ",
-        "category": "Γαλακτοκομικά",
-        "supermarket": "ΑΒ Βασιλόπουλος",
-        "original_price": 1.78,
-        "offer_price": 1.42,
-        "image": "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=300"
-    },
-    {
-        "id": "3",
-        "name": "Ελαιόλαδο Έξτρα Παρθένο 1L",
-        "brand": "ΧΩΡΙΟ",
-        "category": "Τρόφιμα",
-        "supermarket": "Μασούτης",
-        "original_price": 12.50,
-        "offer_price": 9.90,
-        "image": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300"
-    },
-    {
-        "id": "4",
-        "name": "Ελαιόλαδο Έξτρα Παρθένο 1L",
-        "brand": "ΧΩΡΙΟ",
-        "category": "Τρόφιμα",
-        "supermarket": "Σκλαβενίτης",
-        "original_price": 12.20,
-        "offer_price": 10.50,
-        "image": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300"
-    },
-    {
-        "id": "5",
-        "name": "Κάψουλες Καφέ Espresso 10τμχ",
-        "brand": "NESPRESSO",
-        "category": "Ποτά & Καφέδες",
-        "supermarket": "MyMarket",
-        "original_price": 4.80,
-        "offer_price": 3.60,
-        "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300"
-    },
-    {
-        "id": "6",
-        "name": "Υγρό Πιάτων 500ml",
-        "brand": "FAIRY",
-        "category": "Καθαριστικά",
-        "supermarket": "ΑΒ Βασιλόπουλος",
-        "original_price": 2.90,
-        "offer_price": 1.95,
-        "image": "https://images.unsplash.com/photo-1585832770485-e68a5fcfad52?w=300"
-    }
-]
 
-def save_products():
-    print("Συλλογή προσφορών...")
-    time.sleep(1)
-    
-    # Υπολογισμός ποσοστού έκπτωσης
-    for item in products_data:
-        discount = round(((item["original_price"] - item["offer_price"]) / item["original_price"]) * 100)
-        item["discount_percent"] = discount
+def scrape_supermarket_offers():
+  print("Ξεκινάει το scraping των προσφορών...")
 
-    with open("offers.json", "w", encoding="utf-8") as f:
-        json.dump(products_data, f, ensure_ascii=False, indent=4)
-        
-    print("✅ Αποθηκεύτηκαν 6 προσφορές στο offers.json!")
+  offers = []
+
+  # Παράδειγμα χρήσης Playwright (όπως δηλώνεις στο workflow)
+  with sync_playwright() as p:
+    browser = p.chromium.launch(headless=True)
+    page = browser.new_page()
+
+    # Παράδειγμα URL (άλλαξέ το με αυτό που θες)
+    # page.goto("https://example-supermarket.gr/offers")
+    # html = page.content()
+
+    browser.close()
+
+  # Εδώ αποθηκεύεις τα δεδομένα σου στο clean_offers.json
+  # (Για δοκιμή δημιουργούμε ένα απλό αρχείο)
+  sample_data = {
+      "updated_at": "2026-06-06",
+      "offers": [{"title": "Παράδειγμα Προϊόντος", "price": "1.99€"}],
+  }
+
+  filename = "clean_offers.json"
+  with open(filename, "w", encoding="utf-8") as f:
+    json.dump(sample_data, f, ensure_ascii=False, indent=4)
+
+  print(f"Το αρχείο {filename} δημιουργήθηκε επιτυχώς.")
+  return filename
+
+
+# --- 2. Η συνάρτηση αποστολής στο FTP ---
+
+
+def upload_to_ftp(filename="clean_offers.json"):
+  ftp_server = os.getenv("FTP_SERVER")
+  ftp_user = os.getenv("FTP_USERNAME")
+  ftp_pass = os.getenv("FTP_PASSWORD")
+
+  if not all([ftp_server, ftp_user, ftp_pass]):
+    print(
+        "Σφάλμα: Τα στοιχεία FTP (SERVER, USERNAME, PASSWORD) δεν βρέθηκαν στις"
+        " μεταβλητές περιβάλλοντος."
+    )
+    return
+
+  print(f"Σύνδεση στον FTP server: {ftp_server}...")
+  try:
+    ftp = FTP(ftp_server)
+    ftp.login(user=ftp_user, passwd=ftp_pass)
+
+    with open(filename, "rb") as f:
+      # Ανεβάζει το αρχείο στο root του FTP.
+      # Αν θες να το βάλεις σε φάκελο, γράψ' το π.χ. 'public_html/clean_offers.json'
+      ftp.storbinary(f"STOR {filename}", f)
+
+    print(f"Το αρχείο {filename} ανέβηκε επιτυχώς στο FTP server!")
+    ftp.quit()
+  except Exception as e:
+    print(f"Αποτυχία μεταφόρτωσης στο FTP: {e}")
+
+
+# --- 3. Εκτέλεση ---
 
 if __name__ == "__main__":
-    save_products()
+  # 1. Τρέχει το scraping και φτιάχνει το αρχείο
+  json_file = scrape_supermarket_offers()
+
+  # 2. Ανέβασμα στο FTP
+  if json_file and os.path.exists(json_file):
+    upload_to_ftp(json_file)
+  else:
+    print("Το αρχείο δεν βρέθηκε, η μεταφόρτωση στο FTP παραλείπεται.")
