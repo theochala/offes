@@ -90,7 +90,6 @@
                 const card = document.createElement('div');
                 card.className = 'bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between';
                 
-                // Εμφάνιση παλιάς τιμής μόνο αν υπάρχει
                 const oldPriceHtml = offer.old_price ? `<span class="text-xs text-gray-400 line-through mr-2">${offer.old_price}</span>` : '';
 
                 card.innerHTML = `
