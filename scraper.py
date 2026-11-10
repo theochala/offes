@@ -13,7 +13,7 @@ TARGET_URLS = {
 }
 
 def scrape_all_supermarkets():
-    print("=== [1/3] Εκκίνηση Πλήρους Scraper ===")
+    print("=== [1/3] Εκκίνηση Ευέλικτου Scraper ===")
     all_offers = []
 
     try:
@@ -43,65 +43,69 @@ def scrape_all_supermarkets():
                 try:
                     page.goto(url, wait_until="domcontentloaded", timeout=30000)
                     
-                    # Πολλαπλό scroll για να φορτώσουν όλα τα δυναμικά προϊόντα (Lazy Loading)
+                    # Scroll για φόρτωση lazy loading
                     for _ in range(3):
                         page.mouse.wheel(0, 1500)
                         page.wait_for_timeout(1500)
 
                     market_offers = []
 
-                    # Γενικοί και ειδικοί selectors για να πιάσουμε κάθε πιθανή κάρτα προϊόντος
-                    cards = page.locator("article, div[class*='product'], div[class*='Card'], div[class*='item'], li[class*='product']").all()
-
+                    # Πιο ευρύς εντοπισμός στοιχείων (όλα τα articles, divs και list items)
+                    cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product'], li[class*='item']").all()
                     print(f"  [i] Εντοπίστηκαν {len(cards)} υποψήφια στοιχεία στο {market_name}.")
 
-                    for card in cards[:30]:
+                    for card in cards[:40]: # Εξέταση έως 40 στοιχείων ανά μάρκα
                         try:
-                            title_el = None
-                            price_el = None
-                            old_price_el = None
+                            title_text = ""
+                            price_text = ""
+                            old_price_text = ""
                             img_src = ""
 
-                            # Αναζήτηση τίτλου με πολλαπλάσια κριτήρια
-                            for t_sel in ["h2", "h3", "h4", ".product-title", ".title", "a[title]", "[class*='title']", "[class*='name']"]:
-                                el = card.locator(t_sel).first
-                                if el.count() > 0:
-                                    txt = el.inner_text().strip()
-                                    if len(txt) > 3 and not any(w in txt.lower() for w in ["καλάθι", "σούπερ", "αρχική"]):
-                                        title_el = txt
+                            # 1. Βρες οποιοδήποτε κείμενο τίτλου (από h2, h3, a, span με κλάσεις τίτλου)
+                            all_texts = card.locator("h2, h3, h4, a, span, p").all_inner_texts()
+                            
+                            possible_titles = []
+                            possible_prices = []
+
+                            for txt in all_texts:
+                                t = txt.strip()
+                                if not t:
+                                    continue
+                                # Αν περιέχει € ή σύμβολο τιμής και αριθμό, το θεωρούμε τιμή
+                                if any(char.isdigit() for char in t) and ('€' in t or '£' in t or ',' in t or '.' in t) and len(t) < 10:
+                                    if not price_text:
+                                        price_text = t
+                                # Αλλιώς, αν είναι αρκετά μεγάλο για τίτλο προϊόντος
+                                elif len(t) > 5 and not any(w in t.lower() for w in ["καλάθι", "σούπερ", "αρχική", "σύνδεση", "προσφορές"]):
+                                    possible_titles.append(t)
+
+                            # Επιλέγουμε τον μεγαλύτερο/καλύτερο τίτλο από τους διαθέσιμους
+                            if possible_titles:
+                                title_text = max(possible_titles, key=len)
+
+                            # Αν δεν βρήκε τιμή με το παραπάνω, δοκιμάζουμε πιο στοχευμένα
+                            if not price_text:
+                                p_el = card.locator("[class*='price'], [class*='amount'], span").all_inner_texts()
+                                for pt in p_el:
+                                    if any(char.isdigit() for char in pt) and ('€' in pt or len(pt) < 6):
+                                        price_text = pt.strip()
                                         break
 
-                            # Αναζήτηση τιμής με πολλαπλάσια κριτήρια
-                            for p_sel in [".price", ".current-price", ".value", "[class*='price']", "[class*='amount']", "span"]:
-                                el = card.locator(p_sel).first
-                                if el.count() > 0:
-                                    txt = el.inner_text().strip()
-                                    if any(char.isdigit() for char in txt) and ('€' in txt or len(txt) < 8):
-                                        price_el = txt
-                                        break
-
-                            # Αναζήτηση παλιάς τιμής
-                            for op_sel in [".old-price", ".original-price", "del", "[class*='old']"]:
-                                el = card.locator(op_sel).first
-                                if el.count() > 0:
-                                    old_price_el = el.inner_text().strip()
-                                    break
-
-                            # Εικόνα προϊόντος
+                            # Εικόνα
                             img_el = card.locator("img").first
                             if img_el.count() > 0:
                                 src = img_el.get_attribute("src") or img_el.get_attribute("data-src")
                                 if src and src.startswith("http"):
                                     img_src = src
 
-                            if title_el and price_el:
-                                # Αποφυγή διπλοεγγραφών
-                                if not any(o['title'] == title_el for o in market_offers):
+                            # Αν βρέθηκαν έγκυρα στοιχεία
+                            if title_text and price_text:
+                                if not any(o['title'] == title_text for o in market_offers):
                                     market_offers.append({
                                         "supermarket": market_name,
-                                        "title": title_el,
-                                        "price": price_el,
-                                        "old_price": old_price_el or "",
+                                        "title": title_text,
+                                        "price": price_text,
+                                        "old_price": old_price_text,
                                         "image": img_src if img_src else "https://via.placeholder.com/150?text=Offer",
                                         "date": datetime.now().strftime("%Y-%m-%d")
                                     })
@@ -112,7 +116,7 @@ def scrape_all_supermarkets():
                         all_offers.extend(market_offers)
                         print(f"  [OK] Επιτυχής εξαγωγή {len(market_offers)} προϊόντων από {market_name}.")
                     else:
-                        print(f"  [!] Δεν βρέθηκαν έγκυρα προϊόντα στο {market_name}.")
+                        print(f"  [!] Δεν εξήχθησαν προϊόντα από {market_name}.")
 
                 except Exception as ex:
                     print(f"  [X] Σφάλμα στο {market_name}: {ex}")
