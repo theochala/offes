@@ -3,116 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperMarket Offers Finder</title>
+    <title>SuperOffer Finder - Σύγκριση Προσφορών</title>
+    <!-- Tailwind CSS για γρήγορο και όμορφο σχεδιασμό -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen font-sans">
+<body class="bg-gray-100 min-h-screen">
 
     <!-- Header -->
     <header class="bg-blue-600 text-white py-6 shadow-md">
         <div class="container mx-auto px-4 text-center">
             <h1 class="text-3xl font-bold">🛒 SuperOffer Finder</h1>
-            <p class="text-blue-100 text-sm mt-1">Σύγκριση προσφορών από όλα τα Σούπερ Μάρκετ</p>
+            <p class="mt-2 text-blue-100">Σύγκριση προσφορών από όλα τα Σούπερ Μάρκετ</p>
         </div>
     </header>
 
-    <!-- Filters & Search -->
+    <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
-        <div class="bg-white p-4 rounded-xl shadow mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
-            <!-- Search Bar -->
-            <input 
-                type="text" 
-                id="searchInput" 
-                placeholder="Αναζήτηση προϊόντος (π.χ. Γάλα, Καφές)..." 
-                class="w-full md:w-1/2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                oninput="filterProducts()"
-            >
-            
-            <!-- Supermarket Filter -->
-            <select id="marketFilter" onchange="filterProducts()" class="w-full md:w-1/3 p-3 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="ALL">Όλα τα Σούπερ Μάρκετ</option>
-                <option value="Σκλαβενίτης">Σκλαβενίτης</option>
-                <option value="ΑΒ Βασιλόπουλος">ΑΒ Βασιλόπουλος</option>
-                <option value="Μασούτης">Μασούτης</option>
-                <option value="MyMarket">MyMarket</option>
-            </select>
+        
+        <!-- Φίλτρα Σούπερ Μάρκετ -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8" id="filter-buttons">
+            <button onclick="filterOffers('all')" class="filter-btn px-4 py-2 bg-blue-600 text-white rounded-full font-semibold shadow transition hover:bg-blue-700">Όλα τα Σούπερ Μάρκετ</button>
+            <button onclick="filterOffers('Σκλαβενίτης')" class="filter-btn px-4 py-2 bg-white text-gray-700 rounded-full font-semibold shadow transition hover:bg-gray-200">Σκλαβενίτης</button>
+            <button onclick="filterOffers('ΑΒ Βασιλόπουλος')" class="filter-btn px-4 py-2 bg-white text-gray-700 rounded-full font-semibold shadow transition hover:bg-gray-200">ΑΒ Βασιλόπουλος</button>
+            <button onclick="filterOffers('Μασούτης')" class="filter-btn px-4 py-2 bg-white text-gray-700 rounded-full font-semibold shadow transition hover:bg-gray-200">Μασούτης</button>
+            <button onclick="filterOffers('MyMarket')" class="filter-btn px-4 py-2 bg-white text-gray-700 rounded-full font-semibold shadow transition hover:bg-gray-200">MyMarket</button>
+            <button onclick="filterOffers('Lidl')" class="filter-btn px-4 py-2 bg-white text-gray-700 rounded-full font-semibold shadow transition hover:bg-gray-200">Lidl</button>
         </div>
 
-        <!-- Products Grid -->
-        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Τα προϊόντα φορτώνονται δυναμικά από την JS -->
+        <!-- Λίστα Προσφορών -->
+        <div id="offers-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Εδώ θα φορτωθούν δυναμικά οι προσφορές -->
+            <p class="text-center col-span-full text-gray-500">Φόρτωση προσφορών...</p>
         </div>
     </main>
 
+    <!-- JavaScript για ανάγνωση του JSON -->
     <script>
-        let allProducts = [];
+        let allOffersData = [];
 
-        // Φόρτωση δεδομένων από το JSON
-        async function loadProducts() {
+        async function loadOffers() {
             try {
-                const response = await fetch('offers.json');
-                allProducts = await response.json();
-                renderProducts(allProducts);
+                // Διαβάζει το αρχείο clean_offers.json από τον server σου
+                const response = await fetch('clean_offers.json?' + new Date().getTime());
+                if (!response.ok) throw new Error('Αποτυχία φόρτωσης αρχείου');
+                
+                const data = await response.json();
+                allOffersData = data.offers || [];
+                
+                displayOffers(allOffersData);
             } catch (error) {
-                console.error("Σφάλμα φόρτωσης δεδομένων:", error);
+                console.error(error);
+                document.getElementById('offers-container').innerHTML = `
+                    <p class="text-center col-span-full text-red-500 font-semibold">Δεν βρέθηκαν προσφορές ή απέτυχε η σύνδεση με το αρχείο.</p>
+                `;
             }
         }
 
-        // Εμφάνιση προϊόντων
-        function renderProducts(products) {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
+        function displayOffers(offers) {
+            const container = document.getElementById('offers-container');
+            container.innerHTML = '';
 
-            if (products.length === 0) {
-                grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8">Δεν βρέθηκαν προσφορές.</p>`;
+            if (offers.length === 0) {
+                container.innerHTML = `<p class="text-center col-span-full text-gray-500">Δεν βρέθηκαν προσφορές.</p>`;
                 return;
             }
 
-            products.forEach(p => {
-                const card = `
-                    <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-5 flex flex-col justify-between relative border">
-                        <span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                            -${p.discount_percent}%
-                        </span>
-                        <div>
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-40 object-cover rounded-md mb-4">
-                            <span class="text-xs text-gray-400 font-semibold uppercase">${p.category}</span>
-                            <h2 class="font-bold text-lg text-gray-800 leading-snug">${p.name}</h2>
-                            <p class="text-sm text-gray-500 mb-3">${p.brand}</p>
-                        </div>
-                        
-                        <div class="border-t pt-3 flex justify-between items-end">
-                            <div>
-                                <span class="text-xs text-gray-500 block">${p.supermarket}</span>
-                                <span class="text-gray-400 line-through text-sm">€${p.original_price.toFixed(2)}</span>
-                                <span class="text-2xl font-black text-green-600 block">€${p.offer_price.toFixed(2)}</span>
-                            </div>
-                            <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition">
-                                Σύγκριση
-                            </button>
-                        </div>
+            offers.forEach(offer => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg shadow-md p-5 flex flex-col justify-between border border-gray-200 hover:shadow-lg transition';
+                
+                card.innerHTML = `
+                    <div>
+                        <span class="text-xs font-bold uppercase px-2 py-1 bg-blue-100 text-blue-800 rounded-full">${offer.supermarket}</span>
+                        <h3 class="text-lg font-semibold text-gray-800 mt-3">${offer.title}</h3>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between">
+                        <span class="text-xl font-bold text-green-600">${offer.price}</span>
+                        <span class="text-xs text-gray-400">${offer.date || ''}</span>
                     </div>
                 `;
-                grid.innerHTML += card;
+                container.appendChild(card);
             });
         }
 
-        // Φιλτράρισμα
-        function filterProducts() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const selectedMarket = document.getElementById('marketFilter').value;
-
-            const filtered = allProducts.filter(p => {
-                const matchesSearch = p.name.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query);
-                const matchesMarket = selectedMarket === "ALL" || p.supermarket === selectedMarket;
-                return matchesSearch && matchesMarket;
+        function filterOffers(supermarketName) {
+            // Αλλαγή στυλ κουμπιών
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-white', 'text-gray-700');
             });
+            event.target.classList.remove('bg-white', 'text-gray-700');
+            event.target.classList.add('bg-blue-600', 'text-white');
 
-            renderProducts(filtered);
+            // Φιλτράρισμα δεδομένων
+            if (supermarketName === 'all') {
+                displayOffers(allOffersData);
+            } else {
+                const filtered = allOffersData.filter(item => item.supermarket === supermarketName);
+                displayOffers(filtered);
+            }
         }
 
-        // Εκκίνηση
-        loadProducts();
+        // Φόρτωση των προσφορών όταν ανοίξει η σελίδα
+        window.onload = loadOffers;
     </script>
 </body>
 </html>
