@@ -4,6 +4,7 @@ from datetime import datetime
 from ftplib import FTP
 from playwright.sync_api import sync_playwright
 
+# Σύνδεσμοι Προσφορών Σούπερ Μάρκετ
 TARGET_URLS = {
     "Μασούτης": "https://www.masoutis.gr/offers",
     "Σκλαβενίτης": "https://www.sklavenitis.gr/sylloges/prosfores/",
@@ -18,7 +19,7 @@ TARGET_URLS = {
 
 
 def scrape_all_supermarkets():
-  print("Ξεκινάει η συλλογή προϊόντων (εικόνες & τιμές)...")
+  print("Ξεκινάει η συλλογή πραγματικών προϊόντων από τα links...")
   all_offers = []
 
   with sync_playwright() as p:
@@ -42,8 +43,9 @@ def scrape_all_supermarkets():
     for market_name, url in TARGET_URLS.items():
       print(f"-> Σάρωση σελίδας {market_name}: {url}")
       try:
-        page.goto(url, wait_until="domcontentloaded", timeout=60000)
-        page.wait_for_timeout(4000)
+        # Αυστηρό timeout 15 δευτερολέπτων για να μην κολλάει ποτέ
+        page.goto(url, wait_until="domcontentloaded", timeout=15000)
+        page.wait_for_timeout(2000)
 
         market_offers = []
         product_cards = page.locator(
@@ -51,7 +53,7 @@ def scrape_all_supermarkets():
         ).all()
 
         if product_cards:
-          for card in product_cards:
+          for card in product_cards[:15]:  # Επεξεργασία των πρώτων 15 για ταχύτητα
             try:
               title_el = card.locator(
                   "h2, h3, .product-title, .title, a"
@@ -59,8 +61,6 @@ def scrape_all_supermarkets():
               price_el = card.locator(
                   ".price, .current-price, .value, span"
               ).first.inner_text()
-
-              # Προσπάθεια εύρεσης παλιάς (κανονικής) τιμής και εικόνας
               old_price_el = card.locator(
                   ".old-price, .original-price, del"
               ).first.inner_text()
@@ -82,8 +82,8 @@ def scrape_all_supermarkets():
                     "supermarket": market_name,
                     "title": clean_title,
                     "price": clean_price,
-                    "old_price": clean_old_price,  # Κανονική τιμή (αν υπάρχει)
-                    "image": clean_img,  # URL εικόνας προϊόντος
+                    "old_price": clean_old_price,
+                    "image": clean_img,
                     "date": datetime.now().strftime("%Y-%m-%d"),
                 })
             except:
@@ -96,13 +96,21 @@ def scrape_all_supermarkets():
               f" {market_name}."
           )
         else:
-          print(f"  [!] Δεν εντοπίστηκαν προϊόντα στο {market_name}.")
+          print(
+              f"  [!] Δεν εντοπίστηκαν ανοιχτά προϊόντα στο {market_name}"
+              " (πιθανό bot block)."
+          )
 
       except Exception as e:
-        print(f"  [X] Σφάλμα φόρτωσης στο {market_name}: {e}")
+        print(
+            f"  [X] Το {market_name} άργησε πολύ ή απέκλεισε την πρόσβαση."
+            " Συνεχίζουμε..."
+        )
+        continue
 
     browser.close()
 
+  # Δομή του JSON αρχείου
   data = {
       "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
       "total_offers": len(all_offers),
@@ -113,6 +121,10 @@ def scrape_all_supermarkets():
   with open(filename, "w", encoding="utf-8") as f:
     json.dump(data, f, ensure_ascii=False, indent=4)
 
+  print(
+      f"Δημιουργήθηκε το {filename} με συνολικά {len(all_offers)} πραγματικά"
+      " προϊόντα."
+  )
   return filename
 
 
@@ -122,27 +134,34 @@ def upload_all_to_ftp():
   ftp_pass = os.getenv("FTP_PASSWORD")
 
   if not all([ftp_server, ftp_user, ftp_pass]):
+    print("Σφάλμα: Λείπουν τα στοιχεία FTP.")
     return
 
+  print(f"Σύνδεση στο FTP: {ftp_server}...")
   try:
     ftp = FTP(ftp_server)
     ftp.login(user=ftp_user, passwd=ftp_pass)
+
+    # Πλοήγηση στον σωστό φάκελο
     ftp.cwd("prosfores.infy.click")
     ftp.cwd("htdocs")
+    print(f"Τελικός φάκελος FTP: {ftp.pwd()}")
 
     for filename in os.listdir("."):
       if os.path.isfile(filename) and not filename.startswith("."):
         if filename == "scraper.py":
           continue
+
         with open(filename, "rb") as f:
           ftp.storbinary(f"STOR {filename}", f)
+        print(f"Ανέβηκε στο FTP: {filename}")
 
     ftp.quit()
-    print("Η μεταφόρτωση ολοκληρώθηκε!")
+    print("Η μεταφόρτωση ολοκληρώθηκε επιτυχώς!")
   except Exception as e:
     print(f"Σφάλμα FTP: {e}")
 
 
 if __name__ == "__main__":
-  scrape_all_supermarkets()
+  json_file = scrape_all_supermarkets()
   upload_all_to_ftp()
