@@ -4,8 +4,9 @@ from datetime import datetime
 from ftplib import FTP
 from playwright.sync_api import sync_playwright
 
+# Ενημερωμένα και πιο άμεστα URLs προσφορών για όλα τα καταστήματα
 TARGET_URLS = {
-    "Μασούτης": "https://www.masoutis.gr/offers",
+    "Μασούτης": "https://www.masoutis.gr/offers/en",
     "Σκλαβενίτης": "https://www.sklavenitis.gr/sylloges/prosfores/",
     "Lidl": "https://www.lidl-hellas.gr/c/store/evdomadiaies-epiloges-26kw45/a10106403",
     "MyMarket": "https://www.mymarket.gr/offers?srsltid=AYCX9vJAEuUd6A9J70LsUgVl9eSugbCgIdwLfjS928We_Oc2AeBL0hoP",
@@ -13,7 +14,7 @@ TARGET_URLS = {
 }
 
 def scrape_all_supermarkets():
-    print("=== [1/3] Εκκίνηση Τελικού Scraper ===")
+    print("=== [1/3] Εκκίνηση Πλήρους Scraper (Και για τα 5 Μαρκέτ) ===")
     all_offers = []
 
     try:
@@ -44,7 +45,7 @@ def scrape_all_supermarkets():
                     page.goto(url, wait_until="networkidle", timeout=35000)
                     page.wait_for_timeout(4000)
 
-                    # Αυτόματη αποδοχή cookies αν υπάρχουν
+                    # Αυτόματη αποδοχή cookies
                     try:
                         cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler").first
                         if cookie_btn.count() > 0:
@@ -53,24 +54,18 @@ def scrape_all_supermarkets():
                     except:
                         pass
                     
-                    # Σταδιακό scroll για ενεργοποίηση lazy loading
+                    # Πολλαπλό scroll για lazy loading
                     for _ in range(5):
                         page.mouse.wheel(0, 2000)
                         page.wait_for_timeout(1500)
 
                     market_offers = []
 
-                    # Ειδικός εντοπισμός ανάλογα με το κατάστημα
-                    if "masoutis" in url:
-                        cards = page.locator("div.product-item, div[class*='productCard'], article, div.item").all()
-                    elif "sklavenitis" in url:
-                        cards = page.locator("div.product-item, article, div[class*='product'], div[class*='Card']").all()
-                    else:
-                        cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product']").all()
-
+                    # Ευρεία αναζήτηση στοιχείων για όλες τις δομές
+                    cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product'], li[class*='item'], div[class*='Grid']").all()
                     print(f"  [i] Εντοπίστηκαν {len(cards)} υποψήφια στοιχεία στο {market_name}.")
 
-                    for card in cards[:80]:
+                    for card in cards[:100]:
                         try:
                             title_text = ""
                             price_text = ""
