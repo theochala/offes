@@ -4,7 +4,6 @@ from datetime import datetime
 from ftplib import FTP
 from playwright.sync_api import sync_playwright
 
-# Σύνδεσμοι Προσφορών Σούπερ Μάρκετ
 TARGET_URLS = {
     "Μασούτης": "https://www.masoutis.gr/offers",
     "Σκλαβενίτης": "https://www.sklavenitis.gr/sylloges/prosfores/",
@@ -19,7 +18,7 @@ TARGET_URLS = {
 
 
 def scrape_all_supermarkets():
-  print("Ξεκινάει η συλλογή πραγματικών προϊόντων από τα links...")
+  print("Ξεκινάει η συλλογή προϊόντων (εικόνες & τιμές)...")
   all_offers = []
 
   with sync_playwright() as p:
@@ -44,14 +43,9 @@ def scrape_all_supermarkets():
       print(f"-> Σάρωση σελίδας {market_name}: {url}")
       try:
         page.goto(url, wait_until="domcontentloaded", timeout=60000)
-        page.wait_for_timeout(
-            4000
-        )  # Αναμονή για να φορτώσει η δυναμική JavaScript
+        page.wait_for_timeout(4000)
 
         market_offers = []
-
-        # Δοκιμή εύρεσης προϊόντων με κοινούς selectors e-shop (κάρτες προϊόντων)
-        # Αναζητούμε στοιχεία που ταιριάζουν σε τίτλους και τιμές προϊόντων
         product_cards = page.locator(
             ".product-item, .item-card, article, [data-product-id]"
         ).all()
@@ -59,17 +53,27 @@ def scrape_all_supermarkets():
         if product_cards:
           for card in product_cards:
             try:
-              # Προσπάθεια εξαγωγής τίτλου
               title_el = card.locator(
                   "h2, h3, .product-title, .title, a"
               ).first.inner_text()
-              # Προσπάθεια εξαγωγής τιμής
               price_el = card.locator(
                   ".price, .current-price, .value, span"
               ).first.inner_text()
 
+              # Προσπάθεια εύρεσης παλιάς (κανονικής) τιμής και εικόνας
+              old_price_el = card.locator(
+                  ".old-price, .original-price, del"
+              ).first.inner_text()
+              img_el = card.locator("img").first.get_attribute("src")
+
               clean_title = title_el.strip() if title_el else ""
               clean_price = price_el.strip() if price_el else ""
+              clean_old_price = old_price_el.strip() if old_price_el else ""
+              clean_img = (
+                  img_el
+                  if img_el
+                  else "https://via.placeholder.com/150?text=No+Image"
+              )
 
               if len(clean_title) > 2 and any(
                   char.isdigit() for char in clean_price
@@ -78,32 +82,12 @@ def scrape_all_supermarkets():
                     "supermarket": market_name,
                     "title": clean_title,
                     "price": clean_price,
+                    "old_price": clean_old_price,  # Κανονική τιμή (αν υπάρχει)
+                    "image": clean_img,  # URL εικόνας προϊόντος
                     "date": datetime.now().strftime("%Y-%m-%d"),
                 })
             except:
               continue
-
-        # Αν οι ειδικές κάρτες δεν απέδωσαν, παίρνουμε γενικούς τίτλους κειμένου από τη σελίδα προσφορών
-        if not market_offers:
-          titles = page.locator(
-              "h2, h3, h4, span.title, a.title"
-          ).all_inner_texts()
-          for t in titles:
-            t_clean = t.strip()
-            if (
-                len(t_clean) > 5
-                and t_clean not in [o["title"] for o in market_offers]
-                and not any(
-                    word in t_clean.lower()
-                    for word in ["καλάθι", "σούπερ", "αρχική", "σύνδεση"]
-                )
-            ):
-              market_offers.append({
-                  "supermarket": market_name,
-                  "title": t_clean,
-                  "price": "Δείτε το site",
-                  "date": datetime.now().strftime("%Y-%m-%d"),
-              })
 
         if market_offers:
           all_offers.extend(market_offers)
@@ -112,17 +96,13 @@ def scrape_all_supermarkets():
               f" {market_name}."
           )
         else:
-          print(
-              f"  [!] Δεν εντοπίστηκαν ανοιχτά προϊόντα στο {market_name}"
-              " (πιθανή προστασία bot)."
-          )
+          print(f"  [!] Δεν εντοπίστηκαν προϊόντα στο {market_name}.")
 
       except Exception as e:
         print(f"  [X] Σφάλμα φόρτωσης στο {market_name}: {e}")
 
     browser.close()
 
-  # ΔΕΝ προσθέτουμε ψεύτικα δεδομένα αν είναι κενή η λίστα. Θα γράφει ακριβώς ό,τι βρήκε.
   data = {
       "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
       "total_offers": len(all_offers),
@@ -133,10 +113,6 @@ def scrape_all_supermarkets():
   with open(filename, "w", encoding="utf-8") as f:
     json.dump(data, f, ensure_ascii=False, indent=4)
 
-  print(
-      f"Δημιουργήθηκε το {filename} με συνολικά {len(all_offers)} πραγματικά"
-      " προϊόντα."
-  )
   return filename
 
 
@@ -146,14 +122,11 @@ def upload_all_to_ftp():
   ftp_pass = os.getenv("FTP_PASSWORD")
 
   if not all([ftp_server, ftp_user, ftp_pass]):
-    print("Σφάλμα: Λείπουν τα στοιχεία FTP.")
     return
 
-  print(f"Σύνδεση στο FTP: {ftp_server}...")
   try:
     ftp = FTP(ftp_server)
     ftp.login(user=ftp_user, passwd=ftp_pass)
-
     ftp.cwd("prosfores.infy.click")
     ftp.cwd("htdocs")
 
@@ -161,10 +134,8 @@ def upload_all_to_ftp():
       if os.path.isfile(filename) and not filename.startswith("."):
         if filename == "scraper.py":
           continue
-
         with open(filename, "rb") as f:
           ftp.storbinary(f"STOR {filename}", f)
-        print(f"Ανέβηκε στο FTP: {filename}")
 
     ftp.quit()
     print("Η μεταφόρτωση ολοκληρώθηκε!")
