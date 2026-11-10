@@ -13,7 +13,7 @@ TARGET_URLS = {
 }
 
 def scrape_all_supermarkets():
-    print("=== [1/3] Εκκίνηση Ευέλικτου Scraper ===")
+    print("=== [1/3] Εκκίνηση Διορθωμένου Scraper ===")
     all_offers = []
 
     try:
@@ -41,49 +41,52 @@ def scrape_all_supermarkets():
             for market_name, url in TARGET_URLS.items():
                 print(f"-> Φόρτωση σελίδας {market_name}: {url}")
                 try:
-                    page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                    page.goto(url, wait_until="networkidle", timeout=35000)
+                    page.wait_for_timeout(3000)
+
+                    # Προσπάθεια κλεισίματος παραθύρων cookies αν εμφανιστούν
+                    try:
+                        cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler").first
+                        if cookie_btn.count() > 0:
+                            cookie_btn.click(timeout=3000)
+                            page.wait_for_timeout(1000)
+                    except:
+                        pass
                     
                     # Scroll για φόρτωση lazy loading
-                    for _ in range(3):
-                        page.mouse.wheel(0, 1500)
+                    for _ in range(4):
+                        page.mouse.wheel(0, 2000)
                         page.wait_for_timeout(1500)
 
                     market_offers = []
 
-                    # Πιο ευρύς εντοπισμός στοιχείων (όλα τα articles, divs και list items)
-                    cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product'], li[class*='item']").all()
+                    # Εντοπισμός στοιχείων (συμπεριλαμβανομένων links και containers)
+                    cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product'], li[class*='item'], div[class*='Grid']").all()
                     print(f"  [i] Εντοπίστηκαν {len(cards)} υποψήφια στοιχεία στο {market_name}.")
 
-                    for card in cards[:40]: # Εξέταση έως 40 στοιχείων ανά μάρκα
+                    for card in cards[:60]:
                         try:
                             title_text = ""
                             price_text = ""
                             old_price_text = ""
                             img_src = ""
 
-                            # 1. Βρες οποιοδήποτε κείμενο τίτλου (από h2, h3, a, span με κλάσεις τίτλου)
                             all_texts = card.locator("h2, h3, h4, a, span, p").all_inner_texts()
                             
                             possible_titles = []
-                            possible_prices = []
-
                             for txt in all_texts:
                                 t = txt.strip()
                                 if not t:
                                     continue
-                                # Αν περιέχει € ή σύμβολο τιμής και αριθμό, το θεωρούμε τιμή
                                 if any(char.isdigit() for char in t) and ('€' in t or '£' in t or ',' in t or '.' in t) and len(t) < 10:
                                     if not price_text:
                                         price_text = t
-                                # Αλλιώς, αν είναι αρκετά μεγάλο για τίτλο προϊόντος
-                                elif len(t) > 5 and not any(w in t.lower() for w in ["καλάθι", "σούπερ", "αρχική", "σύνδεση", "προσφορές"]):
+                                elif len(t) > 4 and not any(w in t.lower() for w in ["καλάθι", "σούπερ", "αρχική", "σύνδεση", "προσφορές", "cookies"]):
                                     possible_titles.append(t)
 
-                            # Επιλέγουμε τον μεγαλύτερο/καλύτερο τίτλο από τους διαθέσιμους
                             if possible_titles:
                                 title_text = max(possible_titles, key=len)
 
-                            # Αν δεν βρήκε τιμή με το παραπάνω, δοκιμάζουμε πιο στοχευμένα
                             if not price_text:
                                 p_el = card.locator("[class*='price'], [class*='amount'], span").all_inner_texts()
                                 for pt in p_el:
@@ -91,14 +94,12 @@ def scrape_all_supermarkets():
                                         price_text = pt.strip()
                                         break
 
-                            # Εικόνα
                             img_el = card.locator("img").first
                             if img_el.count() > 0:
                                 src = img_el.get_attribute("src") or img_el.get_attribute("data-src")
                                 if src and src.startswith("http"):
                                     img_src = src
 
-                            # Αν βρέθηκαν έγκυρα στοιχεία
                             if title_text and price_text:
                                 if not any(o['title'] == title_text for o in market_offers):
                                     market_offers.append({
