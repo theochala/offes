@@ -13,7 +13,7 @@ TARGET_URLS = {
 }
 
 def scrape_all_supermarkets():
-    print("=== [1/3] Εκκίνηση Διορθωμένου Scraper ===")
+    print("=== [1/3] Εκκίνηση Τελικού Scraper ===")
     all_offers = []
 
     try:
@@ -42,29 +42,35 @@ def scrape_all_supermarkets():
                 print(f"-> Φόρτωση σελίδας {market_name}: {url}")
                 try:
                     page.goto(url, wait_until="networkidle", timeout=35000)
-                    page.wait_for_timeout(3000)
+                    page.wait_for_timeout(4000)
 
-                    # Προσπάθεια κλεισίματος παραθύρων cookies αν εμφανιστούν
+                    # Αυτόματη αποδοχή cookies αν υπάρχουν
                     try:
                         cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler").first
                         if cookie_btn.count() > 0:
-                            cookie_btn.click(timeout=3000)
+                            cookie_btn.click(timeout=2000)
                             page.wait_for_timeout(1000)
                     except:
                         pass
                     
-                    # Scroll για φόρτωση lazy loading
-                    for _ in range(4):
+                    # Σταδιακό scroll για ενεργοποίηση lazy loading
+                    for _ in range(5):
                         page.mouse.wheel(0, 2000)
                         page.wait_for_timeout(1500)
 
                     market_offers = []
 
-                    # Εντοπισμός στοιχείων (συμπεριλαμβανομένων links και containers)
-                    cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product'], li[class*='item'], div[class*='Grid']").all()
+                    # Ειδικός εντοπισμός ανάλογα με το κατάστημα
+                    if "masoutis" in url:
+                        cards = page.locator("div.product-item, div[class*='productCard'], article, div.item").all()
+                    elif "sklavenitis" in url:
+                        cards = page.locator("div.product-item, article, div[class*='product'], div[class*='Card']").all()
+                    else:
+                        cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product']").all()
+
                     print(f"  [i] Εντοπίστηκαν {len(cards)} υποψήφια στοιχεία στο {market_name}.")
 
-                    for card in cards[:60]:
+                    for card in cards[:80]:
                         try:
                             title_text = ""
                             price_text = ""
@@ -81,7 +87,7 @@ def scrape_all_supermarkets():
                                 if any(char.isdigit() for char in t) and ('€' in t or '£' in t or ',' in t or '.' in t) and len(t) < 10:
                                     if not price_text:
                                         price_text = t
-                                elif len(t) > 4 and not any(w in t.lower() for w in ["καλάθι", "σούπερ", "αρχική", "σύνδεση", "προσφορές", "cookies"]):
+                                elif len(t) > 3 and not any(w in t.lower() for w in ["καλάθι", "σούπερ", "αρχική", "σύνδεση", "προσφορές", "cookies", "masoutis", "sklavenitis"]):
                                     possible_titles.append(t)
 
                             if possible_titles:
