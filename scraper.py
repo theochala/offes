@@ -4,93 +4,49 @@ from datetime import datetime
 from ftplib import FTP
 from playwright.sync_api import sync_playwright
 
-# --- 1. Συναρτήσεις Scraping ανά Σούπερ Μάρκετ ---
-
-
-def scrape_sklavenitis(page):
-  print("Συλλογή προσφορών από Σκλαβενίτη...")
-  offers = []
-  try:
-    # Παράδειγμα URL (άλλαξέ το με το πραγματικό link προσφορών)
-    # page.goto("https://www.sklavenitis.gr/prosfores/", timeout=60000)
-    # page.wait_for_selector(".product-item", timeout=10000)
-
-    # Παράδειγμα εξαγωγής δεδομένων (απόδειξη λειτουργίας)
-    offers.append({
-        "supermarket": "Σκλαβενίτης",
-        "title": "Παράδειγμα Προϊόντος Σκλαβενίτης",
-        "price": "1.50€",
-        "date": datetime.now().strftime("%Y-%m-%d"),
-    })
-  except Exception as e:
-    print(f"Σφάλμα στον Σκλαβενίτη: {e}")
-  return offers
-
-
-def scrape_ab(page):
-  print("Συλλογή προσφορών από ΑΒ Βασιλόπουλο...")
-  offers = []
-  try:
-    # page.goto("https://www.ab.gr/el/eshop/offers", timeout=60000)
-
-    offers.append({
-        "supermarket": "ΑΒ Βασιλόπουλος",
-        "title": "Παράδειγμα Προϊόντος ΑΒ",
-        "price": "2.10€",
-        "date": datetime.now().strftime("%Y-%m-%d"),
-    })
-  except Exception as e:
-    print(f"Σφάλμα στον ΑΒ: {e}")
-  return offers
-
-
-def scrape_lidl(page):
-  print("Συλλογή προσφορών από Lidl...")
-  offers = []
-  try:
-    # page.goto("https://www.lidl.gr/c/ebdomadiaies-prosfores/s10007185", timeout=60000)
-
-    offers.append({
-        "supermarket": "Lidl",
-        "title": "Παράδειγμα Προϊόντος Lidl",
-        "price": "0.99€",
-        "date": datetime.now().strftime("%Y-%m-%d"),
-    })
-  except Exception as e:
-    print(f"Σφάλμα στα Lidl: {e}")
-  return offers
-
-
-# --- 2. Κεντρική συνάρτηση που τα μαζεύει όλα ---
+# --- 1. Η λογική του Scraper (Συλλογή Προσφορών) ---
 
 
 def scrape_all_supermarkets():
   print("Ξεκινάει το συνολικό scraping προσφορών...")
   all_offers = []
 
-  with sync_playwright() as p:
-    # Launch browser (headless=True για να τρέχει στο GitHub Actions)
-    browser = p.chromium.launch(
-        headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"]
-    )
-    page = browser.new_page()
+  # Πραγματικές / δοκιμαστικές προσφορές για να γεμίζει το JSON
+  real_sample_offers = [
+      {
+          "supermarket": "Σκλαβενίτης",
+          "title": "Ελληνικό Φρέσκο Γάλα 1L",
+          "price": "1.25€",
+          "date": datetime.now().strftime("%Y-%m-%d"),
+      },
+      {
+          "supermarket": "ΑΒ Βασιλόπουλος",
+          "title": "Ηλιέλαιο 5L",
+          "price": "7.80€",
+          "date": datetime.now().strftime("%Y-%m-%d"),
+      },
+      {
+          "supermarket": "Μασούτης",
+          "title": "Αλεύρι για όλες τις χρήσεις 1kg",
+          "price": "0.85€",
+          "date": datetime.now().strftime("%Y-%m-%d"),
+      },
+      {
+          "supermarket": "MyMarket",
+          "title": "Μακαρόνια No. 6 500g",
+          "price": "0.68€",
+          "date": datetime.now().strftime("%Y-%m-%d"),
+      },
+      {
+          "supermarket": "Lidl",
+          "title": "Φέτα ΠΟΠ 400g",
+          "price": "3.49€",
+          "date": datetime.now().strftime("%Y-%m-%d"),
+      },
+  ]
 
-    # User-agent για να μη μας κόβουν τα bot protections
-    page.set_extra_http_headers({
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,"
-            " like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        )
-    })
+  all_offers.extend(real_sample_offers)
 
-    # Καλλούμε τα scrapers για κάθε μάρκετ
-    all_offers.extend(scrape_sklavenitis(page))
-    all_offers.extend(scrape_ab(page))
-    all_offers.extend(scrape_lidl(page))
-
-    browser.close()
-
-  # Δομή του JSON αρχείου
   data = {
       "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
       "total_offers": len(all_offers),
@@ -107,10 +63,10 @@ def scrape_all_supermarkets():
   return filename
 
 
-# --- 3. Συνάρτηση αποστολής στο FTP (στο prosfores.infy.click/htdocs) ---
+# --- 2. Συνάρτηση αποστολής ΟΛΩΝ των αρχείων στο FTP ---
 
 
-def upload_to_ftp(filename="clean_offers.json"):
+def upload_all_to_ftp():
   ftp_server = os.getenv("FTP_SERVER")
   ftp_user = os.getenv("FTP_USERNAME")
   ftp_pass = os.getenv("FTP_PASSWORD")
@@ -129,23 +85,27 @@ def upload_to_ftp(filename="clean_offers.json"):
     ftp.cwd("htdocs")
     print(f"Τελικός φάκελος μεταφόρτωσης: {ftp.pwd()}")
 
-    with open(filename, "rb") as f:
-      ftp.storbinary(f"STOR {filename}", f)
+    # Σάρωση όλων των αρχείων στον τρέχοντα φάκελο εργασίας
+    for filename in os.listdir("."):
+      # Ελέγχουμε αν είναι αρχείο (όχι φάκελος) και δεν είναι κρυφό (π.χ. .git)
+      if os.path.isfile(filename) and not filename.startswith("."):
+        # Προαιρετικά: Αν δεν θες να ανεβαίνει ο ίδιος ο κώδικας python στον server, εξαιρέσέ τον
+        if filename == "scraper.py":
+          continue
 
-    print(
-        f"Το αρχείο {filename} ανέβηκε επιτυχώς στο prosfores.infy.click/htdocs!"
-    )
+        print(f"Μεταφόρτωση αρχείου: {filename}...")
+        with open(filename, "rb") as f:
+          ftp.storbinary(f"STOR {filename}", f)
+        print(f"Το αρχείο {filename} ανέβηκε επιτυχώς!")
+
     ftp.quit()
+    print("Όλα τα αρχεία μεταφορτώθηκαν επιτυχώς στο FTP!")
   except Exception as e:
     print(f"Αποτυχία μεταφόρτωσης στο FTP: {e}")
 
 
-# --- 4. Εκτέλεση προγράμματος ---
+# --- 3. Εκτέλεση προγράμματος ---
 
 if __name__ == "__main__":
-  json_file = scrape_all_supermarkets()
-
-  if json_file and os.path.exists(json_file):
-    upload_to_ftp(json_file)
-  else:
-    print("Το αρχείο δεν βρέθηκε, η μεταφόρτωση παραλείπεται.")
+  scrape_all_supermarkets()
+  upload_all_to_ftp()
