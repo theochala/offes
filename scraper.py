@@ -11,7 +11,7 @@ def clean_title(title):
     if not title:
         return ""
     
-    # Καθαρισμός από τυχόν τιμές, ποσά ή σύμβολα ευρώ που μπορεί να κόλλησαν
+    # Καθαρισμός από τυχόν τιμές, ποσά ή σύμβολα ευρώ
     title = re.sub(r'\d+[\.,]\d+\s*€', '', title)
     title = re.sub(r'\d+\s*€', '', title)
     
@@ -41,9 +41,8 @@ def parse_products(raw_products, supermarket_name):
         text = item["text"]
         img_url = item["image"]
         
-        # Ανίχνευση τιμής ξεχωριστά για να υπάρχει στο τελικό αντικείμενο
         prices = re.findall(r'(\d+[\.,]\d+\s*€)', text)
-        title = clean_title(item["title"])  # Παίρνουμε αποκλειστικά τον καθαρό τίτλο
+        title = clean_title(item["title"])
         price_val = prices[-1] if prices else ""
         
         if len(title) > 3 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
@@ -58,7 +57,6 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Απόλυτα στοχευμένη εξαγωγή τίτλου για τον Σκλαβενίτη ---
 def logic_sklavenitis(page, name, context=None):
     print("-> Στοχευμένη ανάγνωση τίτλων Σκλαβενίτη...")
     
@@ -78,7 +76,6 @@ def logic_sklavenitis(page, name, context=None):
         cards.forEach(card => {
             const text = card.innerText;
             if (text && text.includes('€')) {
-                // Αναζήτηση αποκλειστικά στις ετικέτες τίτλου του προϊόντος
                 const titleEl = card.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"], .product-title, .title');
                 const productTitle = titleEl ? titleEl.innerText.trim() : '';
                 
@@ -98,7 +95,6 @@ def logic_sklavenitis(page, name, context=None):
     print(f"-> Εντοπίστηκαν {len(raw)} καθαροί τίτλοι προϊόντων από τον Σκλαβενίτη.")
     return parse_products(raw, name)
 
-# --- Απόλυτα στοχευμένη εξαγωγή τίτλου για τα υπόλοιπα καταστήματα ---
 def universal_scraper_logic(page, name):
     for _ in range(4):
         page.evaluate("window.scrollBy(0, 1200)")
