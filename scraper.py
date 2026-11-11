@@ -56,26 +56,28 @@ def parse_products(raw_products, supermarket_name):
 def logic_lidl(page, name):
     print(f"-> Στοχευμένη ανάγνωση για {name}...")
     
-    for _ in range(5):
-        page.evaluate("window.scrollBy(0, 1200)")
-        page.wait_for_timeout(2000)
+    # Περισσότερο scrolling για να φορτώσουν όλες οι προσφορές
+    for _ in range(10):
+        page.evaluate("window.scrollBy(0, 1500)")
+        page.wait_for_timeout(1500)
 
     raw = page.evaluate("""() => {
         const results = [];
-        // Τα Lidl χρησιμοποιούν συνήθως grid items ή κάρτες προσφορών
-        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid"], div[class*="item"], div[class*="card"]');
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid"], div[class*="item"], div[class*="card"], li');
         
         cards.forEach(card => {
             const text = card.innerText;
             if (text && text.includes('€')) {
-                const titleEl = card.querySelector('h2, h3, h4, span[class*="title"], div[class*="title"], span[class*="desc"]');
+                const titleEl = card.querySelector('h2, h3, h4, span[class*="title"], div[class*="title"], span[class*="desc"], a');
                 const productTitle = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
                 
                 const img = card.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
                 
                 if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 2) {
-                    results.push({ title: productTitle, text: text, image: imgSrc });
+                    if (!results.some(r => r.title === productTitle)) {
+                        results.push({ title: productTitle, text: text, image: imgSrc });
+                    }
                 }
             }
         });
@@ -83,7 +85,7 @@ def logic_lidl(page, name):
     }""")
     return parse_products(raw, name)
 
-# --- Γενική δοκιμασμένη λογική σάρωσης για τα υπόλοιπα ---
+# --- Καθολική δοκιμασμένη λογική σάρωσης ---
 def universal_scraper_logic(page, name):
     print(f"-> Σάρωση σελίδας για {name}...")
     
@@ -163,7 +165,6 @@ def scrape_store(p, url, supermarket_name, logic_func=None):
         except:
             pass
             
-        # Αν υπάρχει ειδική συνάρτηση (όπως για τα Lidl), την εκτελούμε, αλλιώς την καθολική
         if logic_func:
             parsed = logic_func(page, supermarket_name)
         else:
@@ -227,7 +228,7 @@ if __name__ == "__main__":
             ("Κρητικός", "https://kritikos-sm.gr/offers/", None),
             ("Γαλαξίας", "https://galaxias.shop/eshop/2", None),
             ("My Market", "https://www.mymarket.gr/offers", None),
-            ("Lidl", "https://www.lidl-hellas.gr/", logic_lidl),
+            ("Lidl", "https://www.lidl-hellas.gr/c/prosfores/a10008743", logic_lidl),
             ("Discount Markt", "https://discountmarkt.gr/offer-brochures/", None),
         ]
         
