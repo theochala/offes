@@ -50,44 +50,63 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-# --- Ειδική λογική αποκλειστικά για τον Σκλαβενίτη στο /sylloges/prosfores/ ---
-def logic_sklavenitis(page, name):
-    print("-> Εκτέλεση ειδικής σάρωσης για Σκλαβενίτη...")
+# --- Πολυεπίπεδη λογική αποκλειστικά για τον Σκλαβενίτη (hub -> υπο-συλλογές) ---
+def logic_sklavenitis(page, name, context):
+    print("-> Ανίχνευση συλλογών προσφορών από τη σελίδα του Σκλαβενίτη...")
+    page.wait_for_timeout(3000)
     
-    # Περιμένουμε να σταθεροποιηθεί η σελίδα
-    try:
-        page.wait_for_load_state("networkidle", timeout=15000)
-    except:
-        pass
-
-    # Scroll down σταδιακά για να πυροδοτήσουμε το infinite scroll / lazy load
-    for i in range(6):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-
-    # Στοχευμένη εξαγωγή για τη δομή του Σκλαβενίτη
-    raw = page.evaluate("""() => {
+    # Συλλογή όλων των links υπο-συλλογών από την κεντρική σελίδα προσφορών
+    links = page.evaluate("""() => {
         const results = [];
-        // Αναζήτηση σε κάρτες προϊόντων ή συλλογών του Σκλαβενίτη
-        const selectors = 'article, .product-item, div[class*="product"], div[class*="item"], div[class*="card"], a';
-        document.querySelectorAll(selectors).forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 350 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
-                
-                if (imgSrc && imgSrc.startsWith('http')) {
-                    if (!results.some(r => r.text === cleanText)) {
-                        results.push({ text: cleanText, image: imgSrc });
-                    }
-                }
+        document.querySelectorAll('a').forEach(a => {
+            const href = a.href;
+            if (href && href.includes('/sylloges/') && href !== window.location.href) {
+                if (!results.includes(href)) results.push(href);
             }
         });
         return results;
     }""")
     
-    return parse_products(raw, name)
+    print(f"-> Βρέθηκαν {len(links)} ενεργές συλλογές προσφορών. Σάρωση περιεχομένου...")
+    all_sklavenitis_raw = []
+    
+    # Άνοιγμα νέας σελίδας για να σαρώσουμε τις υπο-συλλογές μία προς μία
+    sub_page = context.new_page()
+    
+    for link in links[:6]: # Περιορισμός στις πρώτες 6 συλλογές για ταχύτητα και αποφυγή timeouts
+        try:
+            print(f"-> Είσοδος στη συλλογή: {link}")
+            sub_page.goto(link, timeout=30000, wait_until="domcontentloaded")
+            sub_page.wait_for_timeout(2500)
+            
+            # Scroll για lazy loading μέσα στη συλλογή
+            for _ in range(3):
+                sub_page.evaluate("window.scrollBy(0, 1000)")
+                sub_page.wait_for_timeout(1500)
+                
+            raw_items = sub_page.evaluate("""() => {
+                const items = [];
+                document.querySelectorAll('article, div[class*="product"], div[class*="item"], div[class*="card"]').forEach(el => {
+                    const text = el.innerText;
+                    if (text && text.includes('€') && text.length < 350 && text.length > 10) {
+                        const cleanText = text.replace(/\\n/g, ' | ').trim();
+                        const img = el.querySelector('img');
+                        const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                        if (imgSrc && imgSrc.startsWith('http')) {
+                            if (!items.some(i => i.text === cleanText)) {
+                                items.push({ text: cleanText, image: imgSrc });
+                            }
+                        }
+                    }
+                });
+                return items;
+            }""")
+            all_sklavenitis_raw.extend(raw_items)
+        except Exception as sub_err:
+            print(f"-> Σφάλμα στη συλλογή {link}: {sub_err}")
+            
+    sub_page.close()
+    return parse_products(all_sklavenitis_raw, name)
 
 def universal_scraper_logic(page, name):
     for _ in range(4):
@@ -114,7 +133,7 @@ def universal_scraper_logic(page, name):
     }""")
     return parse_products(raw, name)
 
-def scrape_store(p, url, supermarket_name, logic_func):
+def scrape_store(p, url, supermarket_name, logic_func, context=None):
     print(f"\n--- Συλλογή από {supermarket_name} ---")
     browser = None
     try:
@@ -131,17 +150,16 @@ def scrape_store(p, url, supermarket_name, logic_func):
         }
 
         browser = p.chromium.launch(**launch_args)
-        
-        context = browser.new_context(
+        ctx = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
             viewport={"width": 1920, "height": 1080},
             locale="el-GR",
             timezone_id="Europe/Athens"
         )
         
-        context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
+        ctx.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
         
-        page = context.new_page()
+        page = ctx.new_page()
         print(f"-> Μετάβαση στη διεύθυνση: {url}")
         
         try:
@@ -151,7 +169,7 @@ def scrape_store(p, url, supermarket_name, logic_func):
             
         page.wait_for_timeout(4000)
         
-        # Διαχείριση cookies / popups
+        # Κλείσιμο cookies / popups
         try:
             popup_btns = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler")
             if popup_btns.count() > 0:
@@ -160,7 +178,12 @@ def scrape_store(p, url, supermarket_name, logic_func):
         except:
             pass
             
-        parsed = logic_func(page, supermarket_name)
+        # Εκτέλεση αντίστοιχης λογικής
+        if supermarket_name == "Σκλαβενίτης":
+            parsed = logic_func(page, supermarket_name, ctx)
+        else:
+            parsed = logic_func(page, supermarket_name)
+            
         browser.close()
         
         if parsed and len(parsed) > 0:
@@ -223,7 +246,7 @@ if __name__ == "__main__":
         
         for name, url, logic_func in targets:
             try:
-                offers = store_offers = scrape_store(p, url, name, logic_func)
+                offers = scrape_store(p, url, name, logic_func)
                 all_offers.extend(offers)
             except Exception as e:
                 print(f"Σφάλμα εκτέλεσης για {name}:", e)
