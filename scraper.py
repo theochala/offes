@@ -10,13 +10,11 @@ OUTPUT_FILE = Path("clean_offers.json")
 def clean_title(title):
     if not title:
         return ""
-    
     title = re.sub(r'\d+[\.,]\d+\s*€', '', title)
     title = re.sub(r'\d+\s*€', '', title)
     title = re.sub(r'^[\|\-\/\s]+', '', title)
     title = re.sub(r'[\/\|\-\.\,\s]+$', '', title)
     title = re.sub(r'\s*[\/\|\-]+\s*', ' ', title)
-    
     return re.sub(r'\s+', ' ', title).strip()
 
 def is_valid_product(title):
@@ -35,7 +33,6 @@ def parse_products(raw_products, supermarket_name):
     for item in raw_products:
         text = item["text"]
         img_url = item["image"]
-        
         prices = re.findall(r'(\d+[\.,]\d+\s*€)', text)
         title = clean_title(item["title"])
         price_val = prices[-1] if prices else ""
@@ -52,67 +49,183 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-def logic_sklavenitis(page, name, context=None):
-    print("-> Στοχευμένη ανάγνωση τίτλων Σκλαβενίτη...")
-    try:
-        page.wait_for_selector('article, div[class*="product"], div[class*="item"], div[class*="card"]', timeout=15000)
-    except:
-        pass
-
-    for i in range(8):
+# --- 1. Σκλαβενίτης ---
+def logic_sklavenitis(page, name):
+    print("-> Στοχευμένη ανάγνωση Σκλαβενίτη...")
+    for _ in range(6):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(2000)
 
     raw = page.evaluate("""() => {
         const results = [];
         const cards = document.querySelectorAll('article, div[class*="product"], div[class*="item"], div[class*="card"]');
-        
         cards.forEach(card => {
             const text = card.innerText;
             if (text && text.includes('€')) {
-                const titleEl = card.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"], .product-title, .title');
+                const titleEl = card.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"]');
                 const productTitle = titleEl ? titleEl.innerText.trim() : '';
-                
                 const img = card.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
-                
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
                 if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 2) {
-                    if (!results.some(r => r.title === productTitle)) {
-                        results.push({ title: productTitle, text: text, image: imgSrc });
-                    }
+                    results.push({ title: productTitle, text: text, image: imgSrc });
                 }
             }
         });
         return results;
     }""")
-    
-    print(f"-> Εντοπίστηκαν {len(raw)} καθαροί τίτλοι προϊόντων από τον Σκλαβενίτη.")
     return parse_products(raw, name)
 
-# --- Διευρυμένη και πιο ευέλικτη καθολική λογική για τα υπόλοιπα καταστήματα ---
-def universal_scraper_logic(page, name):
+# --- 2. ΑΒ Βασιλόπουλος ---
+def logic_ab(page, name):
+    print("-> Στοχευμένη ανάγνωση ΑΒ Βασιλόπουλος...")
     for _ in range(6):
         page.evaluate("window.scrollBy(0, 1200)")
         page.wait_for_timeout(2000)
-        
+
     raw = page.evaluate("""() => {
         const results = [];
-        // Σάρωση σε κάθε πιθανό container προϊόντος ή κάρτας
-        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="item"], div[class*="card"], div[class*="offer"], li, a');
-        
+        const cards = document.querySelectorAll('article, div[class*="product"], product-card, div[data-testid*="product"]');
+        if (cards.length === 0) {
+            // Fallback γενική αναζήτηση αν δεν βρεθούν τα συγκεκριμένα tags
+            const allDivs = document.querySelectorAll('div');
+            allDivs.forEach(div => {
+                const text = div.innerText;
+                if (text && text.includes('€') && text.length < 250) {
+                    const img = div.querySelector('img');
+                    const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                    if (imgSrc && imgSrc.startsWith('http')) {
+                        results.push({ title: text.split('\\n')[0], text: text, image: imgSrc });
+                    }
+                }
+            });
+        }
+        return results;
+    }""")
+    return parse_products(raw, name)
+
+# --- 3. Μασούτης ---
+def logic_masoutis(page, name):
+    print("-> Στοχευμένη ανάγνωση Μασούτης...")
+    for _ in range(6):
+        page.evaluate("window.scrollBy(0, 1200)")
+        page.wait_for_timeout(2000)
+
+    raw = page.evaluate("""() => {
+        const results = [];
+        const cards = document.querySelectorAll('.product-item, div[class*="product"], article, li');
         cards.forEach(card => {
             const text = card.innerText;
             if (text && text.includes('€')) {
-                const titleEl = card.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"], .product-title, .title, strong');
+                const titleEl = card.querySelector('h2, h3, a, .title');
                 const productTitle = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
-                
                 const img = card.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
-                
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
                 if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 2) {
-                    if (!results.some(r => r.title === productTitle)) {
-                        results.push({ title: productTitle, text: text, image: imgSrc });
-                    }
+                    results.push({ title: productTitle, text: text, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    return parse_products(raw, name)
+
+# --- 4. Κρητικός ---
+def logic_kritikos(page, name):
+    print("-> Στοχευμένη ανάγνωση Κρητικός...")
+    for _ in range(6):
+        page.evaluate("window.scrollBy(0, 1200)")
+        page.wait_for_timeout(2000)
+
+    raw = page.evaluate("""() => {
+        const results = [];
+        const cards = document.querySelectorAll('.product, div[class*="product"], article, .col');
+        cards.forEach(card => {
+            const text = card.innerText;
+            if (text && text.includes('€')) {
+                const titleEl = card.querySelector('h2, h3, h4, a, span[class*="title"]');
+                const productTitle = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
+                const img = card.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 2) {
+                    results.push({ title: productTitle, text: text, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    return parse_products(raw, name)
+
+# --- 5. Γαλαξίας ---
+def logic_galaxias(page, name):
+    print("-> Στοχευμένη ανάγνωση Γαλαξίας...")
+    for _ in range(6):
+        page.evaluate("window.scrollBy(0, 1200)")
+        page.wait_for_timeout(2000)
+
+    raw = page.evaluate("""() => {
+        const results = [];
+        const cards = document.querySelectorAll('div[class*="product"], article, li, .item');
+        cards.forEach(card => {
+            const text = card.innerText;
+            if (text && text.includes('€')) {
+                const titleEl = card.querySelector('h2, h3, a, .title');
+                const productTitle = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
+                const img = card.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 2) {
+                    results.push({ title: productTitle, text: text, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    return parse_products(raw, name)
+
+# --- 6. My Market ---
+def logic_mymarket(page, name):
+    print("-> Στοχευμένη ανάγνωση My Market...")
+    for _ in range(6):
+        page.evaluate("window.scrollBy(0, 1200)")
+        page.wait_for_timeout(2000)
+
+    raw = page.evaluate("""() => {
+        const results = [];
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="item"]');
+        cards.forEach(card => {
+            const text = card.innerText;
+            if (text && text.includes('€')) {
+                const titleEl = card.querySelector('h2, h3, a, span[class*="title"]');
+                const productTitle = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
+                const img = card.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 2) {
+                    results.push({ title: productTitle, text: text, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    return parse_products(raw, name)
+
+# --- 7. Discount Markt ---
+def logic_discountmarkt(page, name):
+    print("-> Στοχευμένη ανάγνωση Discount Markt...")
+    for _ in range(6):
+        page.evaluate("window.scrollBy(0, 1200)")
+        page.wait_for_timeout(2000)
+
+    raw = page.evaluate("""() => {
+        const results = [];
+        const cards = document.querySelectorAll('div[class*="product"], article, div[class*="brochure"], div[class*="item"], li');
+        cards.forEach(card => {
+            const text = card.innerText;
+            if (text && text.includes('€')) {
+                const titleEl = card.querySelector('h2, h3, h4, a, span, p');
+                const productTitle = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
+                const img = card.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 2) {
+                    results.push({ title: productTitle, text: text, image: imgSrc });
                 }
             }
         });
@@ -153,7 +266,6 @@ def scrape_store(p, url, supermarket_name, logic_func):
         )
         
         ctx.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
-        
         page = ctx.new_page()
         print(f"-> Μετάβαση στη διεύθυνση: {url}")
         
@@ -172,11 +284,7 @@ def scrape_store(p, url, supermarket_name, logic_func):
         except:
             pass
             
-        if supermarket_name == "Σκλαβενίτης":
-            parsed = logic_func(page, supermarket_name, ctx)
-        else:
-            parsed = logic_func(page, supermarket_name)
-            
+        parsed = logic_func(page, supermarket_name)
         browser.close()
         
         if parsed and len(parsed) > 0:
@@ -230,12 +338,12 @@ if __name__ == "__main__":
         
         targets = [
             ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/", logic_sklavenitis),
-            ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions", universal_scraper_logic),
-            ("Μασούτης", "https://www.masoutis.gr/offers", universal_scraper_logic),
-            ("Κρητικός", "https://kritikos-sm.gr/offers/", universal_scraper_logic),
-            ("Γαλαξίας", "https://galaxias.shop/eshop/2", universal_scraper_logic),
-            ("My Market", "https://www.mymarket.gr/offers", universal_scraper_logic),
-            ("Discount Markt", "https://discountmarkt.gr/offer-brochures/", universal_scraper_logic),
+            ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions", logic_ab),
+            ("Μασούτης", "https://www.masoutis.gr/offers", logic_masoutis),
+            ("Κρητικός", "https://kritikos-sm.gr/offers/", logic_kritikos),
+            ("Γαλαξίας", "https://galaxias.shop/eshop/2", logic_galaxias),
+            ("My Market", "https://www.mymarket.gr/offers", logic_mymarket),
+            ("Discount Markt", "https://discountmarkt.gr/offer-brochures/", logic_discountmarkt),
         ]
         
         for name, url, logic_func in targets:
@@ -248,7 +356,6 @@ if __name__ == "__main__":
         unique_offers = []
         seen_titles = set()
         for offer in all_offers:
-            key = (offer["supermarket"], offer["title"])
             key_clean = (offer["supermarket"], offer["title"].lower().strip())
             if key_clean not in seen_titles:
                 seen_titles.add(key_clean)
