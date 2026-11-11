@@ -53,7 +53,6 @@
                 const json = await res.json();
                 rawOffersData = json.offers || [];
                 
-                // Δυναμική συμπλήρωση του dropdown με τα supermarkets που όντως υπάρχουν στα δεδομένα
                 populateSupermarketDropdown();
             } catch (err) {
                 console.error('Σφάλμα φόρτωσης:', err);
@@ -64,10 +63,8 @@
 
         function populateSupermarketDropdown() {
             const select = document.getElementById('supermarket-select');
-            // Κρατάμε μόνο την πρώτη επιλογή "Όλα"
             select.innerHTML = '<option value="all">Όλα τα Σούπερ Μάρκετ</option>';
             
-            // Βρίσκουμε μοναδικά ονόματα supermarket από τα δεδομένα
             const markets = [...new Set(rawOffersData.map(item => item.supermarket))].filter(Boolean);
             
             markets.sort().forEach(market => {
@@ -114,7 +111,7 @@
                                 ${offer.supermarket}
                             </span>
                         </div>
-                        <h3 class="text-sm font-medium text-gray-800 line-clamp-2 mb-2 h-10">
+                        <h3 class="text-sm font-medium text-gray-800 leading-snug mb-2 whitespace-normal break-words">
                             ${offer.title}
                         </h3>
                     </div>
