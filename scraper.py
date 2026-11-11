@@ -51,21 +51,23 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-def random_delay(page, min_ms=1500, max_ms=3500):
-    page.wait_for_timeout(random.randint(min_ms, max_ms))
+def safe_goto(page, url):
+    try:
+        page.goto(url, timeout=45000, wait_until="commit")
+        page.wait_for_timeout(3000)
+        return True
+    except Exception as e:
+        print(f"Σφάλμα πλοήγησης στο {url}: {e}")
+        return False
 
 def scrape_sklavenitis(page):
     print("Συλλογή από Σκλαβενίτη (Φυλλάδια)...")
-    try:
-        page.goto("https://www.sklavenitis.gr/fylladia/", timeout=60000, wait_until="domcontentloaded")
-        random_delay(page, 4000, 6000)
-    except Exception as e:
-        print("Σφάλμα φόρτωσης Σκλαβενίτη:", e)
+    if not safe_goto(page, "https://www.sklavenitis.gr/fylladia/"):
         return []
     
-    for _ in range(3):
+    for _ in range(2):
         page.evaluate("window.scrollBy(0, 1000)")
-        random_delay(page, 1500, 2000)
+        page.wait_for_timeout(1500)
 
     raw = page.evaluate("""() => {
         const results = [];
@@ -89,24 +91,20 @@ def scrape_sklavenitis(page):
 
 def scrape_ab(page):
     print("Συλλογή από ΑΒ Βασιλόπουλο (Φυλλάδια/Προσφορές)...")
-    try:
-        page.goto("https://www.ab.gr/fylladia", timeout=60000, wait_until="domcontentloaded")
-        random_delay(page, 4000, 6000)
-    except Exception as e:
-        print("Σφάλμα φόρτωσης σελίδας ΑΒ:", e)
+    if not safe_goto(page, "https://www.ab.gr/fylladia"):
         return []
     
     try:
         cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
         if cookie_btn.count() > 0:
             cookie_btn.first().click()
-            random_delay(page, 1000, 2000)
+            page.wait_for_timeout(1000)
     except:
         pass
 
-    for _ in range(4):
+    for _ in range(2):
         page.evaluate("window.scrollBy(0, 1000)")
-        random_delay(page, 2000, 2500)
+        page.wait_for_timeout(1500)
     
     raw = page.evaluate("""() => {
         const results = [];
@@ -130,16 +128,12 @@ def scrape_ab(page):
 
 def scrape_masoutis(page):
     print("Συλλογή από Μασούτη (Φυλλάδια)...")
-    try:
-        page.goto("https://www.masoutis.gr/fylladia", timeout=60000, wait_until="domcontentloaded")
-        random_delay(page, 4000, 6000)
-    except Exception as e:
-        print("Σφάλμα φόρτωσης Μασούτη:", e)
+    if not safe_goto(page, "https://www.masoutis.gr/fylladia"):
         return []
 
-    for _ in range(4):
+    for _ in range(2):
         page.evaluate("window.scrollBy(0, 1000)")
-        random_delay(page, 1500, 2000)
+        page.wait_for_timeout(1500)
     
     raw = page.evaluate("""() => {
         const results = [];
@@ -163,15 +157,12 @@ def scrape_masoutis(page):
 
 def scrape_kritikos(page):
     print("Συλλογή από Κρητικό...")
-    try:
-        page.goto("https://kritikos-sm.gr/offers/", timeout=60000, wait_until="domcontentloaded")
-        random_delay(page, 3000, 5000)
-    except:
+    if not safe_goto(page, "https://kritikos-sm.gr/offers/"):
         return []
 
-    for _ in range(4):
+    for _ in range(3):
         page.evaluate("window.scrollBy(0, 1000)")
-        random_delay(page, 1500, 2500)
+        page.wait_for_timeout(1500)
     
     raw = page.evaluate("""() => {
         const results = [];
@@ -195,15 +186,12 @@ def scrape_kritikos(page):
 
 def scrape_galaxias(page):
     print("Συλλογή από Γαλαξία (Φυλλάδια)...")
-    try:
-        page.goto("https://www.galaxias-markets.gr/fylladia/", timeout=60000, wait_until="domcontentloaded")
-        random_delay(page, 4000, 6000)
-    except:
+    if not safe_goto(page, "https://www.galaxias-markets.gr/fylladia/"):
         return []
 
-    for _ in range(4):
+    for _ in range(2):
         page.evaluate("window.scrollBy(0, 1000)")
-        random_delay(page, 2000, 2500)
+        page.wait_for_timeout(1500)
     
     raw = page.evaluate("""() => {
         const results = [];
@@ -227,24 +215,20 @@ def scrape_galaxias(page):
 
 def scrape_mymarket(page):
     print("Συλλογή από My Market...")
-    try:
-        page.goto("https://www.mymarket.gr/offers", timeout=60000, wait_until="domcontentloaded")
-        random_delay(page, 4000, 6000)
-    except Exception as e:
-        print("Σφάλμα φόρτωσης My Market:", e)
+    if not safe_goto(page, "https://www.mymarket.gr/offers"):
         return []
 
     try:
         cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
         if cookie_btn.count() > 0:
             cookie_btn.first().click()
-            random_delay(page, 1000, 2000)
+            page.wait_for_timeout(1000)
     except:
         pass
 
-    for _ in range(4):
+    for _ in range(3):
         page.evaluate("window.scrollBy(0, 1000)")
-        random_delay(page, 2000, 2500)
+        page.wait_for_timeout(1500)
     
     raw = page.evaluate("""() => {
         const results = [];
@@ -337,7 +321,7 @@ if __name__ == "__main__":
             try:
                 all_offers.extend(scraper_func(page))
             except Exception as e:
-                print("Σφάλμα:", e)
+                print(f"Σφάλμα εκτέλεσης για {scraper_func.__name__}:", e)
 
         browser.close()
         
