@@ -57,7 +57,6 @@ def random_delay(page, min_ms=1500, max_ms=3500):
 def scrape_sklavenitis(page):
     print("Συλλογή από Σκλαβενίτη...")
     try:
-        # Χρήση σελίδας προσφορών/φυλλαδίου
         page.goto("https://www.sklavenitis.gr/fylladia/", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except Exception as e:
@@ -91,7 +90,6 @@ def scrape_sklavenitis(page):
 def scrape_ab(page):
     print("Συλλογή από ΑΒ Βασιλόπουλο...")
     try:
-        # Χρήση κεντρικής σελίδας προσφορών ΑΒ
         page.goto("https://www.ab.gr/search/promotions?page=0&size=30", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except Exception as e:
@@ -133,7 +131,6 @@ def scrape_ab(page):
 def scrape_masoutis(page):
     print("Συλλογή από Μασούτη...")
     try:
-        # Χρήση εναλλακτικού URL φυλλαδίων/προσφορών Μασούτη
         page.goto("https://www.masoutis.gr/fylladia", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except Exception as e:
@@ -199,7 +196,6 @@ def scrape_kritikos(page):
 def scrape_galaxias(page):
     print("Συλλογή από Γαλαξία...")
     try:
-        # Χρήση βασικής σελίδας προσφορών Γαλαξία
         page.goto("https://galaxias.shop/eshop/2", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except:
