@@ -4,7 +4,6 @@ from datetime import datetime
 from ftplib import FTP
 from playwright.sync_api import sync_playwright
 
-# Σωστά, ενεργά URLs προσφορών και για τα 5 σούπερ μάρκετ
 TARGET_URLS = {
     "Μασούτης": "https://www.masoutis.gr/offers",
     "Σκλαβενίτης": "https://www.sklavenitis.gr/sylloges/prosfores/",
@@ -14,7 +13,7 @@ TARGET_URLS = {
 }
 
 def scrape_all_supermarkets():
-    print("=== [1/3] Εκκίνηση Scraper με υποστήριξη για Σκλαβενίτη & Μασούτη ===")
+    print("=== [1/3] Εκκίνηση Scraper με Location Bypass ===")
     all_offers = []
 
     try:
@@ -45,32 +44,37 @@ def scrape_all_supermarkets():
                     page.goto(url, wait_until="domcontentloaded", timeout=35000)
                     page.wait_for_timeout(3000)
 
-                    # Αποδοχή cookies
+                    # Αυτόματος χειρισμός pop-up cookies και επιλογής περιοχής/καταστήματος
                     try:
+                        # Κλείσιμο cookies
                         cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler").first
                         if cookie_btn.count() > 0:
                             cookie_btn.click(timeout=2000)
                             page.wait_for_timeout(1000)
                     except:
                         pass
+
+                    # Ειδικός χειρισμός αν εμφανιστεί παράθυρο επιλογής περιοχής (ιδίως σε Σκλαβενίτη/Μασούτη)
+                    try:
+                        loc_btn = page.locator("button:has-text('Συνέχεια'), button:has-text('Επιβεβαίωση'), button:has-text('Αποδοχή'), .close-modal, .modal-close").first
+                        if loc_btn.count() > 0:
+                            loc_btn.click(timeout=2000)
+                            page.wait_for_timeout(1000)
+                    except:
+                        pass
                     
-                    # Πολλαπλό scroll για lazy loading
-                    for _ in range(5):
+                    # Σταδιακό scroll για ενεργοποίηση lazy loading
+                    for _ in range(6):
                         page.mouse.wheel(0, 2000)
                         page.wait_for_timeout(1500)
 
                     market_offers = []
 
-                    # Ειδική αναζήτηση ανάλογα με τη δομή του κάθε site
-                    if market_name in ["Μασούτης", "Σκλαβενίτης"]:
-                        # Στοχευμένα στοιχεία για Σκλαβενίτη και Μασούτη
-                        cards = page.locator("div.product-item, article, div[class*='product'], div[class*='item'], div.card, li.product-item").all()
-                    else:
-                        cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product']").all()
-
+                    # Ευρεία αναζήτηση στοιχείων καρτών προϊόντων
+                    cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product'], li[class*='item'], div[class*='Grid']").all()
                     print(f"  [i] Εντοπίστηκαν {len(cards)} υποψήφια στοιχεία στο {market_name}.")
 
-                    for card in cards[:100]:
+                    for card in cards[:120]:
                         try:
                             title_text = ""
                             price_text = ""
@@ -87,7 +91,7 @@ def scrape_all_supermarkets():
                                 if any(char.isdigit() for char in t) and ('€' in t or '£' in t or ',' in t or '.' in t) and len(t) < 10:
                                     if not price_text:
                                         price_text = t
-                                elif len(t) > 3 and not any(w in t.lower() for w in ["καλάθι", "σούπερ", "αρχική", "σύνδεση", "προσφορές", "cookies"]):
+                                elif len(t) > 3 and not any(w in t.lower() for w in ["καλάθι", "σούπερ", "αρχική", "σύνδεση", "προσφορές", "cookies", "masoutis", "sklavenitis"]):
                                     possible_titles.append(t)
 
                             if possible_titles:
