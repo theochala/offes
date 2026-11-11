@@ -61,8 +61,8 @@ def safe_goto(page, url):
         return False
 
 def scrape_sklavenitis(page):
-    print("Συλλογή από Σκλαβενίτη (Φυλλάδια)...")
-    if not safe_goto(page, "https://www.sklavenitis.gr/fylladia/"):
+    print("Συλλογή από Σκλαβενίτη...")
+    if not safe_goto(page, "https://www.sklavenitis.gr/sylloges/prosfores/"):
         return []
     
     for _ in range(2):
@@ -71,7 +71,7 @@ def scrape_sklavenitis(page):
 
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, .product-item, div[class*="product"], div[class*="item"], div[class*="leaflet"], a');
+        const elements = document.querySelectorAll('article, .product-item, div[class*="product"], div[class*="item"]');
         elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 250 && text.length > 10) {
@@ -90,8 +90,8 @@ def scrape_sklavenitis(page):
     return parsed
 
 def scrape_ab(page):
-    print("Συλλογή από ΑΒ Βασιλόπουλο (Φυλλάδια/Προσφορές)...")
-    if not safe_goto(page, "https://www.ab.gr/fylladia"):
+    print("Συλλογή από ΑΒ Βασιλόπουλο...")
+    if not safe_goto(page, "https://www.ab.gr/search/promotions"):
         return []
     
     try:
@@ -108,7 +108,7 @@ def scrape_ab(page):
     
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, product-card-view, div[class*="product"], div[class*="item"], div[class*="promotion"]');
+        const elements = document.querySelectorAll('article, product-card-view, div[class*="product"], div[class*="item"]');
         elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 300 && text.length > 10) {
@@ -127,8 +127,8 @@ def scrape_ab(page):
     return parsed
 
 def scrape_masoutis(page):
-    print("Συλλογή από Μασούτη (Φυλλάδια)...")
-    if not safe_goto(page, "https://www.masoutis.gr/fylladia"):
+    print("Συλλογή από Μασούτη...")
+    if not safe_goto(page, "https://www.masoutis.gr/offers"):
         return []
 
     for _ in range(2):
@@ -137,7 +137,7 @@ def scrape_masoutis(page):
     
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], .item, div[class*="card"], div[class*="leaflet"]');
+        const elements = document.querySelectorAll('article, div[class*="product"], .item');
         elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 250 && text.length > 10) {
@@ -185,8 +185,8 @@ def scrape_kritikos(page):
     return parsed
 
 def scrape_galaxias(page):
-    print("Συλλογή από Γαλαξία (Φυλλάδια)...")
-    if not safe_goto(page, "https://www.galaxias-markets.gr/fylladia/"):
+    print("Συλλογή από Γαλαξία...")
+    if not safe_goto(page, "https://galaxias.shop/eshop/2"):
         return []
 
     for _ in range(2):
@@ -195,7 +195,7 @@ def scrape_galaxias(page):
     
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], .product-card, div[class*="leaflet"]');
+        const elements = document.querySelectorAll('article, div[class*="product"], .product-card');
         elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 250 && text.length > 10) {
