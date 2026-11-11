@@ -51,7 +51,7 @@ def parse_products(raw_products, supermarket_name):
     return parsed
 
 def universal_scraper_logic(page, name):
-    for _ in range(5):
+    for _ in range(6):
         page.evaluate("window.scrollBy(0, 1200)")
         page.wait_for_timeout(2000)
         
@@ -111,15 +111,14 @@ def scrape_store(p, url, supermarket_name):
         except Exception as nav_err:
             print(f"-> Προειδοποίηση πλοήγησης: {nav_err}")
             
-        page.wait_for_timeout(4000)
+        page.wait_for_timeout(5000)
         
-        # Ειδικός χειρισμός για popups / cookies / επιλογή περιοχής (ιδίως για Σκλαβενίτη)
+        # Ειδικός χειρισμός για popups / cookies / επιλογή καταστήματος στον Σκλαβενίτη
         try:
-            # Κλείσιμο τυχόν modal/popup με κουμπιά αποδοχής ή συνέχειας
-            popup_btns = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), button:has-text('Συνέχεια'), button:has-text('Επιβεβαίωση'), #onetrust-accept-btn-handler")
+            popup_btns = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), button:has-text('Συνέχεια'), button:has-text('Επιβεβαίωση'), button:has-text('OK'), #onetrust-accept-btn-handler")
             if popup_btns.count() > 0:
                 popup_btns.first().click()
-                page.wait_for_timeout(1500)
+                page.wait_for_timeout(2000)
         except:
             pass
             
@@ -176,8 +175,8 @@ if __name__ == "__main__":
         all_offers = []
         
         targets = [
-            # Στοχεύουμε στο βασικό e-shop του Σκλαβενίτη όπου εμφανίζονται προϊόντα και τιμές
-            ("Σκλαβενίτης", "https://www.sklavenitis.gr/e-shop/"),
+            # Στοχεύουμε απευθείας σε βασική κατηγορία προσφορών / ειδών του Σκλαβενίτη
+            ("Σκλαβενίτης", "https://www.sklavenitis.gr/e-shop/trofima-kafedes-kai-eidi- πρωινού/"),
             ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions"),
             ("Μασούτης", "https://www.masoutis.gr/offers"),
             ("Κρητικός", "https://kritikos-sm.gr/offers/"),
