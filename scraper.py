@@ -51,9 +51,10 @@ def parse_products(raw_products, supermarket_name):
     return parsed
 
 def universal_scraper_logic(page, name):
-    for _ in range(6):
-        page.evaluate("window.scrollBy(0, 1200)")
-        page.wait_for_timeout(2000)
+    # Ειδικό αργό scrolling για τον Σκλαβενίτη ώστε να φορτώσει το lazy loading των προσφορών
+    for i in range(8):
+        page.evaluate("window.scrollBy(0, 1000)")
+        page.wait_for_timeout(2500)
         
     raw = page.evaluate("""() => {
         const results = [];
@@ -113,9 +114,9 @@ def scrape_store(p, url, supermarket_name):
             
         page.wait_for_timeout(5000)
         
-        # Ειδικός χειρισμός για popups / cookies / επιλογή καταστήματος στον Σκλαβενίτη
+        # Αυτόματο κλείσιμο cookies / popups
         try:
-            popup_btns = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), button:has-text('Συνέχεια'), button:has-text('Επιβεβαίωση'), button:has-text('OK'), #onetrust-accept-btn-handler")
+            popup_btns = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), button:has-text('Συνέχεια'), #onetrust-accept-btn-handler")
             if popup_btns.count() > 0:
                 popup_btns.first().click()
                 page.wait_for_timeout(2000)
@@ -175,8 +176,8 @@ if __name__ == "__main__":
         all_offers = []
         
         targets = [
-            # Στοχεύουμε απευθείας σε βασική κατηγορία προσφορών / ειδών του Σκλαβενίτη
-            ("Σκλαβενίτης", "https://www.sklavenitis.gr/e-shop/trofima-kafedes-kai-eidi- πρωινού/"),
+            # Επαναφορά ακριβώς του URL προσφορών που ζήτησες
+            ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/"),
             ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions"),
             ("Μασούτης", "https://www.masoutis.gr/offers"),
             ("Κρητικός", "https://kritikos-sm.gr/offers/"),
