@@ -14,177 +14,316 @@ TARGET_URLS = {
     "ΑΒ Βασιλόπουλος": "https://www.ab.gr/search/promotions"
 }
 
-TODAY = datetime.now().strftime("%Y-%m-%d")
+
+def today():
+    return datetime.now().strftime("%Y-%m-%d")
 
 
 def clean_text(text):
     return re.sub(r"\s+", " ", text or "").strip()
 
 
+def normalize_image(image):
+    if not image:
+        return ""
+    if image.startswith("//"):
+        return "https:" + image
+    return image
+
+
+# ==========================================
+# ΜΑΣΟΥΤΗΣ & ΣΚΛΑΒΕΝΙΤΗΣ
+# ==========================================
+
 def scrape_special_market(page, market_name, url):
     print(f"  [INFO] Ειδικός scraper: {market_name}")
 
-    page.goto(url, wait_until="domcontentloaded", timeout=60000)
+    offers = []
+    seen = set()
+
+    # ======================================
+    # ΣΚΛΑΒΕΝΙΤΗΣ
+    # ======================================
+
+    if market_name == "Σκλαβενίτης":
+
+        base = "https://www.sklavenitis.gr/"
+
+        for page_num in range(1, 16):
+
+            api_url = (
+                base
+                + "?$component=Atcom.Sites.Yoda.Components."
+                + "ProductList.Index"
+                + "&sortby=ByPopularity"
+                + f"&pg={page_num}"
+                + "&endless=true"
+            )
+
+            try:
+                page.goto(
+                    api_url,
+                    wait_until="domcontentloaded",
+                    timeout=60000
+                )
+
+                page.wait_for_timeout(2500)
+
+                products = page.evaluate("""() => {
+
+                    const result = [];
+
+                    const cards = document.querySelectorAll(
+                        'article, [class*="product"], [class*="Product"]'
+                    );
+
+                    for (const card of cards) {
+
+                        const text = card.innerText || '';
+
+                        const price = text.match(
+                            /\\d{1,4}[.,]\\d{2}\\s*€/
+                        );
+
+                        if (!price) continue;
+
+                        const img = card.querySelector('img');
+
+                        const heading = card.querySelector(
+                            'h2,h3,h4,[class*="title"],[class*="name"]'
+                        );
+
+                        const title =
+                            heading?.innerText?.trim() ||
+                            img?.alt ||
+                            '';
+
+                        const link = card.querySelector('a[href]');
+
+                        if (!title) continue;
+
+                        result.push({
+                            title: title,
+                            price: price[0],
+                            image: img?.src || '',
+                            url: link?.href || ''
+                        });
+                    }
+
+                    return result;
+
+                }""")
+
+                if not products:
+                    print(
+                        f"  [INFO] Σκλαβενίτης page "
+                        f"{page_num}: 0 προϊόντα"
+                    )
+                    continue
+
+                for product in products:
+
+                    title = clean_text(product["title"])
+                    key = title.lower()
+
+                    if not title or key in seen:
+                        continue
+
+                    seen.add(key)
+
+                    offers.append({
+                        "supermarket": market_name,
+                        "title": title,
+                        "price": product["price"],
+                        "old_price": "",
+                        "image": normalize_image(product["image"])
+                            or "https://via.placeholder.com/150",
+                        "date": today(),
+                        "url": product["url"]
+                    })
+
+            except Exception as e:
+                print(
+                    f"  [ERROR] Σκλαβενίτης page "
+                    f"{page_num}: {e}"
+                )
+
+        print(
+            f"  [OK] Σκλαβενίτης: "
+            f"{len(offers)} προϊόντα"
+        )
+
+        return offers
+
+    # ======================================
+    # ΜΑΣΟΥΤΗΣ
+    # ======================================
+
+    page.goto(
+        url,
+        wait_until="domcontentloaded",
+        timeout=60000
+    )
+
     page.wait_for_timeout(6000)
 
-    # Αποδοχή cookies
+    # Cookies
     for selector in [
         "#onetrust-accept-btn-handler",
         "button:has-text('Αποδοχή')",
         "button:has-text('Συμφωνώ')",
         "button:has-text('Accept All')"
     ]:
+
         try:
-            btn = page.locator(selector).first
-            if btn.count() and btn.is_visible():
-                btn.click(timeout=2000)
+            button = page.locator(selector).first
+
+            if button.count() and button.is_visible():
+                button.click(timeout=2000)
                 page.wait_for_timeout(1500)
                 break
+
         except Exception:
             pass
 
-    # Lazy loading προϊόντων
+    # Lazy loading
     for _ in range(12):
         page.mouse.wheel(0, 1800)
-        page.wait_for_timeout(900)
+        page.wait_for_timeout(1000)
 
-    # Εντοπισμός πιθανών product cards
     products = page.evaluate("""() => {
-        const priceRegex = /(?:\\d{1,4}[.,]\\d{2})\\s*€/;
-        const selectors = [
-            '[data-testid*="product"]',
-            '[class*="product-card"]',
-            '[class*="ProductCard"]',
-            '[class*="product-item"]',
-            '[class*="ProductItem"]',
-            'article'
-        ];
-
-        let cards = [];
-
-        for (const selector of selectors) {
-            cards.push(...document.querySelectorAll(selector));
-        }
-
-        if (!cards.length) {
-            cards = Array.from(document.querySelectorAll('div, li'))
-                .filter(el => {
-                    const text = el.innerText || '';
-                    return text.length > 30 &&
-                           text.length < 800 &&
-                           priceRegex.test(text) &&
-                           el.querySelector('img');
-                });
-        }
 
         const result = [];
-        const seen = new Set();
+
+        const cards = document.querySelectorAll(
+            'article, [class*="product"], [class*="Product"]'
+        );
 
         for (const card of cards) {
-            const text = (card.innerText || '').trim();
 
-            if (!text || text.length > 1200) continue;
+            const text = card.innerText || '';
 
-            const priceMatch = text.match(priceRegex);
-            if (!priceMatch) continue;
-
-            const img = card.querySelector('img');
-            const image = img?.getAttribute('src') ||
-                         img?.getAttribute('data-src') ||
-                         img?.getAttribute('data-lazy-src') ||
-                         img?.getAttribute('data-original') || '';
-
-            const heading = card.querySelector(
-                'h2, h3, h4, [class*="product-name"], ' +
-                '[class*="product-title"], [class*="ProductName"]'
+            const price = text.match(
+                /\\d{1,4}[.,]\\d{2}\\s*€/
             );
 
-            let title = heading?.innerText?.trim() ||
-                        img?.getAttribute('alt') || '';
+            if (!price) continue;
 
-            if (!title) {
-                const lines = text.split('\\n')
-                    .map(x => x.trim())
-                    .filter(x => x.length > 4);
+            const img = card.querySelector('img');
 
-                title = lines.find(x =>
-                    !priceRegex.test(x) &&
-                    !/καλάθι|προσθήκη|ποσότητα|cookies/i.test(x)
-                ) || '';
-            }
+            const heading = card.querySelector(
+                'h2,h3,h4,[class*="title"],[class*="name"]'
+            );
+
+            const title =
+                heading?.innerText?.trim() ||
+                img?.alt ||
+                '';
 
             const link = card.querySelector('a[href]');
 
-            title = title.replace(/\\s+/g, ' ').trim();
-
-            if (!title || title.length < 3) continue;
-
-            const key = title.toLowerCase() + priceMatch[0];
-
-            if (seen.has(key)) continue;
-            seen.add(key);
+            if (!title) continue;
 
             result.push({
-                title,
-                price: priceMatch[0].trim(),
-                image,
+                title: title,
+                price: price[0],
+                image: img?.src || '',
                 url: link?.href || ''
             });
         }
 
         return result;
+
     }""")
 
-    offers = []
+    for product in products:
 
-    for p in products:
-        image = p.get("image", "")
+        title = clean_text(product["title"])
+        key = title.lower()
 
-        if image.startswith("//"):
-            image = "https:" + image
+        if not title or key in seen:
+            continue
+
+        seen.add(key)
 
         offers.append({
             "supermarket": market_name,
-            "title": clean_text(p["title"]),
-            "price": p["price"],
+            "title": title,
+            "price": product["price"],
             "old_price": "",
-            "image": image or "https://via.placeholder.com/150",
-            "date": TODAY,
-            "url": p.get("url", "")
+            "image": normalize_image(product["image"])
+                or "https://via.placeholder.com/150",
+            "date": today(),
+            "url": product["url"]
         })
 
-    print(f"  [OK] {market_name}: {len(offers)} προϊόντα")
+    print(f"  [OK] Μασούτης: {len(offers)} προϊόντα")
+
     return offers
 
 
+# ==========================================
+# LIDL, MYMARKET, ΑΒ
+# ==========================================
+
 def scrape_generic_market(page, market_name, url):
+
     print(f"  [INFO] Γενικός scraper: {market_name}")
 
-    page.goto(url, wait_until="domcontentloaded", timeout=60000)
-    page.wait_for_timeout(5000)
+    page.goto(
+        url,
+        wait_until="domcontentloaded",
+        timeout=60000
+    )
 
-    for _ in range(8):
-        page.mouse.wheel(0, 1500)
-        page.wait_for_timeout(800)
+    page.wait_for_timeout(6000)
+
+    # Cookies
+    for selector in [
+        "#onetrust-accept-btn-handler",
+        "button:has-text('Αποδοχή')",
+        "button:has-text('Συμφωνώ')"
+    ]:
+
+        try:
+            button = page.locator(selector).first
+
+            if button.count() and button.is_visible():
+                button.click(timeout=2000)
+                break
+
+        except Exception:
+            pass
+
+    for _ in range(10):
+        page.mouse.wheel(0, 1800)
+        page.wait_for_timeout(900)
 
     cards = page.locator(
         "article, [class*='product-card'], "
-        "[class*='product-item'], [class*='ProductCard']"
+        "[class*='product-item'], [class*='ProductCard'], "
+        "[data-testid*='product']"
     ).all()
 
     offers = []
     seen = set()
 
-    for card in cards[:250]:
+    for card in cards[:300]:
+
         try:
+
             text = clean_text(card.inner_text())
 
-            match = re.search(r"\d{1,4}[.,]\d{2}\s*€", text)
-            if not match:
+            price_match = re.search(
+                r"\\d{1,4}[.,]\\d{2}\\s*€",
+                text
+            )
+
+            if not price_match:
                 continue
 
             heading = card.locator(
-                "h2, h3, h4, [class*='title'], [class*='name']"
+                "h2,h3,h4,[class*='title'],[class*='name']"
             ).first
 
             title = ""
@@ -193,7 +332,7 @@ def scrape_generic_market(page, market_name, url):
                 title = clean_text(heading.inner_text())
 
             if not title:
-                title = text.split(match.group())[0].strip()
+                title = text.split(price_match.group())[0].strip()
 
             if not title or len(title) < 3:
                 continue
@@ -206,44 +345,67 @@ def scrape_generic_market(page, market_name, url):
             seen.add(key)
 
             img = card.locator("img").first
+
             image = ""
 
             if img.count():
+
                 image = (
-                    img.get_attribute("src") or
-                    img.get_attribute("data-src") or ""
+                    img.get_attribute("src")
+                    or img.get_attribute("data-src")
+                    or img.get_attribute("data-lazy-src")
+                    or ""
                 )
 
-            if image.startswith("//"):
-                image = "https:" + image
+            image = normalize_image(image)
+
+            link = card.locator("a[href]").first
+
+            product_url = ""
+
+            if link.count():
+                product_url = link.get_attribute("href") or ""
 
             offers.append({
                 "supermarket": market_name,
                 "title": title,
-                "price": match.group().strip(),
+                "price": price_match.group().strip(),
                 "old_price": "",
-                "image": image or "https://via.placeholder.com/150",
-                "date": TODAY
+                "image": image
+                    or "https://via.placeholder.com/150",
+                "date": today(),
+                "url": product_url
             })
 
         except Exception:
             continue
 
-    print(f"  [OK] {market_name}: {len(offers)} προϊόντα")
+    print(
+        f"  [OK] {market_name}: "
+        f"{len(offers)} προϊόντα"
+    )
+
     return offers
 
 
+# ==========================================
+# MAIN SCRAPER
+# ==========================================
+
 def scrape_all_supermarkets():
+
     print("=== ΕΝΑΡΞΗ SCRAPER ===")
 
     all_offers = []
 
     with sync_playwright() as p:
+
         browser = p.chromium.launch(
             headless=True,
             args=[
                 "--no-sandbox",
-                "--disable-dev-shm-usage"
+                "--disable-dev-shm-usage",
+                "--disable-setuid-sandbox"
             ]
         )
 
@@ -253,7 +415,10 @@ def scrape_all_supermarkets():
                 "AppleWebKit/537.36 (KHTML, like Gecko) "
                 "Chrome/131.0.0.0 Safari/537.36"
             ),
-            viewport={"width": 1920, "height": 1080},
+            viewport={
+                "width": 1920,
+                "height": 1080
+            },
             locale="el-GR",
             timezone_id="Europe/Athens"
         )
@@ -261,22 +426,37 @@ def scrape_all_supermarkets():
         page = context.new_page()
 
         for market_name, url in TARGET_URLS.items():
+
             try:
+
                 print(f"-> {market_name}")
 
-                if market_name in ["Μασούτης", "Σκλαβενίτης"]:
+                if market_name in [
+                    "Μασούτης",
+                    "Σκλαβενίτης"
+                ]:
+
                     offers = scrape_special_market(
-                        page, market_name, url
+                        page,
+                        market_name,
+                        url
                     )
+
                 else:
+
                     offers = scrape_generic_market(
-                        page, market_name, url
+                        page,
+                        market_name,
+                        url
                     )
 
                 all_offers.extend(offers)
 
             except Exception as e:
-                print(f"[ERROR] {market_name}: {e}")
+
+                print(
+                    f"[ERROR] {market_name}: {e}"
+                )
 
         browser.close()
 
@@ -290,40 +470,87 @@ def scrape_all_supermarkets():
 
     filename = "clean_offers.json"
 
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    with open(
+        filename,
+        "w",
+        encoding="utf-8"
+    ) as f:
 
-    print(f"[OK] {len(all_offers)} προϊόντα συνολικά")
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=4
+        )
+
+    print(
+        f"=== ΟΛΟΚΛΗΡΩΘΗΚΕ: "
+        f"{len(all_offers)} προϊόντα ==="
+    )
+
     return filename
 
 
+# ==========================================
+# FTP UPLOAD
+# ==========================================
+
 def upload_all_to_ftp():
+
     print("=== FTP UPLOAD ===")
 
     ftp_server = os.getenv("FTP_SERVER")
     ftp_user = os.getenv("FTP_USERNAME")
     ftp_pass = os.getenv("FTP_PASSWORD")
 
-    if not all([ftp_server, ftp_user, ftp_pass]):
+    if not all([
+        ftp_server,
+        ftp_user,
+        ftp_pass
+    ]):
+
         print("[ERROR] Λείπουν FTP credentials")
         return
 
     try:
-        with FTP(ftp_server, timeout=30) as ftp:
-            ftp.login(ftp_user, ftp_pass)
+
+        with FTP(
+            ftp_server,
+            timeout=30
+        ) as ftp:
+
+            ftp.login(
+                user=ftp_user,
+                passwd=ftp_pass
+            )
 
             ftp.cwd("prosfores.infy.click")
             ftp.cwd("htdocs")
 
-            with open("clean_offers.json", "rb") as f:
-                ftp.storbinary("STOR clean_offers.json", f)
+            with open(
+                "clean_offers.json",
+                "rb"
+            ) as f:
 
-            print("[OK] clean_offers.json ανέβηκε στο FTP")
+                ftp.storbinary(
+                    "STOR clean_offers.json",
+                    f
+                )
+
+            print(
+                "[OK] clean_offers.json ανέβηκε στο FTP"
+            )
 
     except Exception as e:
+
         print(f"[ERROR] FTP: {e}")
 
 
+# ==========================================
+# EXECUTION
+# ==========================================
+
 if __name__ == "__main__":
+
     scrape_all_supermarkets()
     upload_all_to_ftp()
