@@ -34,7 +34,6 @@ def is_valid_product(title):
         if word in lower_title:
             return False
             
-    # Επιπλέον έλεγχος: να μην είναι απλά μια τιμή ή σκέτα νούμερα
     if re.match(r'^[\d\s\.,€+-]+$', title):
         return False
         
@@ -46,23 +45,33 @@ def parse_products(raw_products, supermarket_name):
         text = item["text"]
         img_url = item["image"]
         
+        # Βρίσκουμε όλες τις τιμές που υπάρχουν στην κάρτα
         prices = re.findall(r'(\d+[\.,]\d+\s*€)', text)
         title = clean_title(item["title"])
-        price_val = prices[-1] if prices else ""
         
-        if len(title) > 3 and prices and price_val != "0,00 €" and price_val != "0 €" and img_url and img_url.startswith('http'):
+        if len(prices) >= 2:
+            # Αν υπάρχουν 2 ή περισσότερες τιμές, η πρώτη (συνήθως μεγαλύτερη) είναι η παλιά/κανονική
+            old_price = prices[0]
+            price_val = prices[1]
+        elif len(prices) == 1:
+            old_price = ""
+            price_val = prices[0]
+        else:
+            continue
+        
+        if len(title) > 3 and price_val and price_val != "0,00 €" and price_val != "0 €" and img_url and img_url.startswith('http'):
             if is_valid_product(title):
                 if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
                     parsed.append({
                         "title": title,
                         "price": price_val,
+                        "old_price": old_price if old_price != price_val else "",
                         "all_prices": prices,
                         "image": img_url,
                         "supermarket": supermarket_name
                     })
     return parsed
 
-# --- Καθολική δοκιμασμένη λογική σάρωσης για όλα τα καταστήματα ---
 def universal_scraper_logic(page, name):
     print(f"-> Σάρωση σελίδας για {name}...")
     
@@ -124,7 +133,6 @@ def scrape_store(p, url, supermarket_name):
         )
         
         ctx.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
-        
         page = ctx.new_page()
         print(f"-> Μετάβαση στη διεύθυνση: {url}")
         
