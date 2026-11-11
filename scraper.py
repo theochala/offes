@@ -11,24 +11,14 @@ def clean_title(title):
     if not title:
         return ""
     
-    # 1. Αυστηρή αφαίρεση οποιασδήποτε τιμής σε ευρώ ή ποσού που έμεινε στον τίτλο
+    # Καθαρισμός από τυχόν τιμές, ποσά ή σύμβολα ευρώ που μπορεί να κόλλησαν
     title = re.sub(r'\d+[\.,]\d+\s*€', '', title)
     title = re.sub(r'\d+\s*€', '', title)
     
-    # 2. Καθαρισμός από περιττά σύμβολα στην αρχή
+    # Καθαρισμός από σύμβολα στην αρχή
     title = re.sub(r'^[\|\-\/\s]+', '', title)
     
-    # 3. Διαγραφή άσχετων λέξεων/τεχνικών όρων
-    artifacts = [
-        "playlist_add", "favorite", "add", "remove", "Χρυσές Τιμές", 
-        "Λίτ", "Τεμ", "τεμ", "τεμάχια", "κιλό", "κιλα", "γρ", "ml", "L", 
-        "συσκ", "συσκευασία", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση", "Προσφορά"
-    ]
-    for art in artifacts:
-        title = re.sub(rf'\b{art}\b', '', title, flags=re.IGNORECASE)
-    
-    # 4. Αφαίρεση μεμονωμένων αριθμών (όπως το 0) και περιττών συμβόλων στίξης
-    title = re.sub(r'\b0\b', '', title)
+    # Αφαίρεση περιττών συμβόλων και τελικών σημείων στίξης
     title = re.sub(r'[\/\|\-\.\,\s]+$', '', title)
     title = re.sub(r'\s*[\/\|\-]+\s*', ' ', title)
     
@@ -43,7 +33,7 @@ def is_valid_product(title):
     for word in blacklist:
         if word in lower_title:
             return False
-    return len(title) > 4
+    return len(title) > 3
 
 def parse_products(raw_products, supermarket_name):
     parsed = []
@@ -51,18 +41,12 @@ def parse_products(raw_products, supermarket_name):
         text = item["text"]
         img_url = item["image"]
         
-        # Εντοπισμός τιμών
+        # Ανίχνευση τιμής ξεχωριστά για να υπάρχει στο τελικό αντικείμενο
         prices = re.findall(r'(\d+[\.,]\d+\s*€)', text)
-        
-        # Καθαρισμός τίτλου από όλες τις τιμές και τα σύμβολα ευρώ
-        title = text
-        for price in prices:
-            title = title.replace(price, "")
-            
-        title = clean_title(title)
+        title = clean_title(item["title"])  # Παίρνουμε αποκλειστικά τον καθαρό τίτλο
         price_val = prices[-1] if prices else ""
         
-        if len(title) > 4 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
+        if len(title) > 3 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
             if is_valid_product(title):
                 if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
                     parsed.append({
@@ -74,14 +58,14 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Στοχευμένη εξαγωγή για τον Σκλαβενίτη ---
+# --- Απόλυτα στοχευμένη εξαγωγή τίτλου για τον Σκλαβενίτη ---
 def logic_sklavenitis(page, name, context=None):
-    print("-> Στοχευμένη ανάγνωση προϊόντων Σκλαβενίτη...")
+    print("-> Στοχευμένη ανάγνωση τίτλων Σκλαβενίτη...")
     
     try:
         page.wait_for_selector('article, div[class*="product"], div[class*="item"], div[class*="card"]', timeout=15000)
     except:
-        print("-> Προειδοποίηση: Timeout στην αναμονή στοιχείων. Συνεχίζουμε με scroll...")
+        pass
 
     for i in range(8):
         page.evaluate("window.scrollBy(0, 1000)")
@@ -94,16 +78,16 @@ def logic_sklavenitis(page, name, context=None):
         cards.forEach(card => {
             const text = card.innerText;
             if (text && text.includes('€')) {
-                const titleEl = card.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"]');
-                const cleanText = titleEl ? titleEl.innerText : text.split('\\n')[0];
+                // Αναζήτηση αποκλειστικά στις ετικέτες τίτλου του προϊόντος
+                const titleEl = card.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"], .product-title, .title');
+                const productTitle = titleEl ? titleEl.innerText.trim() : '';
                 
                 const img = card.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
                 
-                if (imgSrc && imgSrc.startsWith('http') && cleanText.length > 3) {
-                    const fullBlock = cleanText + ' ' + text;
-                    if (!results.some(r => r.text === fullBlock)) {
-                        results.push({ text: fullBlock, image: imgSrc });
+                if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 2) {
+                    if (!results.some(r => r.title === productTitle)) {
+                        results.push({ title: productTitle, text: text, image: imgSrc });
                     }
                 }
             }
@@ -111,9 +95,10 @@ def logic_sklavenitis(page, name, context=None):
         return results;
     }""")
     
-    print(f"-> Εντοπίστηκαν {len(raw)} καθαρά προϊόντα από τον Σκλαβενίτη.")
+    print(f"-> Εντοπίστηκαν {len(raw)} καθαροί τίτλοι προϊόντων από τον Σκλαβενίτη.")
     return parse_products(raw, name)
 
+# --- Απόλυτα στοχευμένη εξαγωγή τίτλου για τα υπόλοιπα καταστήματα ---
 def universal_scraper_logic(page, name):
     for _ in range(4):
         page.evaluate("window.scrollBy(0, 1200)")
@@ -121,17 +106,20 @@ def universal_scraper_logic(page, name):
         
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div, li, section');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 350 && text.length > 15) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="item"], div[class*="card"], li');
+        
+        cards.forEach(card => {
+            const text = card.innerText;
+            if (text && text.includes('€')) {
+                const titleEl = card.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"], .product-title, .title');
+                const productTitle = titleEl ? titleEl.innerText.trim() : '';
+                
+                const img = card.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
                 
-                if (imgSrc && imgSrc.startsWith('http')) {
-                    if (!results.some(r => r.text === cleanText)) {
-                        results.push({ text: cleanText, image: imgSrc });
+                if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 2) {
+                    if (!results.some(r => r.title === productTitle)) {
+                        results.push({ title: productTitle, text: text, image: imgSrc });
                     }
                 }
             }
@@ -179,8 +167,8 @@ def scrape_store(p, url, supermarket_name, logic_func):
         
         try:
             page.goto(url, timeout=60000, wait_until="domcontentloaded")
-        except Exception as nav_err:
-            print(f"-> Προειδοποίηση πλοήγησης: {nav_err}")
+        except:
+            pass
             
         page.wait_for_timeout(5000)
         
