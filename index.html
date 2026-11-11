@@ -33,11 +33,6 @@
                     class="w-full md:w-64 border border-blue-500 text-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 >
                     <option value="all">Όλα τα Σούπερ Μάρκετ</option>
-                    <option value="Σκλαβενίτης">Σκλαβενίτης</option>
-                    <option value="ΑΒ Βασιλόπουλος">ΑΒ Βασιλόπουλος</option>
-                    <option value="Μασούτης">Μασούτης</option>
-                    <option value="MyMarket">MyMarket</option>
-                    <option value="Lidl">Lidl</option>
                 </select>
             </div>
         </div>
@@ -57,11 +52,30 @@
                 
                 const json = await res.json();
                 rawOffersData = json.offers || [];
+                
+                // Δυναμική συμπλήρωση του dropdown με τα supermarkets που όντως υπάρχουν στα δεδομένα
+                populateSupermarketDropdown();
             } catch (err) {
                 console.error('Σφάλμα φόρτωσης:', err);
                 rawOffersData = [];
             }
             filterOffers();
+        }
+
+        function populateSupermarketDropdown() {
+            const select = document.getElementById('supermarket-select');
+            // Κρατάμε μόνο την πρώτη επιλογή "Όλα"
+            select.innerHTML = '<option value="all">Όλα τα Σούπερ Μάρκετ</option>';
+            
+            // Βρίσκουμε μοναδικά ονόματα supermarket από τα δεδομένα
+            const markets = [...new Set(rawOffersData.map(item => item.supermarket))].filter(Boolean);
+            
+            markets.sort().forEach(market => {
+                const option = document.createElement('option');
+                option.value = market;
+                option.textContent = market;
+                select.appendChild(option);
+            });
         }
 
         function filterOffers() {
