@@ -2,10 +2,28 @@ from playwright.sync_api import sync_playwright
 import json
 import os
 import re
+from urllib.parse import urlparse
 from datetime import datetime
 from pathlib import Path
 
 OUTPUT_FILE = Path("clean_offers.json")
+
+def parse_proxy_string(proxy_str):
+    """Μετατρέπει το proxy URL σε μορφή συμβατή με το Playwright"""
+    if not proxy_str:
+        return None
+    try:
+        parsed = urlparse(proxy_str)
+        server = f"{parsed.scheme}://{parsed.hostname}:{parsed.port}"
+        proxy_config = {"server": server}
+        if parsed.username:
+            proxy_config["username"] = parsed.username
+        if parsed.password:
+            proxy_config["password"] = parsed.password
+        return proxy_config
+    except Exception as e:
+        print(f"[!] Σφάλμα ανάλυσης proxy: {e}")
+        return {"server": proxy_str}
 
 def clean_title(title):
     artifacts = [
@@ -50,10 +68,10 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy):
+def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy_str):
     print(f"\n--- Συλλογή από {supermarket_name} ---")
     
-    use_proxy = supermarket_name in ["Σκλαβενίτης", "ΑΒ Βασιλόπουλος", "Μασούτης", "Γαλαξίας"] and residential_proxy
+    use_proxy = supermarket_name in ["Σκλαβενίτης", "ΑΒ Βασιλόπουλος", "Μασούτης", "Γαλαξίας"] and residential_proxy_str
     
     browser = None
     try:
@@ -70,7 +88,7 @@ def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy
         }
         
         if use_proxy:
-            launch_args["proxy"] = {"server": residential_proxy}
+            launch_args["proxy"] = parse_proxy_string(residential_proxy_str)
             print(f"-> Χρήση Residential Proxy για {supermarket_name}")
         else:
             print(f"-> Χρήση απευθείας σύνδεσης για {supermarket_name}")
@@ -89,18 +107,16 @@ def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy
         
         page = context.new_page()
         
-        # Debug: Έλεγχος ποια IP βλέπει το εξωτερικό περιβάλλον
+        # Debug: Έλεγχος ποια IP βλέπει το Playwright μέσω της σύνδεσης
         try:
             page.goto("https://ipv4.icanhazip.com", timeout=15000)
             current_ip = page.inner_text("body").strip()
             print(f"-> [DEBUG] IP που χρησιμοποιείται: {current_ip}")
-        except:
-            pass
+        except Exception as ip_err:
+            print(f"-> [DEBUG] Αποτυχία ανάγνωσης IP: {ip_err}")
 
         print(f"-> Μετάβαση στη διεύθυνση: {url}")
         page.goto(url, timeout=60000, wait_until="domcontentloaded")
-        
-        # Περισσότερος χρόνος φόρτωσης για δυναμικό περιεχόμενο (JS)
         page.wait_for_timeout(5000)
         
         parsed = scraper_logic(page, supermarket_name)
