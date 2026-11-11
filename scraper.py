@@ -11,14 +11,9 @@ def clean_title(title):
     if not title:
         return ""
     
-    # Καθαρισμός από τυχόν τιμές, ποσά ή σύμβολα ευρώ
     title = re.sub(r'\d+[\.,]\d+\s*€', '', title)
     title = re.sub(r'\d+\s*€', '', title)
-    
-    # Καθαρισμός από σύμβολα στην αρχή
     title = re.sub(r'^[\|\-\/\s]+', '', title)
-    
-    # Αφαίρεση περιττών συμβόλων και τελικών σημείων στίξης
     title = re.sub(r'[\/\|\-\.\,\s]+$', '', title)
     title = re.sub(r'\s*[\/\|\-]+\s*', ' ', title)
     
@@ -27,7 +22,7 @@ def clean_title(title):
 def is_valid_product(title):
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
-        "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία"
+        "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία", "φυλλάδια", "προσφορές"
     ]
     lower_title = title.lower()
     for word in blacklist:
@@ -57,10 +52,8 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Ειδική στοχευμένη εξαγωγή για τον Σκλαβενίτη ---
 def logic_sklavenitis(page, name, context=None):
     print("-> Στοχευμένη ανάγνωση τίτλων Σκλαβενίτη...")
-    
     try:
         page.wait_for_selector('article, div[class*="product"], div[class*="item"], div[class*="card"]', timeout=15000)
     except:
@@ -96,20 +89,21 @@ def logic_sklavenitis(page, name, context=None):
     print(f"-> Εντοπίστηκαν {len(raw)} καθαροί τίτλοι προϊόντων από τον Σκλαβενίτη.")
     return parse_products(raw, name)
 
-# --- Καθολική λογική για τα υπόλοιπα καταστήματα (συμπεριλαμβανομένου του Discount Markt) ---
+# --- Διευρυμένη και πιο ευέλικτη καθολική λογική για τα υπόλοιπα καταστήματα ---
 def universal_scraper_logic(page, name):
-    for _ in range(4):
+    for _ in range(6):
         page.evaluate("window.scrollBy(0, 1200)")
         page.wait_for_timeout(2000)
         
     raw = page.evaluate("""() => {
         const results = [];
-        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="item"], div[class*="card"], div[class*="brochure"], li');
+        // Σάρωση σε κάθε πιθανό container προϊόντος ή κάρτας
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="item"], div[class*="card"], div[class*="offer"], li, a');
         
         cards.forEach(card => {
             const text = card.innerText;
             if (text && text.includes('€')) {
-                const titleEl = card.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"], .product-title, .title');
+                const titleEl = card.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"], .product-title, .title, strong');
                 const productTitle = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
                 
                 const img = card.querySelector('img');
@@ -255,8 +249,9 @@ if __name__ == "__main__":
         seen_titles = set()
         for offer in all_offers:
             key = (offer["supermarket"], offer["title"])
-            if key not in seen_titles:
-                seen_titles.add(key)
+            key_clean = (offer["supermarket"], offer["title"].lower().strip())
+            if key_clean not in seen_titles:
+                seen_titles.add(key_clean)
                 unique_offers.append(offer)
 
         data = {
