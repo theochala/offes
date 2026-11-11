@@ -50,27 +50,35 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-# --- Ειδική διορθωμένη λογική για τον Σκλαβενίτη (με αναμονή render & scroll) ---
+# --- Ενισχυμένη λογική για τον Σκλαβενίτη με bypass bot checks ---
 def logic_sklavenitis(page, name, context=None):
-    print("-> Αναμονή φόρτωσης JavaScript και render για Σκλαβενίτη...")
+    print("-> Έλεγχος πρόσβασης και φόρτωσης Σκλαβενίτη...")
     
     try:
-        page.wait_for_selector('article, div[class*="product"], div[class*="item"], div[class*="card"], img', timeout=15000)
-    except:
-        print("-> Προειδοποίηση: Timeout στην αναμονή στοιχείων. Συνεχίζουμε με scroll...")
+        # Εκτύπωση τίτλου για debugging στο GitHub Actions log
+        title = page.title()
+        print(f"-> Τίτλος σελίδας Σκλαβενίτη: {title}")
+    except Exception as e:
+        print(f"-> Σφάλμα ανάγνωσης τίτλου: {e}")
 
-    # Σταδιακό scrolling για να ενεργοποιηθεί το lazy loading
+    # Αναμονή να διαβαστεί το DOM
+    try:
+        page.wait_for_load_state("domcontentloaded", timeout=15000)
+    except:
+        pass
+
+    # Σταδιακό scrolling για φόρτωση δυναμικού περιεχομένου / εικόνων
     for i in range(8):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(2000)
 
-    # Σάρωση ολόκληρης της σελίδας μετά το rendering
+    # Σάρωση στοιχείων (περιλαμβάνει κάρτες, συνδέσμους φυλλαδίων ή προσφορές)
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div, li, section');
+        const elements = document.querySelectorAll('article, div, li, section, a');
         elements.forEach(el => {
             const text = el.innerText;
-            if (text && text.includes('€') && text.length < 350 && text.length > 10) {
+            if (text && (text.includes('€') || text.length > 20)) {
                 const cleanText = text.replace(/\\n/g, ' | ').trim();
                 const img = el.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
@@ -127,16 +135,26 @@ def scrape_store(p, url, supermarket_name, logic_func):
                 "--disable-dev-shm-usage",
                 "--disable-gpu",
                 "--disable-extensions",
-                "--disable-blink-features=AutomationControlled"
+                "--disable-blink-features=AutomationControlled",
+                "--window-size=1920,1080"
             ]
         }
 
         browser = p.chromium.launch(**launch_args)
+        
+        # Ενισχυμένο context με ελληνικά headers και realistic viewport
         ctx = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
             viewport={"width": 1920, "height": 1080},
             locale="el-GR",
-            timezone_id="Europe/Athens"
+            timezone_id="Europe/Athens",
+            extra_http_headers={
+                "Accept-Language": "el-GR,el;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                "Sec-Ch-Ua": '"Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"',
+                "Sec-Ch-Ua-Mobile": "?0",
+                "Sec-Ch-Ua-Platform": '"Windows"'
+            }
         )
         
         ctx.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
@@ -149,14 +167,14 @@ def scrape_store(p, url, supermarket_name, logic_func):
         except Exception as nav_err:
             print(f"-> Προειδοποίηση πλοήγησης: {nav_err}")
             
-        page.wait_for_timeout(4000)
+        page.wait_for_timeout(5000)
         
         # Αυτόματο κλείσιμο cookies / popups
         try:
             popup_btns = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler")
             if popup_btns.count() > 0:
                 popup_btns.first().click()
-                page.wait_for_timeout(1500)
+                page.wait_for_timeout(2000)
         except:
             pass
             
