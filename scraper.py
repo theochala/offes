@@ -50,10 +50,8 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy_str):
+def scrape_store(p, url, scraper_logic, supermarket_name):
     print(f"\n--- Συλλογή από {supermarket_name} ---")
-    
-    use_proxy = supermarket_name in ["Σκλαβενίτης", "ΑΒ Βασιλόπουλος", "Μασούτης", "Γαλαξίας"] and residential_proxy_str
     
     browser = None
     try:
@@ -68,13 +66,6 @@ def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy
                 "--disable-blink-features=AutomationControlled"
             ]
         }
-        
-        if use_proxy:
-            # Απευθείας ανάθεση του proxy string στο Playwright
-            launch_args["proxy"] = {"server": residential_proxy_str}
-            print(f"-> Χρήση Residential Proxy για {supermarket_name}")
-        else:
-            print(f"-> Χρήση απευθείας σύνδεσης για {supermarket_name}")
 
         browser = p.chromium.launch(**launch_args)
         
@@ -90,14 +81,6 @@ def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy
         
         page = context.new_page()
         
-        # Debug: Έλεγχος IP
-        try:
-            page.goto("https://ipv4.icanhazip.com", timeout=15000)
-            current_ip = page.inner_text("body").strip()
-            print(f"-> [DEBUG] IP που χρησιμοποιείται: {current_ip}")
-        except Exception as ip_err:
-            print(f"-> [DEBUG] Αποτυχία ανάγνωσης IP: {ip_err}")
-
         print(f"-> Μετάβαση στη διεύθυνση: {url}")
         page.goto(url, timeout=60000, wait_until="domcontentloaded")
         page.wait_for_timeout(5000)
@@ -281,8 +264,6 @@ def upload_all_to_ftp():
         print(f"[X] Σφάλμα FTP: {error}")
 
 if __name__ == "__main__":
-    residential_proxy = os.getenv("RESIDENTIAL_PROXY")
-    
     with sync_playwright() as p:
         all_offers = []
         
@@ -297,7 +278,7 @@ if __name__ == "__main__":
         
         for name, url, logic_func in targets:
             try:
-                offers = scrape_with_proxy(p, url, logic_func, name, residential_proxy)
+                offers = scrape_store(p, url, logic_func, name)
                 all_offers.extend(offers)
             except Exception as e:
                 print(f"Σφάλμα εκτέλεσης για {name}:", e)
