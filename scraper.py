@@ -47,12 +47,11 @@ def parse_products(raw_products, supermarket_name):
         text = item["text"]
         img_url = item["image"]
         
-        # Εντοπισμός τιμών μαζί με τη μονάδα μέτρησης αν υπάρχει (π.χ. 3,00 €/τεμ. ή 60,00 €/λίτρο)
-        all_matches = re.findall(r'(\d+[\.,]\d+\s*€(?:/[a-zA-Zα-ωΑ-Ω.]+)?|0[\.,]\d+\s*€(?:/[a-zA-Zα-ωΑ-Ω.]+)?)', text)
+        # Πιο ευέλικτος εντοπισμός: πιάνει είτε απλή τιμή (π.χ. 2,59 €) είτε με μονάδα (π.χ. 3,00 €/τεμ. ή 60,00 €/λίτρο)
+        all_matches = re.findall(r'(\d+[\.,]\d+\s*€(?:/[a-zA-Zα-ωΑ-Ω.]+)?)', text)
         
         prices = []
         for m in all_matches:
-            # Καθαρισμός για έλεγχο εύρους τιμής
             num_part = m.split('€')[0].replace(',', '.').strip()
             try:
                 val = float(num_part)
