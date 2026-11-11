@@ -20,14 +20,24 @@ def clean_title(title):
     return re.sub(r'\s+', ' ', title).strip()
 
 def is_valid_product(title):
+    if not title:
+        return False
+        
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
-        "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία"
+        "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία", 
+        "φυλλάδια", "προσφορές", "λίστα αγορών", "είναι άδεια", "σύνολο", 
+        "χρυσές τιμές", "mymarket.gr", "καλάθι", "no image"
     ]
     lower_title = title.lower()
     for word in blacklist:
         if word in lower_title:
             return False
+            
+    # Επιπλέον έλεγχος: να μην είναι απλά μια τιμή ή σκέτα νούμερα
+    if re.match(r'^[\d\s\.,€+-]+$', title):
+        return False
+        
     return len(title) > 3
 
 def parse_products(raw_products, supermarket_name):
@@ -40,7 +50,7 @@ def parse_products(raw_products, supermarket_name):
         title = clean_title(item["title"])
         price_val = prices[-1] if prices else ""
         
-        if len(title) > 3 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
+        if len(title) > 3 and prices and price_val != "0,00 €" and price_val != "0 €" and img_url and img_url.startswith('http'):
             if is_valid_product(title):
                 if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
                     parsed.append({
