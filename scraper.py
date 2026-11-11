@@ -1,317 +1,192 @@
-
-import asyncio
 import json
+import os
 import re
 from datetime import datetime
-from pathlib import Path
-from playwright.async_api import async_playwright
+from ftplib import FTP
+from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
-OUTPUT_FILE = Path("clean_offers.json")
-
-SUPERMARKETS = {
-    "Μασούτης": "https://www.masoutis.gr/eshop",
-    "Σκλαβενίτης": "https://www.sklavenitis.gr/e-shop/",
+TARGET_URLS = {
+    "Μασούτης": "https://www.masoutis.gr/offers",
+    "Σκλαβενίτης": "https://www.sklavenitis.gr/sylloges/prosfores/",
     "Lidl": "https://www.lidl-hellas.gr/c/store/evdomadiaies-epiloges-26kw45/a10106403",
     "MyMarket": "https://www.mymarket.gr/offers",
-    "ΑΒ Βασιλόπουλος": "https://www.ab.gr/search/promotions",
+    "ΑΒ Βασιλόπουλος": "https://www.ab.gr/search/promotions"
 }
 
-PRODUCT_SELECTORS = [
-    '[data-testid*="product"]',
-    '[class*="product-card"]',
-    '[class*="productCard"]',
-    '[class*="ProductCard"]',
-    '[class*="product-item"]',
-    '[class*="productItem"]',
-    'article',
-    'li[class*="product"]',
-    '[class*="product"]',
-]
-
-PRICE_PATTERN = re.compile(
-    r"\d{1,4}(?:[.,]\d{1,2})?\s*€"
-)
-
-def clean_text(value):
-    if not value:
-        return ""
-    return " ".join(value.split()).strip()
-
-def normalize_price(value):
-    if not value:
-        return ""
-
-    match = PRICE_PATTERN.search(value)
-    if match:
-        return clean_text(match.group(0))
-
-    return ""
-
-def get_image(element):
-    image = element.locator("img").first
-
-    try:
-        if image.count():
-            src = (
-                image.get_attribute("src")
-                or image.get_attribute("data-src")
-                or image.get_attribute("data-lazy-src")
-                or image.get_attribute("srcset")
-            )
-
-            if src:
-                return src.split(",")[0].strip().split(" ")[0]
-
-    except Exception:
-        pass
-
-    return ""
-
-async def extract_products(page, supermarket):
+def parse_html_products(html_content, market_name):
+    soup = BeautifulSoup(html_content, 'html.parser')
     offers = []
 
-    for selector in PRODUCT_SELECTORS:
-        try:
-            elements = page.locator(selector)
-            count = await elements.count()
+    # Εντοπισμός όλων των πιθανών containers προϊόντων
+    cards = soup.select("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product']")
 
-            if count == 0:
+    for card in cards[:150]:
+        try:
+            # 1. Εξαγωγή Εικόνας
+            img_tag = card.find("img")
+            img_src = ""
+            if img_tag:
+                img_src = img_tag.get("src") or img_tag.get("data-src") or img_tag.get("srcset", "").split(" ")[0]
+                if img_src and not img_src.startswith("http"):
+                    if img_src.startswith("//"):
+                        img_src = "https:" + img_src
+                    else:
+                        img_src = ""
+
+            # 2. Συλλογή Κειμένων
+            texts = [t.strip() for t in card.stripped_strings if len(t.strip()) > 0]
+            if not texts:
                 continue
 
-            print(f"  [DEBUG] Selector {selector}: {count} στοιχεία")
+            price_text = ""
+            title_text = ""
+            possible_titles = []
 
-            for index in range(min(count, 500)):
-                element = elements.nth(index)
+            for txt in texts:
+                # Εντοπισμός Τιμής (περιέχει αριθμό και € ή κόμμα/τελεία σε μικρό μήκος)
+                if any(char.isdigit() for char in txt) and ('€' in txt or ',' in txt or '.' in txt) and len(txt) <= 10:
+                    if not price_text and re.search(r'\d', txt):
+                        price_text = txt
+                # Εντοπισμός Τίτλου
+                elif len(txt) > 3 and not any(w in txt.lower() for w in [
+                    "καλάθι", "σούπερ", "αρχική", "σύνδεση", "προσφορές", "cookies", 
+                    "newsletter", "εγγραφή", "αποδοχή", "απόρριψη", "λεπτομέρειες"
+                ]):
+                    possible_titles.append(txt)
 
-                try:
-                    text = clean_text(await element.inner_text(timeout=1500))
+            if possible_titles:
+                title_text = max(possible_titles, key=len)
 
-                    if len(text) < 5:
-                        continue
-
-                    price_match = PRICE_PATTERN.search(text)
-
-                    if not price_match:
-                        continue
-
-                    price = normalize_price(price_match.group(0))
-
-                    if not price:
-                        continue
-
-                    # Εντοπισμός τίτλου
-                    title = ""
-
-                    for title_selector in [
-                        "h2",
-                        "h3",
-                        "h4",
-                        '[class*="title"]',
-                        '[class*="name"]',
-                        "a",
-                    ]:
-                        title_element = element.locator(title_selector).first
-
-                        if await title_element.count():
-                            candidate = clean_text(
-                                await title_element.inner_text(timeout=1000)
-                            )
-
-                            if candidate and len(candidate) > 3:
-                                title = candidate
-                                break
-
-                    if not title:
-                        lines = [
-                            clean_text(line)
-                            for line in text.split("\n")
-                            if clean_text(line)
-                        ]
-
-                        title = next(
-                            (
-                                line for line in lines
-                                if not PRICE_PATTERN.search(line)
-                                and len(line) > 4
-                            ),
-                            ""
-                        )
-
-                    if not title:
-                        continue
-
-                    # Εντοπισμός παλιάς τιμής
-                    old_price = ""
-
-                    old_selectors = [
-                        "del",
-                        "s",
-                        "strike",
-                        '[class*="old-price"]',
-                        '[class*="oldPrice"]',
-                        '[class*="original-price"]',
-                        '[class*="price-old"]',
-                    ]
-
-                    for old_selector in old_selectors:
-                        old_element = element.locator(old_selector).first
-
-                        if await old_element.count():
-                            old_text = clean_text(
-                                await old_element.inner_text(timeout=1000)
-                            )
-
-                            old_price = normalize_price(old_text)
-
-                            if old_price and old_price != price:
-                                break
-
-                    # Εικόνα
-                    image = await get_image(element)
-
-                    # Αποφυγή διπλοεγγραφών
-                    duplicate = any(
-                        offer["supermarket"] == supermarket
-                        and offer["title"].lower() == title.lower()
-                        and offer["price"] == price
-                        for offer in offers
-                    )
-
-                    if duplicate:
-                        continue
-
+            if title_text and price_text:
+                # Αποφυγή διπλότυπων τίτλων
+                if not any(o['title'] == title_text for o in offers):
                     offers.append({
-                        "supermarket": supermarket,
-                        "title": title,
-                        "price": price,
-                        "old_price": old_price,
-                        "image": image,
-                        "date": datetime.now().strftime("%d/%m/%Y"),
+                        "supermarket": market_name,
+                        "title": title_text,
+                        "price": price_text,
+                        "old_price": "",
+                        "image": img_src if img_src else "https://via.placeholder.com/150?text=Offer",
+                        "date": datetime.now().strftime("%Y-%m-%d")
                     })
-
-                except Exception:
-                    continue
-
-            # Αν βρέθηκαν προϊόντα, δεν χρειάζεται άλλος selector
-            if offers:
-                break
-
-        except Exception as error:
-            print(f"  [DEBUG] Selector error {selector}: {error}")
-
-    return offers
-
-
-async def scrape_supermarket(browser, supermarket, url):
-    print(f"\n-> {supermarket}")
-
-    offers = []
-
-    page = await browser.new_page(
-        viewport={"width": 1440, "height": 1000},
-        locale="el-GR",
-        user_agent=(
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/131.0.0.0 Safari/537.36"
-        ),
-    )
-
-    try:
-        response = await page.goto(
-            url,
-            wait_until="domcontentloaded",
-            timeout=60000,
-        )
-
-        print(
-            "  HTTP:",
-            response.status if response else "χωρίς response"
-        )
-        print("  URL:", page.url)
-        print("  TITLE:", await page.title())
-
-        try:
-            await page.locator("body").wait_for(timeout=15000)
-            await page.wait_for_timeout(5000)
         except Exception:
-            pass
-
-        # Μικρή κύλιση για lazy-loaded προϊόντα
-        for _ in range(4):
-            await page.mouse.wheel(0, 1000)
-            await page.wait_for_timeout(800)
-
-        offers = await extract_products(page, supermarket)
-
-        print(f"  [OK] {supermarket}: {len(offers)} προϊόντα")
-
-        if not offers:
-            body_text = await page.locator("body").inner_text()
-            print("  [DEBUG] Κείμενο σελίδας:")
-            print(body_text[:1200])
-
-    except Exception as error:
-        print(f"  [ERROR] {supermarket}: {error}")
-
-    finally:
-        await page.close()
+            continue
 
     return offers
 
-
-async def main():
+def scrape_all_supermarkets():
     print("=== ΕΝΑΡΞΗ SCRAPER ===")
-
     all_offers = []
 
-    async with async_playwright() as playwright:
-        browser = await playwright.chromium.launch(
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
             headless=True,
-            args=["--disable-blink-features=AutomationControlled"],
+            args=[
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-blink-features=AutomationControlled"
+            ]
         )
-
-        for supermarket, url in SUPERMARKETS.items():
-            offers = await scrape_supermarket(
-                browser,
-                supermarket,
-                url,
-            )
-
-            all_offers.extend(offers)
-
-        await browser.close()
-
-    # Αποφυγή διπλοεγγραφών
-    unique_offers = []
-    seen = set()
-
-    for offer in all_offers:
-        key = (
-            offer["supermarket"],
-            offer["title"].lower(),
-            offer["price"],
+        
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080},
+            locale="el-GR",
+            timezone_id="Europe/Athens"
         )
+        context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
+        page = context.new_page()
 
-        if key not in seen:
-            seen.add(key)
-            unique_offers.append(offer)
+        for market_name, url in TARGET_URLS.items():
+            print(f"\n-> {market_name}: {url}")
+            try:
+                response = page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                status = response.status if response else 0
+                print(f"  HTTP Status: {status}")
 
-    output = {
-        "updated_at": datetime.now().isoformat(),
-        "total": len(unique_offers),
-        "offers": unique_offers,
+                if status == 403 and market_name == "Σκλαβενίτης":
+                    # Fallback URL για Σκλαβενίτη σε περίπτωση 403 block
+                    alt_url = "https://www.sklavenitis.gr/prosfores/"
+                    print(f"  [Retry] Δοκιμή εναλλακτικού URL: {alt_url}")
+                    page.goto(alt_url, wait_until="domcontentloaded", timeout=30000)
+
+                page.wait_for_timeout(2000)
+
+                # Αυτόματο κλείσιμο παραθύρων cookies
+                try:
+                    cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler").first
+                    if cookie_btn.count() > 0:
+                        cookie_btn.click(timeout=2000)
+                        page.wait_for_timeout(1000)
+                except Exception:
+                    pass
+
+                # Scroll για ενεργοποίηση lazy loading
+                for _ in range(5):
+                    page.mouse.wheel(0, 1500)
+                    page.wait_for_timeout(1000)
+
+                # Λήψη του πλήρως rendered HTML
+                html_content = page.content()
+                market_offers = parse_html_products(html_content, market_name)
+
+                if market_offers:
+                    all_offers.extend(market_offers)
+                    print(f"  [OK] {market_name}: Εξήχθησαν {len(market_offers)} πραγματικά προϊόντα.")
+                else:
+                    print(f"  [!] {market_name}: 0 προϊόντα.")
+
+            except Exception as ex:
+                print(f"  [X] Σφάλμα στο {market_name}: {ex}")
+                continue
+
+        browser.close()
+
+    # Εγγραφή στο JSON
+    data = {
+        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "total_offers": len(all_offers),
+        "offers": all_offers
     }
 
-    OUTPUT_FILE.write_text(
-        json.dumps(output, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    filename = "clean_offers.json"
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
 
-    print("\n=== ΟΛΟΚΛΗΡΩΘΗΚΕ ===")
-    print(f"Συνολικά προϊόντα: {len(unique_offers)}")
-    print(f"Αποθηκεύτηκαν στο: {OUTPUT_FILE}")
+    print(f"\n=== ΟΛΟΚΛΗΡΩΘΗΚΕ ===")
+    print(f"Συνολικά πραγματικά προϊόντα: {len(all_offers)}")
+    return filename
 
+def upload_all_to_ftp():
+    print("\n=== ΜΕΤΑΦΟΡΤΩΣΗ FTP ===")
+    ftp_server = os.getenv("FTP_SERVER")
+    ftp_user = os.getenv("FTP_USERNAME")
+    ftp_pass = os.getenv("FTP_PASSWORD")
+
+    if not all([ftp_server, ftp_user, ftp_pass]):
+        print("Σφάλμα: Λείπουν τα στοιχεία FTP από τα GitHub Secrets.")
+        return
+
+    try:
+        ftp = FTP(ftp_server, timeout=10)
+        ftp.login(user=ftp_user, passwd=ftp_pass)
+        ftp.cwd("prosfores.infy.click")
+        ftp.cwd("htdocs")
+
+        for filename in os.listdir("."):
+            if os.path.isfile(filename) and not filename.startswith("."):
+                if filename == "scraper.py":
+                    continue
+                with open(filename, "rb") as f:
+                    ftp.storbinary(f"STOR {filename}", f)
+                print(f"Ανέβηκε: {filename}")
+
+        ftp.quit()
+        print("Επιτυχής ολοκλήρωση FTP!")
+    except Exception as e:
+        print(f"[X] Σφάλμα FTP: {e}")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    json_file = scrape_all_supermarkets()
+    upload_all_to_ftp()
