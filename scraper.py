@@ -8,10 +8,13 @@ from pathlib import Path
 OUTPUT_FILE = Path("clean_offers.json")
 
 def clean_title(title):
-    # 1. Αφαίρεση αρχικών περιττών συμβόλων
+    if not title:
+        return ""
+    
+    # 1. Καθαρισμός από περιττά σύμβολα στην αρχή
     title = re.sub(r'^[\|\-\/\s]+', '', title)
     
-    # 2. Λίστα λέξεων και τεχνικών όρων προς διαγραφή
+    # 2. Διαγραφή άσχετων λέξεων/μηχανικών όρων
     artifacts = [
         "playlist_add", "favorite", "add", "remove", "Χρυσές Τιμές", 
         "Λίτ", "Τεμ", "τεμ", "τεμάχια", "κιλό", "κιλα", "γρ", "ml", "L", 
@@ -20,16 +23,12 @@ def clean_title(title):
     for art in artifacts:
         title = re.sub(rf'\b{art}\b', '', title, flags=re.IGNORECASE)
     
-    # 3. Αφαίρεση μεμονωμένων αριθμών όπως το "0"
+    # 3. Αφαίρεση μεμονωμένων αριθμών (όπως το 0) και περιττών συμβόλων στίξης
     title = re.sub(r'\b0\b', '', title)
+    title = re.sub(r'[\/\|\-\.\,\s]+$', '', title)
+    title = re.sub(r'\s*[\/\|\-]+\s*', ' ', title)
     
-    # 4. Αφαίρεση επαναλαμβανόμενων συμβόλων στίξης και κάθετων (π.χ. "/", "-", "|", ".")
-    title = re.sub(r'[\/\|\-\.\,\s]+$', '', title) # Καθαρισμός από το τέλος
-    title = re.sub(r'\s*[\/\|\-]+\s*', ' ', title)  # Αντικατάσταση εσωτερικών συμβόλων με κενό
-    
-    # 5. Τελικό trimming διπλών κενών
-    title = re.sub(r'\s+', ' ', title).strip()
-    return title
+    return re.sub(r'\s+', ' ', title).strip()
 
 def is_valid_product(title):
     blacklist = [
@@ -40,7 +39,7 @@ def is_valid_product(title):
     for word in blacklist:
         if word in lower_title:
             return False
-    return True
+    return len(title) > 4
 
 def parse_products(raw_products, supermarket_name):
     parsed = []
@@ -48,7 +47,10 @@ def parse_products(raw_products, supermarket_name):
         text = item["text"]
         img_url = item["image"]
         
+        # Εντοπισμός τιμών
         prices = re.findall(r'(\d+[\.,]\d+\s*€)', text)
+        
+        # Καθαρισμός τίτλου από τιμές και περιττά σύμβολα
         title = text
         for price in prices:
             title = title.replace(price, "")
@@ -68,11 +70,12 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
+# --- Στοχευμένη εξαγωγή για τον Σκλαβενίτη (μόνο τίτλοι προϊόντων) ---
 def logic_sklavenitis(page, name, context=None):
-    print("-> Αναμονή φόρτωσης JavaScript και render για Σκλαβενίτη...")
+    print("-> Στοχευμένη ανάγνωση προϊόντων Σκλαβενίτη...")
     
     try:
-        page.wait_for_selector('article, div[class*="product"], div[class*="item"], div[class*="card"], img', timeout=15000)
+        page.wait_for_selector('article, div[class*="product"], div[class*="item"], div[class*="card"]', timeout=15000)
     except:
         print("-> Προειδοποίηση: Timeout στην αναμονή στοιχείων. Συνεχίζουμε με scroll...")
 
@@ -80,19 +83,27 @@ def logic_sklavenitis(page, name, context=None):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(2000)
 
+    # Τραβάμε αποκλειστικά τα στοιχεία που περιέχουν τίτλο και τιμή, αποφεύγοντας τα γενικά μενού
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div, li, section');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 350 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
+        // Αναζήτηση σε πιθανές κάρτες προϊόντων
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="item"], div[class*="card"]');
+        
+        cards.forEach(card => {
+            const text = card.innerText;
+            if (text && text.includes('€')) {
+                // Προσπάθεια εύρεσης συγκεκριμένου τίτλου προϊόντος μέσα στην κάρτα
+                const titleEl = card.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"]');
+                const cleanText = titleEl ? titleEl.innerText : text.split('\\n')[0];
+                
+                const img = card.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
                 
-                if (imgSrc && imgSrc.startsWith('http')) {
-                    if (!results.some(r => r.text === cleanText)) {
-                        results.push({ text: cleanText, image: imgSrc });
+                if (imgSrc && imgSrc.startsWith('http') && cleanText.length > 3) {
+                    // Συνδυάζουμε τον καθαρό τίτλο με την τιμή που υπάρχει στην κάρτα για να την αναγνωρίσει ο parser
+                    const fullBlock = cleanText + ' ' + text;
+                    if (!results.some(r => r.text === fullBlock)) {
+                        results.push({ text: fullBlock, image: imgSrc });
                     }
                 }
             }
@@ -100,7 +111,7 @@ def logic_sklavenitis(page, name, context=None):
         return results;
     }""")
     
-    print(f"-> Εντοπίστηκαν {len(raw)} ακατέργαστα στοιχεία από τον Σκλαβενίτη.")
+    print(f"-> Εντοπίστηκαν {len(raw)} καθαρά προϊόντα από τον Σκλαβενίτη.")
     return parse_products(raw, name)
 
 def universal_scraper_logic(page, name):
@@ -174,9 +185,9 @@ def scrape_store(p, url, supermarket_name, logic_func):
         page.wait_for_timeout(5000)
         
         try:
-            popup_btns = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler")
-            if popup_btns.count() > 0:
-                popup_btns.first().click()
+            popup_ids = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler")
+            if popup_ids.count() > 0:
+                popup_ids.first().click()
                 page.wait_for_timeout(2000)
         except:
             pass
