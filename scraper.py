@@ -55,7 +55,7 @@ def random_delay(page, min_ms=1500, max_ms=3500):
     page.wait_for_timeout(random.randint(min_ms, max_ms))
 
 def scrape_sklavenitis(page):
-    print("Συλλογή από Σκλαβενίτη...")
+    print("Συλλογή από Σκλαβενίτη (Φυλλάδια)...")
     try:
         page.goto("https://www.sklavenitis.gr/fylladia/", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
@@ -69,7 +69,7 @@ def scrape_sklavenitis(page):
 
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, .product-item, div[class*="product"], div[class*="item"], div[class*="leaflet"]');
+        const elements = document.querySelectorAll('article, .product-item, div[class*="product"], div[class*="item"], div[class*="leaflet"], a');
         elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 250 && text.length > 10) {
@@ -88,9 +88,9 @@ def scrape_sklavenitis(page):
     return parsed
 
 def scrape_ab(page):
-    print("Συλλογή από ΑΒ Βασιλόπουλο...")
+    print("Συλλογή από ΑΒ Βασιλόπουλο (Φυλλάδια/Προσφορές)...")
     try:
-        page.goto("https://www.ab.gr/search/promotions?page=0&size=30", timeout=60000, wait_until="domcontentloaded")
+        page.goto("https://www.ab.gr/fylladia", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης σελίδας ΑΒ:", e)
@@ -129,7 +129,7 @@ def scrape_ab(page):
     return parsed
 
 def scrape_masoutis(page):
-    print("Συλλογή από Μασούτη...")
+    print("Συλλογή από Μασούτη (Φυλλάδια)...")
     try:
         page.goto("https://www.masoutis.gr/fylladia", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
@@ -194,9 +194,9 @@ def scrape_kritikos(page):
     return parsed
 
 def scrape_galaxias(page):
-    print("Συλλογή από Γαλαξία...")
+    print("Συλλογή από Γαλαξία (Φυλλάδια)...")
     try:
-        page.goto("https://galaxias.shop/eshop/2", timeout=60000, wait_until="domcontentloaded")
+        page.goto("https://www.galaxias-markets.gr/fylladia/", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except:
         return []
@@ -207,7 +207,7 @@ def scrape_galaxias(page):
     
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], .product-card');
+        const elements = document.querySelectorAll('article, div[class*="product"], .product-card, div[class*="leaflet"]');
         elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 250 && text.length > 10) {
@@ -264,39 +264,6 @@ def scrape_mymarket(page):
     }""")
     parsed = parse_products(raw, "My Market")
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από My Market.")
-    return parsed
-
-def scrape_discountmarket(page):
-    print("Συλλογή από Discount Market...")
-    try:
-        page.goto("https://www.discountmarket.gr/", timeout=60000, wait_until="domcontentloaded")
-        random_delay(page, 4000, 6000)
-    except Exception as e:
-        print("Σφάλμα φόρτωσης Discount Market:", e)
-        return []
-
-    for _ in range(4):
-        page.evaluate("window.scrollBy(0, 1000)")
-        random_delay(page, 1500, 2500)
-    
-    raw = page.evaluate("""() => {
-        const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], .product-item, div[class*="item"]');
-        elements.forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) {
-                    results.push({ text: cleanText, image: imgSrc });
-                }
-            }
-        });
-        return results;
-    }""")
-    parsed = parse_products(raw, "Discount Market")
-    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Discount Market.")
     return parsed
 
 def upload_all_to_ftp():
@@ -363,8 +330,7 @@ if __name__ == "__main__":
             scrape_masoutis, 
             scrape_kritikos, 
             scrape_galaxias, 
-            scrape_mymarket,
-            scrape_discountmarket
+            scrape_mymarket
         ]
         
         for scraper_func in scrapers:
