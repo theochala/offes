@@ -31,7 +31,6 @@ def parse_products(raw_products, supermarket_name):
         text = item["text"]
         img_url = item["image"]
         
-        # Αναζήτηση τιμών (π.χ. 1,50 € ή 1.50€)
         prices = re.findall(r'(\d+[\.,]\d+\s*€)', text)
         title = text
         for price in prices:
@@ -52,12 +51,10 @@ def parse_products(raw_products, supermarket_name):
     return parsed
 
 def universal_scraper_logic(page, name):
-    # Scroll για να φορτώσει το lazy-loaded περιεχόμενο
     for _ in range(5):
         page.evaluate("window.scrollBy(0, 1200)")
         page.wait_for_timeout(2000)
         
-    # Καθολικός εντοπισμός στοιχείων προϊόντων
     raw = page.evaluate("""() => {
         const results = [];
         const elements = document.querySelectorAll('article, div, li, section');
@@ -116,12 +113,13 @@ def scrape_store(p, url, supermarket_name):
             
         page.wait_for_timeout(4000)
         
-        # Διαχείριση cookies αν υπάρχουν
+        # Ειδικός χειρισμός για popups / cookies / επιλογή περιοχής (ιδίως για Σκλαβενίτη)
         try:
-            cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler")
-            if cookie_btn.count() > 0:
-                cookie_btn.first().click()
-                page.wait_for_timeout(1000)
+            # Κλείσιμο τυχόν modal/popup με κουμπιά αποδοχής ή συνέχειας
+            popup_btns = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), button:has-text('Συνέχεια'), button:has-text('Επιβεβαίωση'), #onetrust-accept-btn-handler")
+            if popup_btns.count() > 0:
+                popup_btns.first().click()
+                page.wait_for_timeout(1500)
         except:
             pass
             
@@ -178,8 +176,8 @@ if __name__ == "__main__":
         all_offers = []
         
         targets = [
-            # Αλλαγή URL Σκλαβενίτη σε γενική κατηγορία προσφορών / ειδικών τιμών τους
-            ("Σκλαβενίτης", "https://www.sklavenitis.gr/prosfores-kai-nea/"),
+            # Στοχεύουμε στο βασικό e-shop του Σκλαβενίτη όπου εμφανίζονται προϊόντα και τιμές
+            ("Σκλαβενίτης", "https://www.sklavenitis.gr/e-shop/"),
             ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions"),
             ("Μασούτης", "https://www.masoutis.gr/offers"),
             ("Κρητικός", "https://kritikos-sm.gr/offers/"),
