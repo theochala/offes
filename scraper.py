@@ -11,6 +11,7 @@ def clean_title(title):
     if not title:
         return ""
     
+    # Καθαρισμός τιμών και περιττών χαρακτήρων από τον τίτλο
     title = re.sub(r'\d+[\.,]\d+\s*€', '', title)
     title = re.sub(r'\d+\s*€', '', title)
     title = re.sub(r'^[\|\-\/\s]+', '', title)
@@ -20,15 +21,30 @@ def clean_title(title):
     return re.sub(r'\s+', ' ', title).strip()
 
 def is_valid_product(title):
+    if not title:
+        return False
+        
+    # Αυστηρή μαύρη λίστα για να κόβονται κατηγορίες, μενού και άκυρα κείμενα
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
-        "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία"
+        "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία",
+        "φυλλάδια", "προσφορές", "περισσότερα", "όλα", "εβδομάδα", "αρχική",
+        "αγόρασε", "καλάθι", "σούπερ", "μάρκετ", "προιόντα", "προϊόντα",
+        "νέες", "αποκλειστικά", "lupilu", "parkside", "silvercrest", "deluxe"
     ]
+    
     lower_title = title.lower()
+    
+    # Αν ο τίτλος περιέχει λέξεις από τη μαύρη λίστα ή είναι πολύ μικρός, απορρίπτεται
     for word in blacklist:
-        if word in lower_title:
+        if word == lower_title or f" {word} " in f" {lower_title} ":
             return False
-    return len(title) > 3
+            
+    # Αν ο τίτλος αποτελείται μόνο από νούμερα ή σύμβολα
+    if re.match(r'^[\d\s\.,€+-]+$', title):
+        return False
+        
+    return len(title) > 4
 
 def parse_products(raw_products, supermarket_name):
     parsed = []
@@ -40,7 +56,8 @@ def parse_products(raw_products, supermarket_name):
         title = clean_title(item["title"])
         price_val = prices[-1] if prices else ""
         
-        if len(title) > 3 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
+        # Έλεγχος εγκυρότητας: Πρέπει να έχει έγκυρο τίτλο, τιμή διαφορετική από 0 και φωτογραφία προϊόντος
+        if len(title) > 4 and prices and price_val != "0,00 €" and price_val != "0 €" and img_url and img_url.startswith('http'):
             if is_valid_product(title):
                 if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
                     parsed.append({
@@ -52,68 +69,43 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Προηγμένη λογική για τα Lidl με υποκλοπή API & deep DOM scanning ---
+# --- Ειδική στοχευμένη λογική για τα Lidl (μόνο προϊόντα) ---
 def logic_lidl(page, name):
-    print(f"-> Προηγμένη ανάγνωση API/DOM για {name}...")
+    print(f"-> Στοχευμένη ανάγνωση προϊόντων για {name}...")
     
-    intercepted_products = []
-
-    # Παρακολούθηση δικτύου για δεδομένα JSON προϊόντων
-    def handle_response(response):
-        try:
-            if "json" in response.headers.get("content-type", ""):
-                url = response.url
-                if "product" in url or "search" in url or "offers" in url or "flyer" in url:
-                    data = response.json()
-                    # Αν βρούμε δομημένα δεδομένα JSON, προσπαθούμε να τα εξάγουμε
-                    # (Η λογική θα μαζέψει τίτλους και τιμές αν υπάρχουν στα payloads)
-        except:
-            pass
-
-    page.on("response", handle_response)
-
-    try:
-        page.goto("https://www.lidl-hellas.gr/c/prosfores/a10008743", timeout=60000, wait_until="networkidle")
-    except:
-        pass
-
-    # Κύλιση για να πυροδοτηθεί η φόρτωση
     for _ in range(8):
         page.evaluate("window.scrollBy(0, 1500)")
         page.wait_for_timeout(2000)
 
-    # Σάρωση DOM με ευρεία γκάμα επιλογέων που χρησιμοποιούν τα Lidl (grid, tiles, custom elements)
     raw = page.evaluate("""() => {
         const results = [];
-        // Αναζήτηση σε κάθε πιθανό στοιχείο κάρτας ή προϊόντος στα Lidl
-        const elements = document.querySelectorAll('[class*="product"], [class*="Grid"], [class*="card"], [class*="item"], article, section, li');
+        // Στοχεύουμε αποκλειστικά σε κάρτες προϊόντων και grid items
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid-item"], div[class*="card"], li[class*="product"]');
         
-        elements.forEach(el => {
-            const text = el.innerText || '';
-            if (text.includes('€') && text.length < 500) {
-                // Εύρεση τίτλου μέσα στην κάρτα
-                const titleEl = el.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"], [class*="desc"], a');
-                let titleText = titleEl ? titleEl.innerText.trim() : '';
+        cards.forEach(card => {
+            const text = card.innerText;
+            if (text && text.includes('€')) {
+                // Αναζήτηση συγκεκριμένου τίτλου προϊόντος
+                const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"], [class*="description"]');
+                let productTitle = titleEl ? titleEl.innerText.trim() : '';
                 
-                if (!titleText || titleText.length < 3) {
+                if (!productTitle) {
                     const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
-                    titleText = lines.length > 0 ? lines[0] : '';
+                    productTitle = lines.length > 0 ? lines[0] : '';
                 }
-
-                // Εύρεση εικόνας
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || img.getAttribute('srcset') || '') : '';
                 
-                if (imgSrc && imgSrc.startsWith('http') && titleText.length > 2) {
-                    if (!results.some(r => r.title === titleText)) {
-                        results.push({ title: titleText, text: text, image: imgSrc.split(' ')[0] });
+                const img = card.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+                
+                if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 3) {
+                    if (!results.some(r => r.title === productTitle)) {
+                        results.push({ title: productTitle, text: text, image: imgSrc.split(' ')[0] });
                     }
                 }
             }
         });
         return results;
     }""")
-
     return parse_products(raw, name)
 
 # --- Η καθολική δοκιμασμένη λογική για τα υπόλοιπα σούπερ μάρκετ ---
