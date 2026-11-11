@@ -1,5 +1,4 @@
 from playwright.sync_api import sync_playwright
-from playwright_stealth import Stealth
 import json
 import os
 import re
@@ -299,17 +298,16 @@ def upload_all_to_ftp():
         print(f"[X] Σφάλμα FTP: {error}")
 
 if __name__ == "__main__":
-    # Χρήση του Stealth context manager για αυτόματη εφαρμογή evasions σε όλο το Playwright instance
-    with Stealth().use_sync(sync_playwright()) as p:
+    with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=True,
             args=[
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage",
-                "--disable-blink-features=AutomationControlled",
-                "--no-zygote",
-                "--single-process"
+                "--disable-gpu",
+                "--disable-extensions",
+                "--disable-blink-features=AutomationControlled"
             ]
         )
         
@@ -319,6 +317,10 @@ if __name__ == "__main__":
             locale="el-GR",
             timezone_id="Europe/Athens"
         )
+        
+        # Απόκρυψη flags αυτοματισμού σε επίπεδο JavaScript
+        context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
+        context.add_init_script("window.navigator.chrome = { runtime: {} };")
         
         page = context.new_page()
         all_offers = []
