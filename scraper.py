@@ -53,17 +53,16 @@ def parse_products(raw_products, supermarket_name):
 
 def universal_scraper_logic(page, name):
     # Scroll για να φορτώσει το lazy-loaded περιεχόμενο
-    for _ in range(4):
+    for _ in range(5):
         page.evaluate("window.scrollBy(0, 1200)")
         page.wait_for_timeout(2000)
         
-    # Καθολικός εντοπισμός στοιχείων που μοιάζουν με προϊόντα (κάρτες, divs, li, articles)
+    # Καθολικός εντοπισμός στοιχείων προϊόντων
     raw = page.evaluate("""() => {
         const results = [];
         const elements = document.querySelectorAll('article, div, li, section');
         elements.forEach(el => {
             const text = el.innerText;
-            // Ελέγχουμε αν το στοιχείο περιέχει σύμβολο ευρώ και έχει λογικό μέγεθος κάρτας προϊόντος
             if (text && text.includes('€') && text.length < 350 && text.length > 15) {
                 const cleanText = text.replace(/\\n/g, ' | ').trim();
                 const img = el.querySelector('img');
@@ -71,7 +70,7 @@ def universal_scraper_logic(page, name):
                 
                 if (imgSrc && imgSrc.startsWith('http')) {
                     if (!results.some(r => r.text === cleanText)) {
-                        results.append ? null : results.push({ text: cleanText, image: imgSrc });
+                        results.push({ text: cleanText, image: imgSrc });
                     }
                 }
             }
@@ -179,7 +178,8 @@ if __name__ == "__main__":
         all_offers = []
         
         targets = [
-            ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/"),
+            # Αλλαγή URL Σκλαβενίτη σε γενική κατηγορία προσφορών / ειδικών τιμών τους
+            ("Σκλαβενίτης", "https://www.sklavenitis.gr/prosfores-kai-nea/"),
             ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions"),
             ("Μασούτης", "https://www.masoutis.gr/offers"),
             ("Κρητικός", "https://kritikos-sm.gr/offers/"),
