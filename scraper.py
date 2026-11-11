@@ -4,17 +4,17 @@ from datetime import datetime
 from ftplib import FTP
 from playwright.sync_api import sync_playwright
 
-# Ενημερωμένα και πιο άμεστα URLs προσφορών για όλα τα καταστήματα
+# Διορθωμένα, πιο άμεση πρόσβασης URLs για όλα τα καταστήματα
 TARGET_URLS = {
     "Μασούτης": "https://www.masoutis.gr/offers/en",
-    "Σκλαβενίτης": "https://www.sklavenitis.gr/sylloges/prosfores/",
+    "Σκλαβενίτης": "https://www.sklavenitis.gr/e-shop/prosfopet-e-shop", # Ενημερωμένο link κατηγορίας προσφορών
     "Lidl": "https://www.lidl-hellas.gr/c/store/evdomadiaies-epiloges-26kw45/a10106403",
     "MyMarket": "https://www.mymarket.gr/offers?srsltid=AYCX9vJAEuUd6A9J70LsUgVl9eSugbCgIdwLfjS928We_Oc2AeBL0hoP",
     "ΑΒ Βασιλόπουλος": "https://www.ab.gr/search/promotions"
 }
 
 def scrape_all_supermarkets():
-    print("=== [1/3] Εκκίνηση Πλήρους Scraper (Και για τα 5 Μαρκέτ) ===")
+    print("=== [1/3] Εκκίνηση Ενισχυμένου Scraper ===")
     all_offers = []
 
     try:
@@ -42,10 +42,15 @@ def scrape_all_supermarkets():
             for market_name, url in TARGET_URLS.items():
                 print(f"-> Φόρτωση σελίδας {market_name}: {url}")
                 try:
-                    page.goto(url, wait_until="networkidle", timeout=35000)
-                    page.wait_for_timeout(4000)
+                    page.goto(url, wait_until="domcontentloaded", timeout=35000)
+                    
+                    # Αναμονή για τυχόν δυναμικά αιτήματα
+                    try:
+                        page.wait_for_load_state("networkidle", timeout=8000)
+                    except:
+                        pass
 
-                    # Αυτόματη αποδοχή cookies
+                    # Αποδοχή cookies
                     try:
                         cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler").first
                         if cookie_btn.count() > 0:
@@ -54,18 +59,18 @@ def scrape_all_supermarkets():
                     except:
                         pass
                     
-                    # Πολλαπλό scroll για lazy loading
-                    for _ in range(5):
+                    # Scroll για lazy loading
+                    for _ in range(6):
                         page.mouse.wheel(0, 2000)
-                        page.wait_for_timeout(1500)
+                        page.wait_for_timeout(1200)
 
                     market_offers = []
 
-                    # Ευρεία αναζήτηση στοιχείων για όλες τις δομές
+                    # Ευρεία αναζήτηση στοιχείων (συμπεριλαμβανομένων όλων των τύπων καρτών)
                     cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product'], li[class*='item'], div[class*='Grid']").all()
                     print(f"  [i] Εντοπίστηκαν {len(cards)} υποψήφια στοιχεία στο {market_name}.")
 
-                    for card in cards[:100]:
+                    for card in cards[:120]:
                         try:
                             title_text = ""
                             price_text = ""
