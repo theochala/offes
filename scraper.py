@@ -1,5 +1,5 @@
 from playwright.sync_api import sync_playwright
-from playwright_stealth import stealth_sync
+from playwright_stealth import Stealth
 import json
 import os
 import re
@@ -57,7 +57,6 @@ def random_delay(page, min_ms=1500, max_ms=3500):
 
 def scrape_sklavenitis(page):
     print("Συλλογή από Σκλαβενίτη...")
-    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
         page.goto("https://www.sklavenitis.gr/sylloges/prosfores/", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
@@ -91,7 +90,6 @@ def scrape_sklavenitis(page):
 
 def scrape_ab(page):
     print("Συλλογή από ΑΒ Βασιλόπουλο...")
-    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
         page.goto("https://www.ab.gr/search/promotions", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
@@ -133,7 +131,6 @@ def scrape_ab(page):
 
 def scrape_masoutis(page):
     print("Συλλογή από Μασούτη...")
-    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
         page.goto("https://www.masoutis.gr/offers", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
@@ -167,7 +164,6 @@ def scrape_masoutis(page):
 
 def scrape_kritikos(page):
     print("Συλλογή από Κρητικό...")
-    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
         page.goto("https://kritikos-sm.gr/offers/?srsltid=AYCX9vJWXPLOaa4mCSyC7xt-dwrv1ovQ7pkBaLPHp-8tjTfpPrQCT6pA", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 3000, 5000)
@@ -200,7 +196,6 @@ def scrape_kritikos(page):
 
 def scrape_galaxias(page):
     print("Συλλογή από Γαλαξία...")
-    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
         page.goto("https://galaxias.shop/eshop/2?promos=isExtraBonus&promos=isBravoBonus&promos=isKalathiNoikokiriou&promos=isSumferei&promos=isTileoptiko&promos=isGoldPrices", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
@@ -233,7 +228,6 @@ def scrape_galaxias(page):
 
 def scrape_mymarket(page):
     print("Συλλογή από My Market...")
-    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
         page.goto("https://www.mymarket.gr/offers", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
@@ -305,7 +299,8 @@ def upload_all_to_ftp():
         print(f"[X] Σφάλμα FTP: {error}")
 
 if __name__ == "__main__":
-    with sync_playwright() as p:
+    # Χρήση του Stealth context manager για αυτόματη εφαρμογή evasions σε όλο το Playwright instance
+    with Stealth().use_sync(sync_playwright()) as p:
         browser = p.chromium.launch(
             headless=True,
             args=[
