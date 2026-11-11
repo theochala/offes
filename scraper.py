@@ -8,6 +8,9 @@ from pathlib import Path
 OUTPUT_FILE = Path("clean_offers.json")
 
 def clean_title(title):
+    # Αφαίρεση ανεπιθύμητων συμβόλων στην αρχή ή στο τέλος
+    title = re.sub(r'^[\|\-\s]+', '', title)
+    
     artifacts = [
         "playlist_add", "favorite", "add", "remove", "Χρυσές Τιμές", 
         "Λίτ", "Τεμ", "/", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση", "Προσφορά"
@@ -25,6 +28,18 @@ def clean_title(title):
     title = re.sub(r'\s+', ' ', title).strip()
     return title
 
+def is_valid_product(title):
+    # Λίστα με λέξεις-κλειδιά που δείχνουν ότι πρόκειται για μενού, header ή footer και όχι προϊόν
+    blacklist = [
+        "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
+        "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία"
+    ]
+    lower_title = title.lower()
+    for word in blacklist:
+        if word in lower_title:
+            return False
+    return True
+
 def parse_products(raw_products, supermarket_name):
     parsed = []
     for item in raw_products:
@@ -39,46 +54,38 @@ def parse_products(raw_products, supermarket_name):
         title = clean_title(title)
         price_val = prices[-1] if prices else ""
         
-        if len(title) > 4 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
-            if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
-                parsed.append({
-                    "title": title,
-                    "price": price_val,
-                    "all_prices": prices,
-                    "image": img_url,
-                    "supermarket": supermarket_name
-                })
+        # Έλεγχος εγκυρότητας: Πρέπει να έχει καθαρό τίτλο, τιμή, να μην είναι 0,00€ και να περνάει το blacklist φίλτρο
+        if len(title) > 6 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
+            if is_valid_product(title):
+                if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
+                    parsed.append({
+                        "title": title,
+                        "price": price_val,
+                        "all_prices": prices,
+                        "image": img_url,
+                        "supermarket": supermarket_name
+                    })
     return parsed
 
-# --- Ενισχυμένη λογική για τον Σκλαβενίτη με bypass bot checks ---
+# --- Ειδική λογική για τον Σκλαβενίτη ---
 def logic_sklavenitis(page, name, context=None):
-    print("-> Έλεγχος πρόσβασης και φόρτωσης Σκλαβενίτη...")
+    print("-> Αναμονή φόρτωσης JavaScript και render για Σκλαβενίτη...")
     
     try:
-        # Εκτύπωση τίτλου για debugging στο GitHub Actions log
-        title = page.title()
-        print(f"-> Τίτλος σελίδας Σκλαβενίτη: {title}")
-    except Exception as e:
-        print(f"-> Σφάλμα ανάγνωσης τίτλου: {e}")
-
-    # Αναμονή να διαβαστεί το DOM
-    try:
-        page.wait_for_load_state("domcontentloaded", timeout=15000)
+        page.wait_for_selector('article, div[class*="product"], div[class*="item"], div[class*="card"], img', timeout=15000)
     except:
-        pass
+        print("-> Προειδοποίηση: Timeout στην αναμονή στοιχείων. Συνεχίζουμε με scroll...")
 
-    # Σταδιακό scrolling για φόρτωση δυναμικού περιεχομένου / εικόνων
     for i in range(8):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(2000)
 
-    # Σάρωση στοιχείων (περιλαμβάνει κάρτες, συνδέσμους φυλλαδίων ή προσφορές)
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div, li, section, a');
+        const elements = document.querySelectorAll('article, div, li, section');
         elements.forEach(el => {
             const text = el.innerText;
-            if (text && (text.includes('€') || text.length > 20)) {
+            if (text && text.includes('€') && text.length < 350 && text.length > 10) {
                 const cleanText = text.replace(/\\n/g, ' | ').trim();
                 const img = el.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
@@ -141,8 +148,6 @@ def scrape_store(p, url, supermarket_name, logic_func):
         }
 
         browser = p.chromium.launch(**launch_args)
-        
-        # Ενισχυμένο context με ελληνικά headers και realistic viewport
         ctx = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
             viewport={"width": 1920, "height": 1080},
@@ -169,7 +174,6 @@ def scrape_store(p, url, supermarket_name, logic_func):
             
         page.wait_for_timeout(5000)
         
-        # Αυτόματο κλείσιμο cookies / popups
         try:
             popup_btns = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler")
             if popup_btns.count() > 0:
