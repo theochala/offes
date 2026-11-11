@@ -10,7 +10,7 @@ OUTPUT_FILE = Path("clean_offers.json")
 def clean_title(title):
     artifacts = [
         "playlist_add", "favorite", "add", "remove", "Χρυσές Τιμές", 
-        "Λίτ", "Τεμ", "/", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση"
+        "Λίτ", "Τεμ", "/", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση", "Προσφορά"
     ]
     for art in artifacts:
         title = title.replace(art, "")
@@ -31,6 +31,7 @@ def parse_products(raw_products, supermarket_name):
         text = item["text"]
         img_url = item["image"]
         
+        # Αναζήτηση τιμών (π.χ. 1,50 € ή 1.50€)
         prices = re.findall(r'(\d+[\.,]\d+\s*€)', text)
         title = text
         for price in prices:
@@ -39,7 +40,7 @@ def parse_products(raw_products, supermarket_name):
         title = clean_title(title)
         price_val = prices[-1] if prices else ""
         
-        if len(title) > 5 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
+        if len(title) > 4 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
             if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
                 parsed.append({
                     "title": title,
@@ -50,9 +51,37 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-def scrape_store(p, url, scraper_logic, supermarket_name):
+def universal_scraper_logic(page, name):
+    # Scroll για να φορτώσει το lazy-loaded περιεχόμενο
+    for _ in range(4):
+        page.evaluate("window.scrollBy(0, 1200)")
+        page.wait_for_timeout(2000)
+        
+    # Καθολικός εντοπισμός στοιχείων που μοιάζουν με προϊόντα (κάρτες, divs, li, articles)
+    raw = page.evaluate("""() => {
+        const results = [];
+        const elements = document.querySelectorAll('article, div, li, section');
+        elements.forEach(el => {
+            const text = el.innerText;
+            // Ελέγχουμε αν το στοιχείο περιέχει σύμβολο ευρώ και έχει λογικό μέγεθος κάρτας προϊόντος
+            if (text && text.includes('€') && text.length < 350 && text.length > 15) {
+                const cleanText = text.replace(/\\n/g, ' | ').trim();
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+                
+                if (imgSrc && imgSrc.startsWith('http')) {
+                    if (!results.some(r => r.text === cleanText)) {
+                        results.append ? null : results.push({ text: cleanText, image: imgSrc });
+                    }
+                }
+            }
+        });
+        return results;
+    }""")
+    return parse_products(raw, name)
+
+def scrape_store(p, url, supermarket_name):
     print(f"\n--- Συλλογή από {supermarket_name} ---")
-    
     browser = None
     try:
         launch_args = {
@@ -77,15 +106,27 @@ def scrape_store(p, url, scraper_logic, supermarket_name):
         )
         
         context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
-        context.add_init_script("window.navigator.chrome = { runtime: {} };")
         
         page = context.new_page()
-        
         print(f"-> Μετάβαση στη διεύθυνση: {url}")
-        page.goto(url, timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(5000)
         
-        parsed = scraper_logic(page, supermarket_name)
+        try:
+            page.goto(url, timeout=60000, wait_until="domcontentloaded")
+        except Exception as nav_err:
+            print(f"-> Προειδοποίηση πλοήγησης: {nav_err}")
+            
+        page.wait_for_timeout(4000)
+        
+        # Διαχείριση cookies αν υπάρχουν
+        try:
+            cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler")
+            if cookie_btn.count() > 0:
+                cookie_btn.first().click()
+                page.wait_for_timeout(1000)
+        except:
+            pass
+            
+        parsed = universal_scraper_logic(page, supermarket_name)
         browser.close()
         
         if parsed and len(parsed) > 0:
@@ -103,136 +144,6 @@ def scrape_store(p, url, scraper_logic, supermarket_name):
             except:
                 pass
         return []
-
-# --- Λογική εξαγωγής ανά κατάστημα ---
-
-def logic_sklavenitis(page, name):
-    for _ in range(3):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-    raw = page.evaluate("""() => {
-        const results = [];
-        document.querySelectorAll('article, .product-item, div[class*="product"], div[class*="item"]').forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) results.push({ text: cleanText, image: imgSrc });
-            }
-        });
-        return results;
-    }""")
-    return parse_products(raw, name)
-
-def logic_ab(page, name):
-    try:
-        cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
-        if cookie_btn.count() > 0:
-            cookie_btn.first().click()
-            page.wait_for_timeout(1500)
-    except:
-        pass
-    for _ in range(3):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-    raw = page.evaluate("""() => {
-        const results = [];
-        document.querySelectorAll('article, product-card-view, div[class*="product"], div[class*="item"]').forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 300 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) results.push({ text: cleanText, image: imgSrc });
-            }
-        });
-        return results;
-    }""")
-    return parse_products(raw, name)
-
-def logic_masoutis(page, name):
-    for _ in range(3):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-    raw = page.evaluate("""() => {
-        const results = [];
-        document.querySelectorAll('article, div[class*="product"], .item').forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) results.push({ text: cleanText, image: imgSrc });
-            }
-        });
-        return results;
-    }""")
-    return parse_products(raw, name)
-
-def logic_kritikos(page, name):
-    for _ in range(3):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1500)
-    raw = page.evaluate("""() => {
-        const results = [];
-        document.querySelectorAll('article, div[class*="product"]').forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) results.push({ text: cleanText, image: imgSrc });
-            }
-        });
-        return results;
-    }""")
-    return parse_products(raw, name)
-
-def logic_galaxias(page, name):
-    for _ in range(3):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
-    raw = page.evaluate("""() => {
-        const results = [];
-        document.querySelectorAll('article, div[class*="product"], .product-card').forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!cleanText.includes('Κατηγορίες') && !results.some(r => r.text === cleanText)) results.push({ text: cleanText, image: imgSrc });
-            }
-        });
-        return results;
-    }""")
-    return parse_products(raw, name)
-
-def logic_mymarket(page, name):
-    try:
-        cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
-        if cookie_btn.count() > 0:
-            cookie_btn.first().click()
-            page.wait_for_timeout(1000)
-    except:
-        pass
-    for _ in range(3):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1500)
-    raw = page.evaluate("""() => {
-        const results = [];
-        document.querySelectorAll('article, div[class*="product"], .item').forEach(el => {
-            const text = el.innerText;
-            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
-                const cleanText = text.replace(/\\n/g, ' | ').trim();
-                const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                if (!results.some(r => r.text === cleanText)) results.push({ text: cleanText, image: imgSrc });
-            }
-        });
-        return results;
-    }""")
-    return parse_products(raw, name)
 
 def upload_all_to_ftp():
     print("\n=== ΜΕΤΑΦΟΡΤΩΣΗ FTP ===")
@@ -268,17 +179,17 @@ if __name__ == "__main__":
         all_offers = []
         
         targets = [
-            ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/", logic_sklavenitis),
-            ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions", logic_ab),
-            ("Μασούτης", "https://www.masoutis.gr/offers", logic_masoutis),
-            ("Κρητικός", "https://kritikos-sm.gr/offers/", logic_kritikos),
-            ("Γαλαξίας", "https://galaxias.shop/eshop/2", logic_galaxias),
-            ("My Market", "https://www.mymarket.gr/offers", logic_mymarket),
+            ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/"),
+            ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions"),
+            ("Μασούτης", "https://www.masoutis.gr/offers"),
+            ("Κρητικός", "https://kritikos-sm.gr/offers/"),
+            ("Γαλαξίας", "https://galaxias.shop/eshop/2"),
+            ("My Market", "https://www.mymarket.gr/offers"),
         ]
         
-        for name, url, logic_func in targets:
+        for name, url in targets:
             try:
-                offers = scrape_store(p, url, logic_func, name)
+                offers = scrape_store(p, url, name)
                 all_offers.extend(offers)
             except Exception as e:
                 print(f"Σφάλμα εκτέλεσης για {name}:", e)
