@@ -8,28 +8,32 @@ from pathlib import Path
 OUTPUT_FILE = Path("clean_offers.json")
 
 def clean_title(title):
-    # Αφαίρεση ανεπιθύμητων συμβόλων στην αρχή ή στο τέλος
+    # 1. Αφαίρεση κάθετων γραμμών, παρενθέσεων και πολλαπλών κενών
     title = re.sub(r'^[\|\-\s]+', '', title)
+    title = title.replace('|', '')
     
+    # 2. Λίστα λέξεων και τεχνικών όρων που θέλουμε να διαγράφονται
     artifacts = [
         "playlist_add", "favorite", "add", "remove", "Χρυσές Τιμές", 
-        "Λίτ", "Τεμ", "/", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση", "Προσφορά"
+        "Λίτ", "Τεμ", "τεμ", "τεμάχια", "κιλό", "κιλα", "γρ", "ml", "L", 
+        "συσκ", "συσκευασία", "Νέο", "Προσωρινά μη διαθέσιμο", "Διαφήμιση", "Προσφορά"
     ]
     for art in artifacts:
-        title = title.replace(art, "")
+        # Αντικατάσταση είτε με κενό είτε με word boundaries
+        title = re.sub(rf'\b{art}\b', '', title, flags=re.IGNORECASE)
     
-    words = title.split()
-    seen = []
-    for w in words:
-        if w not in seen or len(w) > 4:
-            seen.append(w)
+    # 3. Αφαίρεση μεμονωμένων αριθμών όπως το "0" στο τέλος (π.χ. "τεμ. 0")
+    title = re.sub(r'\b0\b', '', title)
     
-    title = " ".join(seen)
+    # 4. Καθαρισμός διπλών κενών και τελικού trimming
     title = re.sub(r'\s+', ' ', title).strip()
+    
+    # 5. Αφαίρεση τυχόν ασήμαντου χαρακτήρα που περίσσεψα στην άκρη
+    title = re.sub(r'[\,\.\-\/]\s*$', '', title).strip()
+    
     return title
 
 def is_valid_product(title):
-    # Λίστα με λέξεις-κλειδιά που δείχνουν ότι πρόκειται για μενού, header ή footer και όχι προϊόν
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
         "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία"
@@ -54,8 +58,7 @@ def parse_products(raw_products, supermarket_name):
         title = clean_title(title)
         price_val = prices[-1] if prices else ""
         
-        # Έλεγχος εγκυρότητας: Πρέπει να έχει καθαρό τίτλο, τιμή, να μην είναι 0,00€ και να περνάει το blacklist φίλτρο
-        if len(title) > 6 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
+        if len(title) > 4 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
             if is_valid_product(title):
                 if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
                     parsed.append({
@@ -67,7 +70,6 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Ειδική λογική για τον Σκλαβενίτη ---
 def logic_sklavenitis(page, name, context=None):
     print("-> Αναμονή φόρτωσης JavaScript και render για Σκλαβενίτη...")
     
@@ -103,7 +105,6 @@ def logic_sklavenitis(page, name, context=None):
     print(f"-> Εντοπίστηκαν {len(raw)} ακατέργαστα στοιχεία από τον Σκλαβενίτη.")
     return parse_products(raw, name)
 
-# --- Καθολική λογική για τα υπόλοιπα καταστήματα ---
 def universal_scraper_logic(page, name):
     for _ in range(4):
         page.evaluate("window.scrollBy(0, 1200)")
