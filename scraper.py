@@ -48,15 +48,20 @@ def parse_products(raw_products, supermarket_name):
 def scrape_sklavenitis(page):
     print("Συλλογή από Σκλαβενίτη...")
     try:
-        page.goto("https://www.sklavenitis.gr/sylloges/prosfores/", timeout=60000, wait_until="domcontentloaded")
+        # Χρήση άμεσης υποσελίδας κατηγορίας e-shop αντί για το βασικό φίλτρο προσφορών
+        page.goto("https://www.sklavenitis.gr/e-shop/prosfopet-e-shop", timeout=60000, wait_until="domcontentloaded")
         page.wait_for_timeout(6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης Σκλαβενίτη:", e)
         return []
     
+    for _ in range(4):
+        page.evaluate("window.scrollBy(0, 1000)")
+        page.wait_for_timeout(1500)
+
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, .product-item, div[class*="product"]');
+        const elements = document.querySelectorAll('article, .product-item, div[class*="product"], div[class*="item"]');
         elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 250 && text.length > 10) {
@@ -118,13 +123,14 @@ def scrape_ab(page):
 def scrape_masoutis(page):
     print("Συλλογή από Μασούτη...")
     try:
-        page.goto("https://www.masoutis.gr/offers", timeout=60000, wait_until="domcontentloaded")
+        # Χρήση βασικής σελίδας eshop προσφορών για να παρακαμφθούν τα κενά redirects
+        page.goto("https://www.masoutis.gr/eshop", timeout=60000, wait_until="domcontentloaded")
         page.wait_for_timeout(6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης Μασούτη:", e)
         return []
 
-    for _ in range(4):
+    for _ in range(5):
         page.evaluate("window.scrollBy(0, 1000)")
         page.wait_for_timeout(1500)
     
@@ -254,7 +260,6 @@ def scrape_mymarket(page):
     return parsed
 
 with sync_playwright() as p:
-    # Ρύθμιση headless=True για το GitHub Actions αλλά με stealth ορίσματα για να μην μπλοκάρεται
     browser = p.chromium.launch(
         headless=True,
         args=[
@@ -266,17 +271,15 @@ with sync_playwright() as p:
     )
     
     context = browser.new_context(
-        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
         viewport={"width": 1920, "height": 1080},
         locale="el-GR",
         timezone_id="Europe/Athens"
     )
     
-    # Απόκρυψη του flag αυτοματισμού
     context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
     
     page = context.new_page()
-    
     all_offers = []
     
     for scraper_func in [scrape_sklavenitis, scrape_ab, scrape_masoutis, scrape_kritikos, scrape_galaxias, scrape_mymarket]:
