@@ -52,7 +52,38 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Καθολική δοκιμασμένη λογική σάρωσης ---
+# --- Ειδική στοχευμένη λογική για τα Lidl ---
+def logic_lidl(page, name):
+    print(f"-> Στοχευμένη ανάγνωση για {name}...")
+    
+    for _ in range(5):
+        page.evaluate("window.scrollBy(0, 1200)")
+        page.wait_for_timeout(2000)
+
+    raw = page.evaluate("""() => {
+        const results = [];
+        // Τα Lidl χρησιμοποιούν συνήθως grid items ή κάρτες προσφορών
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid"], div[class*="item"], div[class*="card"]');
+        
+        cards.forEach(card => {
+            const text = card.innerText;
+            if (text && text.includes('€')) {
+                const titleEl = card.querySelector('h2, h3, h4, span[class*="title"], div[class*="title"], span[class*="desc"]');
+                const productTitle = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
+                
+                const img = card.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+                
+                if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 2) {
+                    results.push({ title: productTitle, text: text, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    return parse_products(raw, name)
+
+# --- Γενική δοκιμασμένη λογική σάρωσης για τα υπόλοιπα ---
 def universal_scraper_logic(page, name):
     print(f"-> Σάρωση σελίδας για {name}...")
     
@@ -81,7 +112,7 @@ def universal_scraper_logic(page, name):
     }""")
     return parse_products(raw, name)
 
-def scrape_store(p, url, supermarket_name):
+def scrape_store(p, url, supermarket_name, logic_func=None):
     print(f"\n--- Συλλογή από {supermarket_name} ---")
     browser = None
     try:
@@ -132,7 +163,12 @@ def scrape_store(p, url, supermarket_name):
         except:
             pass
             
-        parsed = universal_scraper_logic(page, supermarket_name)
+        # Αν υπάρχει ειδική συνάρτηση (όπως για τα Lidl), την εκτελούμε, αλλιώς την καθολική
+        if logic_func:
+            parsed = logic_func(page, supermarket_name)
+        else:
+            parsed = universal_scraper_logic(page, supermarket_name)
+            
         browser.close()
         
         if parsed and len(parsed) > 0:
@@ -185,19 +221,19 @@ if __name__ == "__main__":
         all_offers = []
         
         targets = [
-            ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/"),
-            ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions"),
-            ("Μασούτης", "https://www.masoutis.gr/offers"),
-            ("Κρητικός", "https://kritikos-sm.gr/offers/"),
-            ("Γαλαξίας", "https://www.galaxias.gr/prosfores/"),
-            ("My Market", "https://www.mymarket.gr/offers"),
-            ("Lidl", "https://www.lidl.gr/t/el/fylladia"),
-            ("Discount Markt", "https://discountmarkt.gr/offer-brochures/"),
+            ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/", None),
+            ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions", None),
+            ("Μασούτης", "https://www.masoutis.gr/offers", None),
+            ("Κρητικός", "https://kritikos-sm.gr/offers/", None),
+            ("Γαλαξίας", "https://galaxias.shop/eshop/2", None),
+            ("My Market", "https://www.mymarket.gr/offers", None),
+            ("Lidl", "https://www.lidl-hellas.gr/", logic_lidl),
+            ("Discount Markt", "https://discountmarkt.gr/offer-brochures/", None),
         ]
         
-        for name, url in targets:
+        for name, url, logic_func in targets:
             try:
-                offers = scrape_store(p, url, name)
+                offers = scrape_store(p, url, name, logic_func)
                 all_offers.extend(offers)
             except Exception as e:
                 print(f"Σφάλμα εκτέλεσης για {name}:", e)
