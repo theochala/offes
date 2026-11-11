@@ -1,4 +1,3 @@
-
 import json
 import os
 import re
@@ -10,10 +9,9 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
-
 TARGET_URLS = {
-    "Μασούτης": "https://www.masoutis.gr/offers",
-    "Σκλαβενίτης": "https://www.sklavenitis.gr/sylloges/prosfores/",
+    "Μασούτης": "https://www.masoutis.gr/eshop/categories/kafedes-rofimata-proino/kafes",
+    "Σκλαβενίτης": "https://www.sklavenitis.gr/e-shop/prosfopet-e-shop",
     "Lidl": "https://www.lidl-hellas.gr/c/store/evdomadiaies-epiloges-26kw45/a10106403",
     "MyMarket": "https://www.mymarket.gr/offers",
     "ΑΒ Βασιλόπουλος": "https://www.ab.gr/search/promotions",
@@ -97,8 +95,11 @@ def extract_image(card, page_url):
     srcset = image.get("srcset") or image.get("data-srcset")
 
     if srcset:
-        first_source = srcset.split(",")[0].strip().split(" ")[0]
-        possible_sources.append(first_source)
+        try:
+            first_source = srcset.split(",")[0].strip().split(" ")[0]
+            possible_sources.append(first_source)
+        except Exception:
+            pass
 
     for source in possible_sources:
         if not source:
@@ -115,7 +116,6 @@ def extract_image(card, page_url):
 
 
 def extract_title(card):
-    # Πρώτα δοκιμάζουμε στοιχεία που συνήθως περιέχουν τίτλο προϊόντος.
     selectors = [
         "h1",
         "h2",
@@ -128,6 +128,7 @@ def extract_title(card):
         '[class*="item-title"]',
         '[class*="item-name"]',
         '[data-testid*="title"]',
+        "a",
     ]
 
     for selector in selectors:
@@ -137,7 +138,6 @@ def extract_title(card):
             if is_valid_title(candidate):
                 return candidate
 
-    # Εναλλακτικά χρησιμοποιούμε alt εικόνας.
     image = card.find("img")
 
     if image:
@@ -145,13 +145,6 @@ def extract_title(card):
 
         if is_valid_title(alt):
             return alt
-
-    # Τελευταία επιλογή: σύντομο κείμενο από το προϊόν.
-    for element in card.select("a"):
-        candidate = clean_text(element.get_text(" ", strip=True))
-
-        if is_valid_title(candidate):
-            return candidate
 
     return ""
 
@@ -194,6 +187,7 @@ def parse_html_products(html_content, market_name, page_url):
         "article",
         "li[class*='product']",
         "div[class*='product']",
+        "div[class*='item']",
     ]
 
     cards = []
@@ -211,7 +205,7 @@ def parse_html_products(html_content, market_name, page_url):
 
     print(f"  [DEBUG] Βρέθηκαν {len(cards)} πιθανά containers.")
 
-    for card in cards[:500]:
+    for card in cards[:600]:
         try:
             card_text = clean_text(card.get_text(" ", strip=True))
 
@@ -259,13 +253,9 @@ def parse_html_products(html_content, market_name, page_url):
 
 def save_debug_html(html, market_name):
     DEBUG_DIR.mkdir(exist_ok=True)
-
     safe_name = re.sub(r"[^a-zA-Z0-9_-]", "_", market_name)
-
     filename = DEBUG_DIR / f"{safe_name}.html"
-
     filename.write_text(html, encoding="utf-8")
-
     print(f"  [DEBUG] Αποθηκεύτηκε HTML: {filename}")
 
 
@@ -283,19 +273,13 @@ def scrape_market(page, market_name, url):
 
         print(f"  HTTP Status: {status}")
 
-        # Δεν προσπαθούμε να κάνουμε parse σε σελίδα αποκλεισμένη.
-        if status == 403:
-            print("  [!] Η πρόσβαση απορρίφθηκε από τον server.")
-            print("  [!] Δεν γίνεται παράκαμψη του αποκλεισμού.")
-            return []
-
         if status >= 400:
             print(f"  [!] HTTP σφάλμα: {status}")
             return []
 
-        page.wait_for_timeout(4000)
+        page.wait_for_timeout(5000)
 
-        # Αποδοχή cookies, εφόσον υπάρχει σχετικό κουμπί.
+        # Αποδοχή cookies
         try:
             cookie_button = page.locator(
                 "button:has-text('Αποδοχή'), "
@@ -311,9 +295,9 @@ def scrape_market(page, market_name, url):
             pass
 
         # Scroll για lazy loading.
-        for _ in range(5):
-            page.mouse.wheel(0, 1200)
-            page.wait_for_timeout(800)
+        for _ in range(8):
+            page.mouse.wheel(0, 1500)
+            page.wait_for_timeout(1000)
 
         html = page.content()
 
@@ -358,6 +342,8 @@ def scrape_all_supermarkets():
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage",
+                "--disable-blink-features=AutomationControlled",
+                "--disable-features=IsolateOrigins,site-per-process",
             ],
         )
 
@@ -365,7 +351,7 @@ def scrape_all_supermarkets():
             user_agent=(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                 "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/124.0.0.0 Safari/537.36"
+                "Chrome/125.0.0.0 Safari/537.36"
             ),
             viewport={
                 "width": 1920,
@@ -373,6 +359,10 @@ def scrape_all_supermarkets():
             },
             locale="el-GR",
             timezone_id="Europe/Athens",
+            extra_http_headers={
+                "Accept-Language": "el-GR,el;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            }
         )
 
         page = context.new_page()
@@ -388,7 +378,6 @@ def scrape_all_supermarkets():
 
         browser.close()
 
-    # Τελική αφαίρεση διπλότυπων.
     unique_offers = []
     seen = set()
 
