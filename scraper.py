@@ -52,14 +52,29 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Ειδική στοχευμένη λογική για τα Lidl ---
+# --- Ειδική στοχευμένη λογική για τα Lidl με αυτόματο κλικ/φόρτωση ---
 def logic_lidl(page, name):
     print(f"-> Στοχευμένη ανάγνωση για {name}...")
     
-    # Περισσότερο scrolling για να φορτώσουν όλες οι προσφορές
-    for _ in range(10):
+    try:
+        cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
+        if cookie_btn.count() > 0:
+            cookie_btn.first().click()
+            page.wait_for_timeout(2000)
+    except:
+        pass
+
+    for i in range(12):
         page.evaluate("window.scrollBy(0, 1500)")
         page.wait_for_timeout(1500)
+        
+        try:
+            load_more = page.locator("button:has-text('Περισσότερα'), button:has-text('Load more'), button:has-text('Show more')")
+            if load_more.count() > 0 and load_more.first().is_visible():
+                load_more.first().click()
+                page.wait_for_timeout(2000)
+        except:
+            pass
 
     raw = page.evaluate("""() => {
         const results = [];
