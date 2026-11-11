@@ -18,11 +18,10 @@ def get_dynamic_proxies():
         with urllib.request.urlopen(req, timeout=10) as response:
             data = response.read().decode('utf-8')
             free_proxies = [line.strip() for line in data.splitlines() if line.strip()]
-            # Παίρνουμε μέχρι 5 τυχαία proxies για να μην καθυστερεί
             selected = random.sample(free_proxies, min(5, len(free_proxies)))
             for p in selected:
                 proxies.append(f"http://{p}")
-        print([OK] "Φορτώθηκαν δυναμικά proxies για δοκιμή.")
+        print("[OK] Φορτώθηκαν δυναμικά proxies για δοκιμή.")
     except Exception as e:
         print("[!] Αποτυχία αυτόματης λήψης proxies, συνεχίζουμε με απευθείας σύνδεση:", e)
     return proxies
@@ -256,7 +255,6 @@ def logic_mymarket(page, name):
         return results;
     }""")
     return parse_products(raw, name)
-
 
 def upload_all_to_ftp():
     print("\n=== ΜΕΤΑΦΟΡΤΩΣΗ FTP ===")
