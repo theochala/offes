@@ -11,8 +11,8 @@ def clean_title(title):
     if not title:
         return ""
     
-    title = re.sub(r'\d+[\.,]\d+\s*€(?:/[^\s]+)?', '', title)
-    title = re.sub(r'\d+\s*€(?:/[^\s]+)?', '', title)
+    title = re.sub(r'\d+[\.,]\d+\s*€', '', title)
+    title = re.sub(r'\d+\s*€', '', title)
     title = re.sub(r'^[\|\-\/\s]+', '', title)
     title = re.sub(r'[\/\|\-\.\,\s]+$', '', title)
     title = re.sub(r'\s*[\/\|\-]+\s*', ' ', title)
@@ -27,16 +27,14 @@ def is_valid_product(title):
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
         "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία", 
         "φυλλάδια", "προσφορές", "λίστα αγορών", "είναι άδεια", "σύνολο", 
-        "χρυσές τιμές", "mymarket.gr", "καλάθι", "no image",
-        "φρούτα", "λαχανικά", "έτοιμες σαλάτες", "γαλακτοκομικά", "κρέατα", "ψάρια"
+        "χρυσές τιμές", "mymarket.gr", "καλάθι", "no image"
     ]
     lower_title = title.lower()
     for word in blacklist:
         if word in lower_title:
-            if lower_title.strip() == word:
-                return False
-                
-    if re.match(r'^[\d\s\.,€/+-]+$', title):
+            return False
+            
+    if re.match(r'^[\d\s\.,€+-]+$', title):
         return False
         
     return len(title) > 3
@@ -47,40 +45,23 @@ def parse_products(raw_products, supermarket_name):
         text = item["text"]
         img_url = item["image"]
         
-        # Πιο ευέλικτος εντοπισμός: πιάνει είτε απλή τιμή (π.χ. 2,59 €) είτε με μονάδα (π.χ. 3,00 €/τεμ. ή 60,00 €/λίτρο)
-        all_matches = re.findall(r'(\d+[\.,]\d+\s*€(?:/[a-zA-Zα-ωΑ-Ω.]+)?)', text)
-        
-        prices = []
-        for m in all_matches:
-            num_part = m.split('€')[0].replace(',', '.').strip()
-            try:
-                val = float(num_part)
-                if 0.05 <= val <= 60.0:
-                    prices.append(m)
-            except:
-                pass
-
-        if not prices:
-            continue
-            
-        price_val = prices[-1]
-        old_price = prices[0] if len(prices) > 1 and prices[0] != price_val else ""
-
+        prices = re.findall(r'(\d+[\.,]\d+\s*€)', text)
         title = clean_title(item["title"])
+        price_val = prices[-1] if prices else ""
         
-        if len(title) > 3 and price_val and "0,00 €" not in price_val and img_url and img_url.startswith('http'):
+        if len(title) > 3 and prices and price_val != "0,00 €" and price_val != "0 €" and img_url and img_url.startswith('http'):
             if is_valid_product(title):
                 if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
                     parsed.append({
                         "title": title,
                         "price": price_val,
-                        "old_price": old_price,
                         "all_prices": prices,
                         "image": img_url,
                         "supermarket": supermarket_name
                     })
     return parsed
 
+# --- Καθολική δοκιμασμένη λογική σάρωσης ---
 def universal_scraper_logic(page, name):
     print(f"-> Σάρωση σελίδας για {name}...")
     
@@ -90,23 +71,15 @@ def universal_scraper_logic(page, name):
         
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, div[class*="product"], div[class*="item"], div[class*="card"], li');
-        
+        const elements = document.querySelectorAll('article, div, li, section');
         elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 350 && text.length > 10) {
-                const titleEl = el.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"], .product-title, .title');
-                let titleText = titleEl ? titleEl.innerText.trim() : '';
-                
-                if (!titleText || titleText.length < 3) {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
-                    titleText = lines.length > 0 ? lines[0] : '';
-                }
-                
+                const titleText = text.split('\\n')[0];
                 const img = el.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
                 
-                if (imgSrc && imgSrc.startsWith('http') && titleText.length > 3) {
+                if (imgSrc && imgSrc.startsWith('http')) {
                     if (!results.some(r => r.title === titleText)) {
                         results.push({ title: titleText, text: text, image: imgSrc });
                     }
