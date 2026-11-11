@@ -2,6 +2,7 @@ from playwright.sync_api import sync_playwright
 import json
 import os
 import re
+from datetime import datetime
 from pathlib import Path
 
 OUTPUT_FILE = Path("clean_offers.json")
