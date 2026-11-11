@@ -2,29 +2,10 @@ from playwright.sync_api import sync_playwright
 import json
 import os
 import re
-import random
-import urllib.request
 from datetime import datetime
 from pathlib import Path
 
 OUTPUT_FILE = Path("clean_offers.json")
-
-def get_dynamic_proxies():
-    """Κατεβάζει αυτόματα μια φρέσκια λίστα με δωρεάν proxies την ώρα της εκτέλεσης"""
-    proxies = [None] # Πάντα δοκιμάζουμε πρώτα απευθείας (για Κρητικό & My Market)
-    try:
-        url = "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=5000&country=all&ssl=yes&anonymity=all"
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=10) as response:
-            data = response.read().decode('utf-8')
-            free_proxies = [line.strip() for line in data.splitlines() if line.strip()]
-            selected = random.sample(free_proxies, min(5, len(free_proxies)))
-            for p in selected:
-                proxies.append(f"http://{p}")
-        print("[OK] Φορτώθηκαν δυναμικά proxies για δοκιμή.")
-    except Exception as e:
-        print("[!] Αποτυχία αυτόματης λήψης proxies, συνεχίζουμε με απευθείας σύνδεση:", e)
-    return proxies
 
 def clean_title(title):
     artifacts = [
@@ -69,69 +50,73 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-def scrape_with_proxy(p, url, scraper_logic, supermarket_name, proxy_pool):
-    print(f"Συλλογή από {supermarket_name} (με Proxy Rotation)...")
+def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy):
+    print(f"Συλλογή από {supermarket_name}...")
     
-    for proxy_url in proxy_pool:
-        browser = None
-        try:
-            launch_args = {
-                "headless": True,
-                "args": [
-                    "--no-sandbox",
-                    "--disable-setuid-sandbox",
-                    "--disable-dev-shm-usage",
-                    "--disable-gpu",
-                    "--disable-extensions",
-                    "--disable-blink-features=AutomationControlled"
-                ]
-            }
-            
-            if proxy_url:
-                launch_args["proxy"] = {"server": proxy_url}
-                print(f"-> Δοκιμή με proxy: {proxy_url}")
-            else:
-                print("-> Δοκιμή με απευθείας σύνδεση...")
+    # Τα καταστήματα που απαιτούν proxy
+    use_proxy = supermarket_name in ["Σκλαβενίτης", "ΑΒ Βασιλόπουλος", "Μασούτης", "Γαλαξίας"] and residential_proxy
+    
+    browser = None
+    try:
+        launch_args = {
+            "headless": True,
+            "args": [
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--disable-extensions",
+                "--disable-blink-features=AutomationControlled"
+            ]
+        }
+        
+        if use_proxy:
+            launch_args["proxy"] = {"server": residential_proxy}
+            print(f"-> Χρήση Residential Proxy για {supermarket_name}...")
+        else:
+            print(f"-> Χρήση απευθείας σύνδεσης για {supermarket_name}...")
 
-            browser = p.chromium.launch(**launch_args)
+        browser = p.chromium.launch(**launch_args)
+        
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080},
+            locale="el-GR",
+            timezone_id="Europe/Athens"
+        )
+        
+        context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
+        context.add_init_script("window.navigator.chrome = { runtime: {} };")
+        
+        page = context.new_page()
+        page.goto(url, timeout=45000, wait_until="commit")
+        page.wait_for_timeout(3000)
+        
+        parsed = scraper_logic(page, supermarket_name)
+        browser.close()
+        
+        if parsed and len(parsed) > 0:
+            print(f"-> Επιτυχία: {len(parsed)} προϊόντα από {supermarket_name}.")
+            return parsed
+        else:
+            print(f"-> 0 προϊόντα βρέθηκαν για {supermarket_name}.")
+            return []
             
-            context = browser.new_context(
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-                viewport={"width": 1920, "height": 1080},
-                locale="el-GR",
-                timezone_id="Europe/Athens"
-            )
-            
-            context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
-            context.add_init_script("window.navigator.chrome = { runtime: {} };")
-            
-            page = context.new_page()
-            page.goto(url, timeout=30000, wait_until="commit")
-            page.wait_for_timeout(2000)
-            
-            parsed = scraper_logic(page, supermarket_name)
-            browser.close()
-            
-            if parsed and len(parsed) > 0:
-                print(f"-> Επιτυχία: {len(parsed)} προϊόντα από {supermarket_name}.")
-                return parsed
-                
-        except Exception as e:
-            if browser:
-                try:
-                    browser.close()
-                except:
-                    pass
-                    
-    print(f"-> Αποτυχία συλλογής για {supermarket_name} (μπλοκαρίσθηκε ή απέτυχε ο proxy).")
-    return []
+    except Exception as e:
+        print(f"-> Σφάλμα κατά τη συλλογή από {supermarket_name}: {e}")
+        if browser:
+            try:
+                browser.close()
+            except:
+                pass
+        return []
 
 # --- Λογική εξαγωγής ανά κατάστημα ---
 
 def logic_sklavenitis(page, name):
     for _ in range(2):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(1500)
     raw = page.evaluate("""() => {
         const results = [];
         document.querySelectorAll('article, .product-item, div[class*="product"], div[class*="item"]').forEach(el => {
@@ -157,7 +142,7 @@ def logic_ab(page, name):
         pass
     for _ in range(2):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(1500)
     raw = page.evaluate("""() => {
         const results = [];
         document.querySelectorAll('article, product-card-view, div[class*="product"], div[class*="item"]').forEach(el => {
@@ -176,7 +161,7 @@ def logic_ab(page, name):
 def logic_masoutis(page, name):
     for _ in range(2):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(1500)
     raw = page.evaluate("""() => {
         const results = [];
         document.querySelectorAll('article, div[class*="product"], .item').forEach(el => {
@@ -195,7 +180,7 @@ def logic_masoutis(page, name):
 def logic_kritikos(page, name):
     for _ in range(3):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(1500)
     raw = page.evaluate("""() => {
         const results = [];
         document.querySelectorAll('article, div[class*="product"]').forEach(el => {
@@ -214,7 +199,7 @@ def logic_kritikos(page, name):
 def logic_galaxias(page, name):
     for _ in range(2):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(1500)
     raw = page.evaluate("""() => {
         const results = [];
         document.querySelectorAll('article, div[class*="product"], .product-card').forEach(el => {
@@ -240,7 +225,7 @@ def logic_mymarket(page, name):
         pass
     for _ in range(3):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(1500)
     raw = page.evaluate("""() => {
         const results = [];
         document.querySelectorAll('article, div[class*="product"], .item').forEach(el => {
@@ -286,7 +271,7 @@ def upload_all_to_ftp():
         print(f"[X] Σφάλμα FTP: {error}")
 
 if __name__ == "__main__":
-    proxy_pool = get_dynamic_proxies()
+    residential_proxy = os.getenv("RESIDENTIAL_PROXY")
     
     with sync_playwright() as p:
         all_offers = []
@@ -302,7 +287,7 @@ if __name__ == "__main__":
         
         for name, url, logic_func in targets:
             try:
-                offers = scrape_with_proxy(p, url, logic_func, name, proxy_pool)
+                offers = scrape_with_proxy(p, url, logic_func, name, residential_proxy)
                 all_offers.extend(offers)
             except Exception as e:
                 print(f"Σφάλμα εκτέλεσης για {name}:", e)
