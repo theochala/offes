@@ -2,6 +2,7 @@ from playwright.sync_api import sync_playwright
 import json
 import os
 import re
+import random
 from datetime import datetime
 from pathlib import Path
 
@@ -50,18 +51,22 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
+def random_delay(page, min_ms=1000, max_ms=3000):
+    page.wait_for_timeout(random.randint(min_ms, max_ms))
+
 def scrape_sklavenitis(page):
     print("Συλλογή από Σκλαβενίτη...")
     try:
-        page.goto("https://www.sklavenitis.gr/e-shop/prosfopet-e-shop", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
+        # Χρήση εναλλακτικού URL προσφορών
+        page.goto("https://www.sklavenitis.gr/sylloges/prosfores/", timeout=60000, wait_until="domcontentloaded")
+        random_delay(page, 4000, 6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης Σκλαβενίτη:", e)
         return []
     
-    for _ in range(4):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1500)
+    for _ in range(5):
+        page.evaluate("window.scrollBy(0, 1200)")
+        random_delay(page, 1500, 2500)
 
     raw = page.evaluate("""() => {
         const results = [];
@@ -87,7 +92,7 @@ def scrape_ab(page):
     print("Συλλογή από ΑΒ Βασιλόπουλο...")
     try:
         page.goto("https://www.ab.gr/search/promotions", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
+        random_delay(page, 4000, 6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης σελίδας ΑΒ:", e)
         return []
@@ -96,17 +101,17 @@ def scrape_ab(page):
         cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
         if cookie_btn.count() > 0:
             cookie_btn.first().click()
-            page.wait_for_timeout(2000)
+            random_delay(page, 1000, 2000)
     except:
         pass
 
-    for _ in range(4):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
+    for _ in range(5):
+        page.evaluate("window.scrollBy(0, 1200)")
+        random_delay(page, 2000, 3000)
     
     raw = page.evaluate("""() => {
         const results = [];
-        const elements = document.querySelectorAll('article, product-card-view, div[class*="product"]');
+        const elements = document.querySelectorAll('article, product-card-view, div[class*="product"], div[class*="item"]');
         elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 300 && text.length > 10) {
@@ -127,15 +132,15 @@ def scrape_ab(page):
 def scrape_masoutis(page):
     print("Συλλογή από Μασούτη...")
     try:
-        page.goto("https://www.masoutis.gr/eshop", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
+        page.goto("https://www.masoutis.gr/offers", timeout=60000, wait_until="domcontentloaded")
+        random_delay(page, 4000, 6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης Μασούτη:", e)
         return []
 
     for _ in range(5):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1500)
+        page.evaluate("window.scrollBy(0, 1200)")
+        random_delay(page, 1500, 2500)
     
     raw = page.evaluate("""() => {
         const results = [];
@@ -161,13 +166,13 @@ def scrape_kritikos(page):
     print("Συλλογή από Κρητικό...")
     try:
         page.goto("https://kritikos-sm.gr/offers/?srsltid=AYCX9vJWXPLOaa4mCSyC7xt-dwrv1ovQ7pkBaLPHp-8tjTfpPrQCT6pA", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(5000)
+        random_delay(page, 3000, 5000)
     except:
         return []
 
     for _ in range(4):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
+        random_delay(page, 1500, 2500)
     
     raw = page.evaluate("""() => {
         const results = [];
@@ -193,13 +198,13 @@ def scrape_galaxias(page):
     print("Συλλογή από Γαλαξία...")
     try:
         page.goto("https://galaxias.shop/eshop/2?promos=isExtraBonus&promos=isBravoBonus&promos=isKalathiNoikokiriou&promos=isSumferei&promos=isTileoptiko&promos=isGoldPrices", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
+        random_delay(page, 4000, 6000)
     except:
         return []
 
     for _ in range(5):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
+        page.evaluate("window.scrollBy(0, 1200)")
+        random_delay(page, 2000, 3000)
     
     raw = page.evaluate("""() => {
         const results = [];
@@ -225,7 +230,7 @@ def scrape_mymarket(page):
     print("Συλλογή από My Market...")
     try:
         page.goto("https://www.mymarket.gr/offers", timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(6000)
+        random_delay(page, 4000, 6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης My Market:", e)
         return []
@@ -234,13 +239,13 @@ def scrape_mymarket(page):
         cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
         if cookie_btn.count() > 0:
             cookie_btn.first().click()
-            page.wait_for_timeout(2000)
+            random_delay(page, 1000, 2000)
     except:
         pass
 
     for _ in range(5):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(2000)
+        page.evaluate("window.scrollBy(0, 1200)")
+        random_delay(page, 2000, 3000)
     
     raw = page.evaluate("""() => {
         const results = [];
@@ -301,7 +306,9 @@ if __name__ == "__main__":
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage",
-                "--disable-blink-features=AutomationControlled"
+                "--disable-blink-features=AutomationControlled",
+                "--no-zygote",
+                "--single-process"
             ]
         )
         
@@ -309,12 +316,19 @@ if __name__ == "__main__":
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
             viewport={"width": 1920, "height": 1080},
             locale="el-GR",
-            timezone_id="Europe/Athens"
+            timezone_id="Europe/Athens",
+            extra_http_headers={
+                "Accept-Language": "el-GR,el;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                "Connection": "keep-alive"
+            }
         )
         
+        # Απόκρυψη flags αυτοματισμού
         context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
-        page = context.new_page()
+        context.add_init_script("window.navigator.chrome = { runtime: {} };")
         
+        page = context.new_page()
         all_offers = []
         
         for scraper_func in [scrape_sklavenitis, scrape_ab, scrape_masoutis, scrape_kritikos, scrape_galaxias, scrape_mymarket]:
