@@ -51,9 +51,8 @@ def parse_products(raw_products, supermarket_name):
     return parsed
 
 def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy):
-    print(f"Συλλογή από {supermarket_name}...")
+    print(f"\n--- Συλλογή από {supermarket_name} ---")
     
-    # Τα καταστήματα που απαιτούν proxy
     use_proxy = supermarket_name in ["Σκλαβενίτης", "ΑΒ Βασιλόπουλος", "Μασούτης", "Γαλαξίας"] and residential_proxy
     
     browser = None
@@ -72,9 +71,9 @@ def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy
         
         if use_proxy:
             launch_args["proxy"] = {"server": residential_proxy}
-            print(f"-> Χρήση Residential Proxy για {supermarket_name}...")
+            print(f"-> Χρήση Residential Proxy για {supermarket_name}")
         else:
-            print(f"-> Χρήση απευθείας σύνδεσης για {supermarket_name}...")
+            print(f"-> Χρήση απευθείας σύνδεσης για {supermarket_name}")
 
         browser = p.chromium.launch(**launch_args)
         
@@ -89,8 +88,20 @@ def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy
         context.add_init_script("window.navigator.chrome = { runtime: {} };")
         
         page = context.new_page()
-        page.goto(url, timeout=45000, wait_until="commit")
-        page.wait_for_timeout(3000)
+        
+        # Debug: Έλεγχος ποια IP βλέπει το εξωτερικό περιβάλλον
+        try:
+            page.goto("https://ipv4.icanhazip.com", timeout=15000)
+            current_ip = page.inner_text("body").strip()
+            print(f"-> [DEBUG] IP που χρησιμοποιείται: {current_ip}")
+        except:
+            pass
+
+        print(f"-> Μετάβαση στη διεύθυνση: {url}")
+        page.goto(url, timeout=60000, wait_until="domcontentloaded")
+        
+        # Περισσότερος χρόνος φόρτωσης για δυναμικό περιεχόμενο (JS)
+        page.wait_for_timeout(5000)
         
         parsed = scraper_logic(page, supermarket_name)
         browser.close()
@@ -114,9 +125,9 @@ def scrape_with_proxy(p, url, scraper_logic, supermarket_name, residential_proxy
 # --- Λογική εξαγωγής ανά κατάστημα ---
 
 def logic_sklavenitis(page, name):
-    for _ in range(2):
+    for _ in range(3):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1500)
+        page.wait_for_timeout(2000)
     raw = page.evaluate("""() => {
         const results = [];
         document.querySelectorAll('article, .product-item, div[class*="product"], div[class*="item"]').forEach(el => {
@@ -137,12 +148,12 @@ def logic_ab(page, name):
         cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
         if cookie_btn.count() > 0:
             cookie_btn.first().click()
-            page.wait_for_timeout(1000)
+            page.wait_for_timeout(1500)
     except:
         pass
-    for _ in range(2):
+    for _ in range(3):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1500)
+        page.wait_for_timeout(2000)
     raw = page.evaluate("""() => {
         const results = [];
         document.querySelectorAll('article, product-card-view, div[class*="product"], div[class*="item"]').forEach(el => {
@@ -159,9 +170,9 @@ def logic_ab(page, name):
     return parse_products(raw, name)
 
 def logic_masoutis(page, name):
-    for _ in range(2):
+    for _ in range(3):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1500)
+        page.wait_for_timeout(2000)
     raw = page.evaluate("""() => {
         const results = [];
         document.querySelectorAll('article, div[class*="product"], .item').forEach(el => {
@@ -197,9 +208,9 @@ def logic_kritikos(page, name):
     return parse_products(raw, name)
 
 def logic_galaxias(page, name):
-    for _ in range(2):
+    for _ in range(3):
         page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1500)
+        page.wait_for_timeout(2000)
     raw = page.evaluate("""() => {
         const results = [];
         document.querySelectorAll('article, div[class*="product"], .product-card').forEach(el => {
