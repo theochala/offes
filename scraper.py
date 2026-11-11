@@ -1,6 +1,10 @@
 from playwright.sync_api import sync_playwright
 import json
+import os
 import re
+from pathlib import Path
+
+OUTPUT_FILE = Path("clean_offers.json")
 
 def clean_title(title):
     artifacts = [
@@ -48,7 +52,6 @@ def parse_products(raw_products, supermarket_name):
 def scrape_sklavenitis(page):
     print("Συλλογή από Σκλαβενίτη...")
     try:
-        # Χρήση άμεσης υποσελίδας κατηγορίας e-shop αντί για το βασικό φίλτρο προσφορών
         page.goto("https://www.sklavenitis.gr/e-shop/prosfopet-e-shop", timeout=60000, wait_until="domcontentloaded")
         page.wait_for_timeout(6000)
     except Exception as e:
@@ -123,7 +126,6 @@ def scrape_ab(page):
 def scrape_masoutis(page):
     print("Συλλογή από Μασούτη...")
     try:
-        # Χρήση βασικής σελίδας eshop προσφορών για να παρακαμφθούν τα κενά redirects
         page.goto("https://www.masoutis.gr/eshop", timeout=60000, wait_until="domcontentloaded")
         page.wait_for_timeout(6000)
     except Exception as e:
@@ -259,45 +261,85 @@ def scrape_mymarket(page):
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από My Market.")
     return parsed
 
-with sync_playwright() as p:
-    browser = p.chromium.launch(
-        headless=True,
-        args=[
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-dev-shm-usage",
-            "--disable-blink-features=AutomationControlled"
-        ]
-    )
-    
-    context = browser.new_context(
-        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-        viewport={"width": 1920, "height": 1080},
-        locale="el-GR",
-        timezone_id="Europe/Athens"
-    )
-    
-    context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
-    
-    page = context.new_page()
-    all_offers = []
-    
-    for scraper_func in [scrape_sklavenitis, scrape_ab, scrape_masoutis, scrape_kritikos, scrape_galaxias, scrape_mymarket]:
-        try:
-            all_offers.extend(scraper_func(page))
-        except Exception as e:
-            print("Σφάλμα:", e)
+def upload_all_to_ftp():
+    print("\n=== ΜΕΤΑΦΟΡΤΩΣΗ FTP ===")
+    from ftplib import FTP
+    ftp_server = os.getenv("FTP_SERVER")
+    ftp_user = os.getenv("FTP_USERNAME")
+    ftp_pass = os.getenv("FTP_PASSWORD")
 
-    browser.close()
-    
-    unique_offers = []
-    seen_titles = set()
-    for offer in all_offers:
-        key = (offer["supermarket"], offer["title"])
-        if key not in seen_titles:
-            seen_titles.add(key)
-            unique_offers.append(offer)
+    if not all([ftp_server, ftp_user, ftp_pass]):
+        print("[!] Λείπουν τα FTP στοιχεία από τα GitHub Secrets.")
+        return
 
-    with open("clean_offers.json", "w", encoding="utf-8") as f:
-        json.dump(unique_offers, f, ensure_ascii=False, indent=4)
-        print(f"\nΣυνολική αποθήκευση {len(unique_offers)} μοναδικών και καθαρών προϊόντων στο clean_offers.json!")
+    if not OUTPUT_FILE.exists():
+        print("[!] Δεν βρέθηκε το clean_offers.json.")
+        return
+
+    ftp = None
+    try:
+        ftp = FTP(ftp_server, timeout=30)
+        ftp.login(user=ftp_user, passwd=ftp_pass)
+
+        ftp.cwd("prosfores.infy.click")
+        ftp.cwd("htdocs")
+
+        with OUTPUT_FILE.open("rb") as file:
+            ftp.storbinary("STOR clean_offers.json", file)
+        
+        print("[OK] Το clean_offers.json ανέβηκε επιτυχώς στο /prosfores.infy.click/htdocs!")
+        ftp.quit()
+    except Exception as error:
+        print(f"[X] Σφάλμα FTP: {error}")
+
+if __name__ == "__main__":
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=[
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-blink-features=AutomationControlled"
+            ]
+        )
+        
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080},
+            locale="el-GR",
+            timezone_id="Europe/Athens"
+        )
+        
+        context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
+        page = context.new_page()
+        
+        all_offers = []
+        
+        for scraper_func in [scrape_sklavenitis, scrape_ab, scrape_masoutis, scrape_kritikos, scrape_galaxias, scrape_mymarket]:
+            try:
+                all_offers.extend(scraper_func(page))
+            except Exception as e:
+                print("Σφάλμα:", e)
+
+        browser.close()
+        
+        unique_offers = []
+        seen_titles = set()
+        for offer in all_offers:
+            key = (offer["supermarket"], offer["title"])
+            if key not in seen_titles:
+                seen_titles.add(key)
+                unique_offers.append(offer)
+
+        data = {
+            "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "total_offers": len(unique_offers),
+            "offers": unique_offers,
+        }
+
+        with OUTPUT_FILE.open("w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+            print(f"\nΣυνολική αποθήκευση {len(unique_offers)} μοναδικών προϊόντων στο clean_offers.json!")
+
+    upload_all_to_ftp()
