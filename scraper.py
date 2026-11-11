@@ -57,6 +57,7 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
+# --- Ειδική στοχευμένη εξαγωγή για τον Σκλαβενίτη ---
 def logic_sklavenitis(page, name, context=None):
     print("-> Στοχευμένη ανάγνωση τίτλων Σκλαβενίτη...")
     
@@ -95,6 +96,7 @@ def logic_sklavenitis(page, name, context=None):
     print(f"-> Εντοπίστηκαν {len(raw)} καθαροί τίτλοι προϊόντων από τον Σκλαβενίτη.")
     return parse_products(raw, name)
 
+# --- Καθολική λογική για τα υπόλοιπα καταστήματα (συμπεριλαμβανομένου του Discount Markt) ---
 def universal_scraper_logic(page, name):
     for _ in range(4):
         page.evaluate("window.scrollBy(0, 1200)")
@@ -102,13 +104,13 @@ def universal_scraper_logic(page, name):
         
     raw = page.evaluate("""() => {
         const results = [];
-        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="item"], div[class*="card"], li');
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="item"], div[class*="card"], div[class*="brochure"], li');
         
         cards.forEach(card => {
             const text = card.innerText;
             if (text && text.includes('€')) {
                 const titleEl = card.querySelector('h2, h3, h4, a[class*="title"], span[class*="title"], .product-title, .title');
-                const productTitle = titleEl ? titleEl.innerText.trim() : '';
+                const productTitle = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
                 
                 const img = card.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
@@ -239,6 +241,7 @@ if __name__ == "__main__":
             ("Κρητικός", "https://kritikos-sm.gr/offers/", universal_scraper_logic),
             ("Γαλαξίας", "https://galaxias.shop/eshop/2", universal_scraper_logic),
             ("My Market", "https://www.mymarket.gr/offers", universal_scraper_logic),
+            ("Discount Markt", "https://discountmarkt.gr/offer-brochures/", universal_scraper_logic),
         ]
         
         for name, url, logic_func in targets:
