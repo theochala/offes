@@ -57,8 +57,8 @@ def random_delay(page, min_ms=1000, max_ms=3000):
 def scrape_sklavenitis(page):
     print("Συλλογή από Σκλαβενίτη...")
     try:
-        # Χρήση εναλλακτικού URL προσφορών
-        page.goto("https://www.sklavenitis.gr/sylloges/prosfores/", timeout=60000, wait_until="domcontentloaded")
+        # Χρήση βασικής κατηγορίας τροφίμων αντί για γενικές προσφορές
+        page.goto("https://www.sklavenitis.gr/e-shop/galaktokomika-eidy-psygeioy/", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης Σκλαβενίτη:", e)
@@ -91,7 +91,8 @@ def scrape_sklavenitis(page):
 def scrape_ab(page):
     print("Συλλογή από ΑΒ Βασιλόπουλο...")
     try:
-        page.goto("https://www.ab.gr/search/promotions", timeout=60000, wait_until="domcontentloaded")
+        # Χρήση σελίδας προσφορών τροφίμων ΑΒ
+        page.goto("https://www.ab.gr/el/eshop/freska-trofima-kai-proionta-psygeioy/c/01", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης σελίδας ΑΒ:", e)
@@ -132,7 +133,8 @@ def scrape_ab(page):
 def scrape_masoutis(page):
     print("Συλλογή από Μασούτη...")
     try:
-        page.goto("https://www.masoutis.gr/offers", timeout=60000, wait_until="domcontentloaded")
+        # Χρήση βασικής κατηγορίας eshop Μασούτη
+        page.goto("https://www.masoutis.gr/eshop/c/trofima", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης Μασούτη:", e)
@@ -197,7 +199,8 @@ def scrape_kritikos(page):
 def scrape_galaxias(page):
     print("Συλλογή από Γαλαξία...")
     try:
-        page.goto("https://galaxias.shop/eshop/2?promos=isExtraBonus&promos=isBravoBonus&promos=isKalathiNoikokiriou&promos=isSumferei&promos=isTileoptiko&promos=isGoldPrices", timeout=60000, wait_until="domcontentloaded")
+        # Χρήση βασικής κατηγορίας eshop Γαλαξία
+        page.goto("https://galaxias.shop/eshop/1", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except:
         return []
@@ -324,7 +327,6 @@ if __name__ == "__main__":
             }
         )
         
-        # Απόκρυψη flags αυτοματισμού
         context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
         context.add_init_script("window.navigator.chrome = { runtime: {} };")
         
