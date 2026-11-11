@@ -1,4 +1,5 @@
 from playwright.sync_api import sync_playwright
+from playwright_stealth import stealth_sync
 import json
 import os
 import re
@@ -51,14 +52,14 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-def random_delay(page, min_ms=1000, max_ms=3000):
+def random_delay(page, min_ms=1500, max_ms=3500):
     page.wait_for_timeout(random.randint(min_ms, max_ms))
 
 def scrape_sklavenitis(page):
     print("Συλλογή από Σκλαβενίτη...")
+    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
-        # Χρήση βασικής κατηγορίας τροφίμων αντί για γενικές προσφορές
-        page.goto("https://www.sklavenitis.gr/e-shop/galaktokomika-eidy-psygeioy/", timeout=60000, wait_until="domcontentloaded")
+        page.goto("https://www.sklavenitis.gr/sylloges/prosfores/", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης Σκλαβενίτη:", e)
@@ -90,9 +91,9 @@ def scrape_sklavenitis(page):
 
 def scrape_ab(page):
     print("Συλλογή από ΑΒ Βασιλόπουλο...")
+    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
-        # Χρήση σελίδας προσφορών τροφίμων ΑΒ
-        page.goto("https://www.ab.gr/el/eshop/freska-trofima-kai-proionta-psygeioy/c/01", timeout=60000, wait_until="domcontentloaded")
+        page.goto("https://www.ab.gr/search/promotions", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης σελίδας ΑΒ:", e)
@@ -132,9 +133,9 @@ def scrape_ab(page):
 
 def scrape_masoutis(page):
     print("Συλλογή από Μασούτη...")
+    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
-        # Χρήση βασικής κατηγορίας eshop Μασούτη
-        page.goto("https://www.masoutis.gr/eshop/c/trofima", timeout=60000, wait_until="domcontentloaded")
+        page.goto("https://www.masoutis.gr/offers", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except Exception as e:
         print("Σφάλμα φόρτωσης Μασούτη:", e)
@@ -166,6 +167,7 @@ def scrape_masoutis(page):
 
 def scrape_kritikos(page):
     print("Συλλογή από Κρητικό...")
+    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
         page.goto("https://kritikos-sm.gr/offers/?srsltid=AYCX9vJWXPLOaa4mCSyC7xt-dwrv1ovQ7pkBaLPHp-8tjTfpPrQCT6pA", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 3000, 5000)
@@ -198,9 +200,9 @@ def scrape_kritikos(page):
 
 def scrape_galaxias(page):
     print("Συλλογή από Γαλαξία...")
+    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
-        # Χρήση βασικής κατηγορίας eshop Γαλαξία
-        page.goto("https://galaxias.shop/eshop/1", timeout=60000, wait_until="domcontentloaded")
+        page.goto("https://galaxias.shop/eshop/2?promos=isExtraBonus&promos=isBravoBonus&promos=isKalathiNoikokiriou&promos=isSumferei&promos=isTileoptiko&promos=isGoldPrices", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
     except:
         return []
@@ -231,6 +233,7 @@ def scrape_galaxias(page):
 
 def scrape_mymarket(page):
     print("Συλλογή από My Market...")
+    stealth_sync(page)  # Ενεργοποίηση Stealth Mode
     try:
         page.goto("https://www.mymarket.gr/offers", timeout=60000, wait_until="domcontentloaded")
         random_delay(page, 4000, 6000)
@@ -319,16 +322,8 @@ if __name__ == "__main__":
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
             viewport={"width": 1920, "height": 1080},
             locale="el-GR",
-            timezone_id="Europe/Athens",
-            extra_http_headers={
-                "Accept-Language": "el-GR,el;q=0.9,en-US;q=0.8,en;q=0.7",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-                "Connection": "keep-alive"
-            }
+            timezone_id="Europe/Athens"
         )
-        
-        context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
-        context.add_init_script("window.navigator.chrome = { runtime: {} };")
         
         page = context.new_page()
         all_offers = []
