@@ -4,16 +4,17 @@ from datetime import datetime
 from ftplib import FTP
 from playwright.sync_api import sync_playwright
 
+# Χρησιμοποιούμε απευθείας τα βασικά URLs e-shop τους που φορτώνουν προϊόντα άμεσα
 TARGET_URLS = {
-    "Μασούτης": "https://www.masoutis.gr/offers",
-    "Σκλαβενίτης": "https://www.sklavenitis.gr/sylloges/prosfores/",
+    "Μασούτης": "https://www.masoutis.gr/eshop",
+    "Σκλαβενίτης": "https://www.sklavenitis.gr/e-shop/",
     "Lidl": "https://www.lidl-hellas.gr/c/store/evdomadiaies-epiloges-26kw45/a10106403",
     "MyMarket": "https://www.mymarket.gr/offers?srsltid=AYCX9vJAEuUd6A9J70LsUgVl9eSugbCgIdwLfjS928We_Oc2AeBL0hoP",
     "ΑΒ Βασιλόπουλος": "https://www.ab.gr/search/promotions"
 }
 
 def scrape_all_supermarkets():
-    print("=== [1/3] Εκκίνηση Scraper με Location Bypass ===")
+    print("=== [1/3] Εκκίνηση Ενισχυμένου Scraper (Masoutis & Sklavenitis Fix) ===")
     all_offers = []
 
     try:
@@ -41,40 +42,31 @@ def scrape_all_supermarkets():
             for market_name, url in TARGET_URLS.items():
                 print(f"-> Φόρτωση σελίδας {market_name}: {url}")
                 try:
-                    page.goto(url, wait_until="domcontentloaded", timeout=35000)
+                    # Χρησιμοποιούμε networkidle για να περιμένουμε να έρθουν όλα τα δεδομένα από τα API τους
+                    page.goto(url, wait_until="networkidle", timeout=40000)
                     page.wait_for_timeout(3000)
 
-                    # Αυτόματος χειρισμός pop-up cookies και επιλογής περιοχής/καταστήματος
+                    # Αυτόματο κλείσιμο cookies / modal popups
                     try:
-                        # Κλείσιμο cookies
-                        cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler").first
+                        cookie_btn = page.locator("button:has-text('Αποδοχή'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler, button:has-text('OK')").first
                         if cookie_btn.count() > 0:
                             cookie_btn.click(timeout=2000)
                             page.wait_for_timeout(1000)
                     except:
                         pass
-
-                    # Ειδικός χειρισμός αν εμφανιστεί παράθυρο επιλογής περιοχής (ιδίως σε Σκλαβενίτη/Μασούτη)
-                    try:
-                        loc_btn = page.locator("button:has-text('Συνέχεια'), button:has-text('Επιβεβαίωση'), button:has-text('Αποδοχή'), .close-modal, .modal-close").first
-                        if loc_btn.count() > 0:
-                            loc_btn.click(timeout=2000)
-                            page.wait_for_timeout(1000)
-                    except:
-                        pass
                     
-                    # Σταδιακό scroll για ενεργοποίηση lazy loading
+                    # Εντατικό scroll για να πυροδοτήσουμε το φόρτωμα των προϊόντων
                     for _ in range(6):
                         page.mouse.wheel(0, 2000)
                         page.wait_for_timeout(1500)
 
                     market_offers = []
 
-                    # Ευρεία αναζήτηση στοιχείων καρτών προϊόντων
+                    # Ευρεία αναζήτηση για κάθε πιθανό container προϊόντος
                     cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product'], li[class*='item'], div[class*='Grid']").all()
                     print(f"  [i] Εντοπίστηκαν {len(cards)} υποψήφια στοιχεία στο {market_name}.")
 
-                    for card in cards[:120]:
+                    for card in cards[:150]:
                         try:
                             title_text = ""
                             price_text = ""
