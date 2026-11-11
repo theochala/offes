@@ -4,17 +4,17 @@ from datetime import datetime
 from ftplib import FTP
 from playwright.sync_api import sync_playwright
 
-# Διορθωμένα, πιο άμεση πρόσβασης URLs για όλα τα καταστήματα
+# Σωστά, ενεργά URLs προσφορών και για τα 5 σούπερ μάρκετ
 TARGET_URLS = {
-    "Μασούτης": "https://www.masoutis.gr/offers/en",
-    "Σκλαβενίτης": "https://www.sklavenitis.gr/e-shop/prosfopet-e-shop", # Ενημερωμένο link κατηγορίας προσφορών
+    "Μασούτης": "https://www.masoutis.gr/offers",
+    "Σκλαβενίτης": "https://www.sklavenitis.gr/sylloges/prosfores/",
     "Lidl": "https://www.lidl-hellas.gr/c/store/evdomadiaies-epiloges-26kw45/a10106403",
     "MyMarket": "https://www.mymarket.gr/offers?srsltid=AYCX9vJAEuUd6A9J70LsUgVl9eSugbCgIdwLfjS928We_Oc2AeBL0hoP",
     "ΑΒ Βασιλόπουλος": "https://www.ab.gr/search/promotions"
 }
 
 def scrape_all_supermarkets():
-    print("=== [1/3] Εκκίνηση Ενισχυμένου Scraper ===")
+    print("=== [1/3] Εκκίνηση Scraper με υποστήριξη για Σκλαβενίτη & Μασούτη ===")
     all_offers = []
 
     try:
@@ -43,12 +43,7 @@ def scrape_all_supermarkets():
                 print(f"-> Φόρτωση σελίδας {market_name}: {url}")
                 try:
                     page.goto(url, wait_until="domcontentloaded", timeout=35000)
-                    
-                    # Αναμονή για τυχόν δυναμικά αιτήματα
-                    try:
-                        page.wait_for_load_state("networkidle", timeout=8000)
-                    except:
-                        pass
+                    page.wait_for_timeout(3000)
 
                     # Αποδοχή cookies
                     try:
@@ -59,18 +54,23 @@ def scrape_all_supermarkets():
                     except:
                         pass
                     
-                    # Scroll για lazy loading
-                    for _ in range(6):
+                    # Πολλαπλό scroll για lazy loading
+                    for _ in range(5):
                         page.mouse.wheel(0, 2000)
-                        page.wait_for_timeout(1200)
+                        page.wait_for_timeout(1500)
 
                     market_offers = []
 
-                    # Ευρεία αναζήτηση στοιχείων (συμπεριλαμβανομένων όλων των τύπων καρτών)
-                    cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product'], li[class*='item'], div[class*='Grid']").all()
+                    # Ειδική αναζήτηση ανάλογα με τη δομή του κάθε site
+                    if market_name in ["Μασούτης", "Σκλαβενίτης"]:
+                        # Στοχευμένα στοιχεία για Σκλαβενίτη και Μασούτη
+                        cards = page.locator("div.product-item, article, div[class*='product'], div[class*='item'], div.card, li.product-item").all()
+                    else:
+                        cards = page.locator("article, div[class*='product'], div[class*='card'], div[class*='item'], li[class*='product']").all()
+
                     print(f"  [i] Εντοπίστηκαν {len(cards)} υποψήφια στοιχεία στο {market_name}.")
 
-                    for card in cards[:120]:
+                    for card in cards[:100]:
                         try:
                             title_text = ""
                             price_text = ""
@@ -87,7 +87,7 @@ def scrape_all_supermarkets():
                                 if any(char.isdigit() for char in t) and ('€' in t or '£' in t or ',' in t or '.' in t) and len(t) < 10:
                                     if not price_text:
                                         price_text = t
-                                elif len(t) > 3 and not any(w in t.lower() for w in ["καλάθι", "σούπερ", "αρχική", "σύνδεση", "προσφορές", "cookies", "masoutis", "sklavenitis"]):
+                                elif len(t) > 3 and not any(w in t.lower() for w in ["καλάθι", "σούπερ", "αρχική", "σύνδεση", "προσφορές", "cookies"]):
                                     possible_titles.append(t)
 
                             if possible_titles:
