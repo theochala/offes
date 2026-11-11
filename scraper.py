@@ -266,6 +266,39 @@ def scrape_mymarket(page):
     print(f"-> Επιτυχία: {len(parsed)} προϊόντα από My Market.")
     return parsed
 
+def scrape_discountmarket(page):
+    print("Συλλογή από Discount Market...")
+    try:
+        page.goto("https://www.discountmarket.gr/", timeout=60000, wait_until="domcontentloaded")
+        random_delay(page, 4000, 6000)
+    except Exception as e:
+        print("Σφάλμα φόρτωσης Discount Market:", e)
+        return []
+
+    for _ in range(4):
+        page.evaluate("window.scrollBy(0, 1000)")
+        random_delay(page, 1500, 2500)
+    
+    raw = page.evaluate("""() => {
+        const results = [];
+        const elements = document.querySelectorAll('article, div[class*="product"], .product-item, div[class*="item"]');
+        elements.forEach(el => {
+            const text = el.innerText;
+            if (text && text.includes('€') && text.length < 250 && text.length > 10) {
+                const cleanText = text.replace(/\\n/g, ' | ').trim();
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (!results.some(r => r.text === cleanText)) {
+                    results.push({ text: cleanText, image: imgSrc });
+                }
+            }
+        });
+        return results;
+    }""")
+    parsed = parse_products(raw, "Discount Market")
+    print(f"-> Επιτυχία: {len(parsed)} προϊόντα από Discount Market.")
+    return parsed
+
 def upload_all_to_ftp():
     print("\n=== ΜΕΤΑΦΟΡΤΩΣΗ FTP ===")
     from ftplib import FTP
@@ -324,7 +357,17 @@ if __name__ == "__main__":
         page = context.new_page()
         all_offers = []
         
-        for scraper_func in [scrape_sklavenitis, scrape_ab, scrape_masoutis, scrape_kritikos, scrape_galaxias, scrape_mymarket]:
+        scrapers = [
+            scrape_sklavenitis, 
+            scrape_ab, 
+            scrape_masoutis, 
+            scrape_kritikos, 
+            scrape_galaxias, 
+            scrape_mymarket,
+            scrape_discountmarket
+        ]
+        
+        for scraper_func in scrapers:
             try:
                 all_offers.extend(scraper_func(page))
             except Exception as e:
