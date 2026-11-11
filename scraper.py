@@ -50,64 +50,45 @@ def parse_products(raw_products, supermarket_name):
                 })
     return parsed
 
-# --- Πολυεπίπεδη λογική αποκλειστικά για τον Σκλαβενίτη (hub -> υπο-συλλογές) ---
-def logic_sklavenitis(page, name, context):
-    print("-> Ανίχνευση συλλογών προσφορών από τη σελίδα του Σκλαβενίτη...")
-    page.wait_for_timeout(3000)
+# --- Ειδική διορθωμένη λογική για τον Σκλαβενίτη (με αναμονή render & scroll) ---
+def logic_sklavenitis(page, name, context=None):
+    print("-> Αναμονή φόρτωσης JavaScript και render για Σκλαβενίτη...")
     
-    # Συλλογή όλων των links υπο-συλλογών από την κεντρική σελίδα προσφορών
-    links = page.evaluate("""() => {
+    try:
+        page.wait_for_selector('article, div[class*="product"], div[class*="item"], div[class*="card"], img', timeout=15000)
+    except:
+        print("-> Προειδοποίηση: Timeout στην αναμονή στοιχείων. Συνεχίζουμε με scroll...")
+
+    # Σταδιακό scrolling για να ενεργοποιηθεί το lazy loading
+    for i in range(8):
+        page.evaluate("window.scrollBy(0, 1000)")
+        page.wait_for_timeout(2000)
+
+    # Σάρωση ολόκληρης της σελίδας μετά το rendering
+    raw = page.evaluate("""() => {
         const results = [];
-        document.querySelectorAll('a').forEach(a => {
-            const href = a.href;
-            if (href && href.includes('/sylloges/') && href !== window.location.href) {
-                if (!results.includes(href)) results.push(href);
+        const elements = document.querySelectorAll('article, div, li, section');
+        elements.forEach(el => {
+            const text = el.innerText;
+            if (text && text.includes('€') && text.length < 350 && text.length > 10) {
+                const cleanText = text.replace(/\\n/g, ' | ').trim();
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+                
+                if (imgSrc && imgSrc.startsWith('http')) {
+                    if (!results.some(r => r.text === cleanText)) {
+                        results.push({ text: cleanText, image: imgSrc });
+                    }
+                }
             }
         });
         return results;
     }""")
     
-    print(f"-> Βρέθηκαν {len(links)} ενεργές συλλογές προσφορών. Σάρωση περιεχομένου...")
-    all_sklavenitis_raw = []
-    
-    # Άνοιγμα νέας σελίδας για να σαρώσουμε τις υπο-συλλογές μία προς μία
-    sub_page = context.new_page()
-    
-    for link in links[:6]: # Περιορισμός στις πρώτες 6 συλλογές για ταχύτητα και αποφυγή timeouts
-        try:
-            print(f"-> Είσοδος στη συλλογή: {link}")
-            sub_page.goto(link, timeout=30000, wait_until="domcontentloaded")
-            sub_page.wait_for_timeout(2500)
-            
-            # Scroll για lazy loading μέσα στη συλλογή
-            for _ in range(3):
-                sub_page.evaluate("window.scrollBy(0, 1000)")
-                sub_page.wait_for_timeout(1500)
-                
-            raw_items = sub_page.evaluate("""() => {
-                const items = [];
-                document.querySelectorAll('article, div[class*="product"], div[class*="item"], div[class*="card"]').forEach(el => {
-                    const text = el.innerText;
-                    if (text && text.includes('€') && text.length < 350 && text.length > 10) {
-                        const cleanText = text.replace(/\\n/g, ' | ').trim();
-                        const img = el.querySelector('img');
-                        const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
-                        if (imgSrc && imgSrc.startsWith('http')) {
-                            if (!items.some(i => i.text === cleanText)) {
-                                items.push({ text: cleanText, image: imgSrc });
-                            }
-                        }
-                    }
-                });
-                return items;
-            }""")
-            all_sklavenitis_raw.extend(raw_items)
-        except Exception as sub_err:
-            print(f"-> Σφάλμα στη συλλογή {link}: {sub_err}")
-            
-    sub_page.close()
-    return parse_products(all_sklavenitis_raw, name)
+    print(f"-> Εντοπίστηκαν {len(raw)} ακατέργαστα στοιχεία από τον Σκλαβενίτη.")
+    return parse_products(raw, name)
 
+# --- Καθολική λογική για τα υπόλοιπα καταστήματα ---
 def universal_scraper_logic(page, name):
     for _ in range(4):
         page.evaluate("window.scrollBy(0, 1200)")
@@ -115,7 +96,8 @@ def universal_scraper_logic(page, name):
         
     raw = page.evaluate("""() => {
         const results = [];
-        document.querySelectorAll('article, div, li, section').forEach(el => {
+        const elements = document.querySelectorAll('article, div, li, section');
+        elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 350 && text.length > 15) {
                 const cleanText = text.replace(/\\n/g, ' | ').trim();
@@ -133,7 +115,7 @@ def universal_scraper_logic(page, name):
     }""")
     return parse_products(raw, name)
 
-def scrape_store(p, url, supermarket_name, logic_func, context=None):
+def scrape_store(p, url, supermarket_name, logic_func):
     print(f"\n--- Συλλογή από {supermarket_name} ---")
     browser = None
     try:
@@ -169,7 +151,7 @@ def scrape_store(p, url, supermarket_name, logic_func, context=None):
             
         page.wait_for_timeout(4000)
         
-        # Κλείσιμο cookies / popups
+        # Αυτόματο κλείσιμο cookies / popups
         try:
             popup_btns = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler")
             if popup_btns.count() > 0:
@@ -178,7 +160,6 @@ def scrape_store(p, url, supermarket_name, logic_func, context=None):
         except:
             pass
             
-        # Εκτέλεση αντίστοιχης λογικής
         if supermarket_name == "Σκλαβενίτης":
             parsed = logic_func(page, supermarket_name, ctx)
         else:
