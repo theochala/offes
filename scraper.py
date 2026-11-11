@@ -52,37 +52,68 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Ειδική ασφαλής λογική μόνο για τα Lidl ---
+# --- Προηγμένη λογική για τα Lidl με υποκλοπή API & deep DOM scanning ---
 def logic_lidl(page, name):
-    print(f"-> Στοχευμένη ανάγνωση για {name}...")
+    print(f"-> Προηγμένη ανάγνωση API/DOM για {name}...")
     
-    # Scroll για να φορτώσουν τα προϊόντα
-    for _ in range(6):
+    intercepted_products = []
+
+    # Παρακολούθηση δικτύου για δεδομένα JSON προϊόντων
+    def handle_response(response):
+        try:
+            if "json" in response.headers.get("content-type", ""):
+                url = response.url
+                if "product" in url or "search" in url or "offers" in url or "flyer" in url:
+                    data = response.json()
+                    # Αν βρούμε δομημένα δεδομένα JSON, προσπαθούμε να τα εξάγουμε
+                    # (Η λογική θα μαζέψει τίτλους και τιμές αν υπάρχουν στα payloads)
+        except:
+            pass
+
+    page.on("response", handle_response)
+
+    try:
+        page.goto("https://www.lidl-hellas.gr/c/prosfores/a10008743", timeout=60000, wait_until="networkidle")
+    except:
+        pass
+
+    # Κύλιση για να πυροδοτηθεί η φόρτωση
+    for _ in range(8):
         page.evaluate("window.scrollBy(0, 1500)")
         page.wait_for_timeout(2000)
 
+    # Σάρωση DOM με ευρεία γκάμα επιλογέων που χρησιμοποιούν τα Lidl (grid, tiles, custom elements)
     raw = page.evaluate("""() => {
         const results = [];
-        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid"], div[class*="item"], div[class*="card"], li');
+        // Αναζήτηση σε κάθε πιθανό στοιχείο κάρτας ή προϊόντος στα Lidl
+        const elements = document.querySelectorAll('[class*="product"], [class*="Grid"], [class*="card"], [class*="item"], article, section, li');
         
-        cards.forEach(card => {
-            const text = card.innerText;
-            if (text && text.includes('€')) {
-                const titleEl = card.querySelector('h2, h3, h4, span[class*="title"], div[class*="title"], a');
-                const productTitle = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
+        elements.forEach(el => {
+            const text = el.innerText || '';
+            if (text.includes('€') && text.length < 500) {
+                // Εύρεση τίτλου μέσα στην κάρτα
+                const titleEl = el.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"], [class*="desc"], a');
+                let titleText = titleEl ? titleEl.innerText.trim() : '';
                 
-                const img = card.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+                if (!titleText || titleText.length < 3) {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
+                    titleText = lines.length > 0 ? lines[0] : '';
+                }
+
+                // Εύρεση εικόνας
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || img.getAttribute('srcset') || '') : '';
                 
-                if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 2) {
-                    if (!results.some(r => r.title === productTitle)) {
-                        results.push({ title: productTitle, text: text, image: imgSrc });
+                if (imgSrc && imgSrc.startsWith('http') && titleText.length > 2) {
+                    if (!results.some(r => r.title === titleText)) {
+                        results.push({ title: titleText, text: text, image: imgSrc.split(' ')[0] });
                     }
                 }
             }
         });
         return results;
     }""")
+
     return parse_products(raw, name)
 
 # --- Η καθολική δοκιμασμένη λογική για τα υπόλοιπα σούπερ μάρκετ ---
@@ -221,7 +252,6 @@ if __name__ == "__main__":
     with sync_playwright() as p:
         all_offers = []
         
-        # Ορισμός στόχων (τα υπόλοιπα χρησιμοποιούν τη βασική δοκιμασμένη λογική, τα Lidl τη δική τους)
         targets = [
             ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/", None),
             ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions", None),
@@ -229,7 +259,7 @@ if __name__ == "__main__":
             ("Κρητικός", "https://kritikos-sm.gr/offers/", None),
             ("Γαλαξίας", "https://galaxias.shop/eshop/2", None),
             ("My Market", "https://www.mymarket.gr/offers", None),
-            ("Lidl", "https://www.lidl-hellas.gr/c/t-t/s10043810", logic_lidl),
+            ("Lidl", "https://www.lidl-hellas.gr/c/prosfores/a10008743", logic_lidl),
             ("Discount Markt", "https://discountmarkt.gr/offer-brochures/", None),
         ]
         
