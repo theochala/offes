@@ -11,8 +11,8 @@ def clean_title(title):
     if not title:
         return ""
     
-    title = re.sub(r'\d+[\.,]\d+\s*€', '', title)
-    title = re.sub(r'\d+\s*€', '', title)
+    title = re.sub(r'\d+[\.,]\d+\s*€(?:/[^\s]+)?', '', title)
+    title = re.sub(r'\d+\s*€(?:/[^\s]+)?', '', title)
     title = re.sub(r'^[\|\-\/\s]+', '', title)
     title = re.sub(r'[\/\|\-\.\,\s]+$', '', title)
     title = re.sub(r'\s*[\/\|\-]+\s*', ' ', title)
@@ -36,7 +36,7 @@ def is_valid_product(title):
             if lower_title.strip() == word:
                 return False
                 
-    if re.match(r'^[\d\s\.,€+-]+$', title):
+    if re.match(r'^[\d\s\.,€/+-]+$', title):
         return False
         
     return len(title) > 3
@@ -47,17 +47,15 @@ def parse_products(raw_products, supermarket_name):
         text = item["text"]
         img_url = item["image"]
         
-        # Εντοπισμός όλων των τιμών με μορφή Χ.ΧΧ € ή Χ,ΧΧ €
-        all_matches = re.findall(r'(\d+[\.,]\d+\s*€)', text)
+        # Εντοπισμός τιμών μαζί με τη μονάδα μέτρησης αν υπάρχει (π.χ. 3,00 €/τεμ. ή 60,00 €/λίτρο)
+        all_matches = re.findall(r'(\d+[\.,]\d+\s*€(?:/[a-zA-Zα-ωΑ-Ω.]+)?|0[\.,]\d+\s*€(?:/[a-zA-Zα-ωΑ-Ω.]+)?)', text)
         
-        # Φιλτράρισμα για να κρατήσουμε ρεαλιστικές τιμές προϊόντων (αποφυγή γραμμαρίων/κιλών όπως 500g, 1000g που μπορεί να πιαστούν)
         prices = []
         for m in all_matches:
-            # Μετατροπή σε float για έλεγχο (π.χ. "2,59 €" -> 2.59)
-            val_str = m.replace('€', '').replace(',', '.').strip()
+            # Καθαρισμός για έλεγχο εύρους τιμής
+            num_part = m.split('€')[0].replace(',', '.').strip()
             try:
-                val = float(val_str)
-                # Μια τιμή σούπερ μάρκετ είναι συνήθως μεταξύ 0.10€ και 50€ ανά τεμάχιο/συσκευασία
+                val = float(num_part)
                 if 0.05 <= val <= 60.0:
                     prices.append(m)
             except:
@@ -66,13 +64,12 @@ def parse_products(raw_products, supermarket_name):
         if not prices:
             continue
             
-        # Ανάθεση τιμών: Η τελευταία καθαρή τιμή είναι συνήθως η τελική τιμή προσφοράς
         price_val = prices[-1]
         old_price = prices[0] if len(prices) > 1 and prices[0] != price_val else ""
 
         title = clean_title(item["title"])
         
-        if len(title) > 3 and price_val and price_val != "0,00 €" and price_val != "0 €" and img_url and img_url.startswith('http'):
+        if len(title) > 3 and price_val and "0,00 €" not in price_val and img_url and img_url.startswith('http'):
             if is_valid_product(title):
                 if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
                     parsed.append({
