@@ -52,7 +52,7 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Αρχική καθολική λογική σάρωσης ---
+# --- Καθολική δοκιμασμένη λογική σάρωσης ---
 def universal_scraper_logic(page, name):
     print(f"-> Σάρωση σελίδας για {name}...")
     
@@ -189,8 +189,9 @@ if __name__ == "__main__":
             ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions"),
             ("Μασούτης", "https://www.masoutis.gr/offers"),
             ("Κρητικός", "https://kritikos-sm.gr/offers/"),
-            ("Γαλαξίας", "https://galaxias.shop/eshop/2"),
+            ("Γαλαξίας", "https://www.galaxias.gr/prosfores/"),
             ("My Market", "https://www.mymarket.gr/offers"),
+            ("Lidl", "https://www.lidl.gr/t/el/fylladia"),
             ("Discount Markt", "https://discountmarkt.gr/offer-brochures/"),
         ]
         
