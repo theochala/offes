@@ -23,7 +23,6 @@ def is_valid_product(title):
     if not title:
         return False
         
-    # Πιο ισορροπημένη λίστα για να μην κόβονται τα προϊόντα του ΑΒ
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
         "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία",
@@ -31,7 +30,6 @@ def is_valid_product(title):
     ]
     
     lower_title = title.lower()
-    
     for word in blacklist:
         if word == lower_title:
             return False
@@ -63,17 +61,21 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Ειδική στοχευμένη λογική για τα Lidl ---
-def logic_lidl(page, name):
-    print(f"-> Στοχευμένη ανάγνωση προϊόντων για {name}...")
-    
-    for _ in range(8):
+# --- Ειδική λογική για τον ΑΒ Βασιλόπουλο ---
+def logic_ab(page, name):
+    print(f"-> Στοχευμένη ανάγνωση για {name}...")
+    try:
+        page.wait_for_load_state("networkidle", timeout=10000)
+    except:
+        pass
+        
+    for _ in range(6):
         page.evaluate("window.scrollBy(0, 1500)")
         page.wait_for_timeout(2000)
 
     raw = page.evaluate("""() => {
         const results = [];
-        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid-item"], div[class*="card"], li');
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid"], div[class*="card"], li');
         
         cards.forEach(card => {
             const text = card.innerText;
@@ -100,10 +102,45 @@ def logic_lidl(page, name):
     }""")
     return parse_products(raw, name)
 
-# --- Η καθολική δοκιμασμένη λογική για τα υπόλοιπα σούπερ μάρκετ ---
+# --- Ειδική λογική για τα Lidl ---
+def logic_lidl(page, name):
+    print(f"-> Στοχευμένη ανάγνωση για {name}...")
+    for _ in range(8):
+        page.evaluate("window.scrollBy(0, 1500)")
+        page.wait_for_timeout(2000)
+
+    raw = page.evaluate("""() => {
+        const results = [];
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid"], div[class*="card"], li');
+        
+        cards.forEach(card => {
+            const text = card.innerText;
+            if (text && text.includes('€')) {
+                const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
+                let productTitle = titleEl ? titleEl.innerText.trim() : '';
+                
+                if (!productTitle) {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
+                    productTitle = lines.length > 0 ? lines[0] : '';
+                }
+                
+                const img = card.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+                
+                if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 3) {
+                    if (!results.some(r => r.title === productTitle)) {
+                        results.push({ title: productTitle, text: text, image: imgSrc.split(' ')[0] });
+                    }
+                }
+            }
+        });
+        return results;
+    }""")
+    return parse_products(raw, name)
+
+# --- Καθολική λογική για τα υπόλοιπα ---
 def universal_scraper_logic(page, name):
     print(f"-> Σάρωση σελίδας για {name}...")
-    
     for _ in range(5):
         page.evaluate("window.scrollBy(0, 1500)")
         page.wait_for_timeout(2000)
@@ -240,7 +277,7 @@ if __name__ == "__main__":
         
         targets = [
             ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/", None),
-            ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions", None),
+            ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions", logic_ab),
             ("Μασούτης", "https://www.masoutis.gr/offers", None),
             ("Κρητικός", "https://kritikos-sm.gr/offers/", None),
             ("Γαλαξίας", "https://galaxias.shop/eshop/2", None),
