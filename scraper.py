@@ -35,6 +35,7 @@ class OfferItem:
 
 
 def clean_price(price_str: str) -> Optional[float]:
+    """Μετατρέπει κείμενο τιμής (π.χ. '3,45 €') σε float (3.45)."""
     if not price_str:
         return None
     cleaned = re.sub(r"[^0-9,.]", "", price_str).replace(",", ".")
@@ -50,7 +51,7 @@ class PlaywrightOffersScraper:
 
     def scrape_all(self):
         with sync_playwright() as p:
-            # Ξεκινάμε τον browser σε headless mode
+            # Εκκίνηση του browser σε headless mode
             browser = p.chromium.launch(headless=True)
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
@@ -59,15 +60,15 @@ class PlaywrightOffersScraper:
             page = context.new_page()
 
             # ------------------------------------------------------------------
-            # 1. MY MARKET (Παράδειγμα με Playwright)
+            # 1. MY MARKET (mymarket.gr)
             # ------------------------------------------------------------------
             try:
                 logger.info("Συλλογή από My Market...")
-                page.goto("https://www.mymarket.gr/offers", timeout=30000)
-                page.wait_for_timeout(3000) # Αναμονή να φορτώσει η JS
+                page.goto("https://www.mymarket.gr/offers", timeout=45000)
+                page.wait_for_timeout(4000)  # Αναμονή φόρτωσης JavaScript
                 
                 cards = page.locator(".product-card, .product-teaser, article").all()
-                for card in cards[:20]: # Περιορισμός στα πρώτα 20 για δοκιμή
+                for card in cards[:30]:
                     try:
                         title = card.locator(".product-title, h3").inner_text(timeout=1000)
                         price = card.locator(".price-final, .product-price").inner_text(timeout=1000)
@@ -90,15 +91,15 @@ class PlaywrightOffersScraper:
                 logger.warning(f"Σφάλμα στο My Market: {e}")
 
             # ------------------------------------------------------------------
-            # 2. ΜΑΣΟΥΤΗΣ
+            # 2. ΜΑΣΟΥΤΗΣ (masoutis.gr)
             # ------------------------------------------------------------------
             try:
                 logger.info("Συλλογή από Μασούτη...")
-                page.goto("https://www.masoutis.gr/offers", timeout=30000)
-                page.wait_for_timeout(3000)
+                page.goto("https://www.masoutis.gr/offers", timeout=45000)
+                page.wait_for_timeout(4000)
                 
                 cards = page.locator(".product-box, .item-product, article").all()
-                for card in cards[:20]:
+                for card in cards[:30]:
                     try:
                         title = card.locator(".product-title, h3").inner_text(timeout=1000)
                         price = card.locator(".final-price, .price").inner_text(timeout=1000)
@@ -145,5 +146,5 @@ class PlaywrightOffersScraper:
 if __name__ == "__main__":
     scraper = PlaywrightOffersScraper()
     scraper.scrape_all()
-    scraper.export_csv()
-    scraper.export_json()
+    scraper.export_csv("supermarket_offers.csv")
+    scraper.export_json("supermarket_offers.json")
