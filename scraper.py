@@ -11,6 +11,7 @@ def clean_title(title):
     if not title:
         return ""
     
+    # Καθαρισμός περιττών χαρακτήρων, τιμών και συμβόλων από την αρχή και το τέλος
     title = re.sub(r'\d+[\.,]\d+\s*€', '', title)
     title = re.sub(r'\d+\s*€', '', title)
     title = re.sub(r'^[\|\-\/\s]+', '', title)
@@ -23,11 +24,12 @@ def is_valid_product(title):
     if not title:
         return False
         
+    # Μαύρη λίστα με λέξεις που ΔΕΝ πρέπει να είναι τίτλοι προϊόντων
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
         "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία",
         "φυλλάδια", "περισσότερα", "εβδομάδα", "αρχική", "αγόρασε", "καλάθι",
-        "διαφήμιση", "δώρο", "προσφορά", "νέο"
+        "διαφήμιση", "δώρο", "προσφορά", "νέο", "προσθήκη σε...", "προσθήκη"
     ]
     
     lower_title = title.lower().strip()
@@ -56,6 +58,7 @@ def parse_products(raw_products, supermarket_name):
         
         if len(title) > 3 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
             if is_valid_product(title):
+                # Έλεγχος ώστε να μην αποθηκεύονται διπλότυπα προϊόντα στο ίδιο σούπερ μάρκετ
                 if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
                     parsed.append({
                         "title": title,
@@ -141,8 +144,8 @@ def universal_scraper_logic(page, name):
             if (text && text.includes('€') && text.length < 400 && text.length > 10) {
                 const titleEl = el.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let titleText = titleEl ? titleEl.innerText.trim() : '';
-                if (!titleText || titleText.toLowerCase().includes('προσθήκη') || titleText.toLowerCase() === 'κιλό' || titleText.toLowerCase() === 'διαφήμιση') {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'κιλό');
+                if (!titleText || titleText.toLowerCase().includes('προσθήκη') || titleText.toLowerCase() === 'κιλό' || titleText.toLowerCase() === 'διαφήμιση' || titleText.toLowerCase() === 'δώρο') {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'κιλό' && l.toLowerCase() !== 'διαφήμιση' && l.toLowerCase() !== 'δώρο');
                     titleText = lines.length > 0 ? lines[0] : '';
                 }
                 const img = el.querySelector('img');
