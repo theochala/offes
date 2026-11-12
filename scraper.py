@@ -23,7 +23,6 @@ def is_valid_product(title):
     if not title:
         return False
         
-    # Αυστηρή μαύρη λίστα για αποκλεισμό διαφημίσεων, δώρων, κατηγοριών και κουμπιών
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
         "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία",
@@ -67,36 +66,29 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Ειδική λογική για τον ΑΒ Βασιλόπουλο ---
 def logic_ab(page, name):
-    print(f"-> Στοχευμένη ανάγνωση για {name}...")
     try:
         page.wait_for_load_state("networkidle", timeout=10000)
     except:
         pass
-        
     for _ in range(6):
         page.evaluate("window.scrollBy(0, 1500)")
         page.wait_for_timeout(2000)
 
-    raw = page.evaluate("""() => {
+    return page.evaluate("""() => {
         const results = [];
         const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid"], div[class*="card"], li');
-        
         cards.forEach(card => {
             const text = card.innerText;
             if (text && text.includes('€')) {
                 const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let productTitle = titleEl ? titleEl.innerText.trim() : '';
-                
-                if (!productTitle || productTitle.toLowerCase().includes('προσθήκη') || productTitle.toLowerCase() === 'διαφήμιση' || productTitle.toLowerCase() === 'δώρο') {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'διαφήμιση' && l.toLowerCase() !== 'δώρο');
+                if (!productTitle || productTitle.toLowerCase().includes('προσθήκη') || productTitle.toLowerCase() === 'διαφήμιση') {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
                     productTitle = lines.length > 0 ? lines[0] : '';
                 }
-                
                 const img = card.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
-                
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
                 if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 3) {
                     if (!results.some(r => r.title === productTitle)) {
                         results.push({ title: productTitle, text: text, image: imgSrc.split(' ')[0] });
@@ -106,33 +98,26 @@ def logic_ab(page, name):
         });
         return results;
     }""")
-    return parse_products(raw, name)
 
-# --- Ειδική λογική για τα Lidl ---
 def logic_lidl(page, name):
-    print(f"-> Στοχευμένη ανάγνωση για {name}...")
     for _ in range(8):
         page.evaluate("window.scrollBy(0, 1500)")
         page.wait_for_timeout(2000)
 
-    raw = page.evaluate("""() => {
+    return page.evaluate("""() => {
         const results = [];
         const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid"], div[class*="card"], li');
-        
         cards.forEach(card => {
             const text = card.innerText;
             if (text && text.includes('€')) {
                 const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let productTitle = titleEl ? titleEl.innerText.trim() : '';
-                
-                if (!productTitle || productTitle.toLowerCase() === 'διαφήμιση' || productTitle.toLowerCase() === 'δώρο') {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && l.toLowerCase() !== 'διαφήμιση' && l.toLowerCase() !== 'δώρο');
+                if (!productTitle) {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
                     productTitle = lines.length > 0 ? lines[0] : '';
                 }
-                
                 const img = card.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
-                
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
                 if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 3) {
                     if (!results.some(r => r.title === productTitle)) {
                         results.push({ title: productTitle, text: text, image: imgSrc.split(' ')[0] });
@@ -142,16 +127,13 @@ def logic_lidl(page, name):
         });
         return results;
     }""")
-    return parse_products(raw, name)
 
-# --- Καθολική λογική για τα υπόλοιπα καταστήματα (Σκλαβενίτης, Μασούτης, Κρητικός, Γαλαξίας, My Market) ---
 def universal_scraper_logic(page, name):
-    print(f"-> Σάρωση σελίδας για {name}...")
     for _ in range(5):
         page.evaluate("window.scrollBy(0, 1500)")
         page.wait_for_timeout(2000)
         
-    raw = page.evaluate("""() => {
+    return page.evaluate("""() => {
         const results = [];
         const elements = document.querySelectorAll('article, div, li, section');
         elements.forEach(el => {
@@ -159,15 +141,12 @@ def universal_scraper_logic(page, name):
             if (text && text.includes('€') && text.length < 400 && text.length > 10) {
                 const titleEl = el.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let titleText = titleEl ? titleEl.innerText.trim() : '';
-                
-                if (!titleText || titleText.toLowerCase().includes('προσθήκη') || titleText.toLowerCase() === 'κιλό' || titleText.toLowerCase() === 'διαφήμιση' || titleText.toLowerCase() === 'δώρο') {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'κιλό' && l.toLowerCase() !== 'διαφήμιση' && l.toLowerCase() !== 'δώρο');
+                if (!titleText || titleText.toLowerCase().includes('προσθήκη') || titleText.toLowerCase() === 'κιλό' || titleText.toLowerCase() === 'διαφήμιση') {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'κιλό');
                     titleText = lines.length > 0 ? lines[0] : '';
                 }
-                
                 const img = el.querySelector('img');
-                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
-                
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
                 if (imgSrc && imgSrc.startsWith('http') && titleText.length > 3) {
                     if (!results.some(r => r.title === titleText)) {
                         results.push({ title: titleText, text: text, image: imgSrc });
@@ -177,7 +156,6 @@ def universal_scraper_logic(page, name):
         });
         return results;
     }""")
-    return parse_products(raw, name)
 
 def scrape_store(p, url, supermarket_name, logic_func=None):
     print(f"\n--- Συλλογή από {supermarket_name} ---")
@@ -190,28 +168,16 @@ def scrape_store(p, url, supermarket_name, logic_func=None):
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage",
                 "--disable-gpu",
-                "--disable-extensions",
                 "--disable-blink-features=AutomationControlled",
                 "--window-size=1920,1080"
             ]
         }
-
         browser = p.chromium.launch(**launch_args)
         ctx = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
             viewport={"width": 1920, "height": 1080},
-            locale="el-GR",
-            timezone_id="Europe/Athens",
-            extra_http_headers={
-                "Accept-Language": "el-GR,el;q=0.9,en-US;q=0.8,en;q=0.7",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-                "Sec-Ch-Ua": '"Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"',
-                "Sec-Ch-Ua-Mobile": "?0",
-                "Sec-Ch-Ua-Platform": '"Windows"'
-            }
+            locale="el-GR"
         )
-        
-        ctx.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
         page = ctx.new_page()
         print(f"-> Μετάβαση στη διεύθυνση: {url}")
         
@@ -219,38 +185,30 @@ def scrape_store(p, url, supermarket_name, logic_func=None):
             page.goto(url, timeout=60000, wait_until="domcontentloaded")
         except:
             pass
-            
         page.wait_for_timeout(5000)
         
         try:
-            popup_ids = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), button:has-text('Συμφωνώ'), #onetrust-accept-btn-handler")
-            if popup_ids.count() > 0:
-                popup_ids.first().click()
+            popup = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
+            if popup.count() > 0:
+                popup.first().click()
                 page.wait_for_timeout(2000)
         except:
             pass
             
-        if logic_func:
-            parsed = logic_func(page, supermarket_name)
-        else:
-            parsed = universal_scraper_logic(page, supermarket_name)
-            
+        raw = logic_func(page, supermarket_name) if logic_func else universal_scraper_logic(page, supermarket_name)
+        parsed = parse_products(raw, supermarket_name)
         browser.close()
         
-        if parsed and len(parsed) > 0:
+        if parsed:
             print(f"-> Επιτυχία: {len(parsed)} προϊόντα από {supermarket_name}.")
             return parsed
-        else:
-            print(f"-> 0 προϊόντα βρέθηκαν για {supermarket_name}.")
-            return []
-            
+        print(f"-> 0 προϊόντα βρέθηκαν για {supermarket_name}.")
+        return []
     except Exception as e:
-        print(f"-> Σφάλμα κατά τη συλλογή από {supermarket_name}: {e}")
+        print(f"-> Σφάλμα για {supermarket_name}: {e}")
         if browser:
-            try:
-                browser.close()
-            except:
-                pass
+            try: browser.close()
+            except: pass
         return []
 
 def upload_all_to_ftp():
@@ -261,7 +219,7 @@ def upload_all_to_ftp():
     ftp_pass = os.getenv("FTP_PASSWORD")
 
     if not all([ftp_server, ftp_user, ftp_pass]):
-        print("[!] Λείπουν τα FTP στοιχεία από τα GitHub Secrets.")
+        print("[!] Λείπουν τα FTP credentials.")
         return
 
     if not OUTPUT_FILE.exists():
@@ -276,7 +234,6 @@ def upload_all_to_ftp():
 
         with OUTPUT_FILE.open("rb") as file:
             ftp.storbinary("STOR clean_offers.json", file)
-        
         print("[OK] Το clean_offers.json ανέβηκε επιτυχώς στο FTP!")
         ftp.quit()
     except Exception as error:
@@ -285,7 +242,6 @@ def upload_all_to_ftp():
 if __name__ == "__main__":
     with sync_playwright() as p:
         all_offers = []
-        
         targets = [
             ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/", None),
             ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions", logic_ab),
@@ -299,17 +255,16 @@ if __name__ == "__main__":
         
         for name, url, logic_func in targets:
             try:
-                offers = scrape_store(p, url, name, logic_func)
-                all_offers.extend(offers)
+                all_offers.extend(scrape_store(p, url, name, logic_func))
             except Exception as e:
-                print(f"Σφάλμα εκτέλεσης για {name}:", e)
+                print(f"Σφάλμα {name}: {e}")
 
         unique_offers = []
-        seen_titles = set()
+        seen = set()
         for offer in all_offers:
-            key_clean = (offer["supermarket"], offer["title"].lower().strip())
-            if key_clean not in seen_titles:
-                seen_titles.add(key_clean)
+            key = (offer["supermarket"], offer["title"].lower().strip())
+            if key not in seen:
+                seen.add(key)
                 unique_offers.append(offer)
 
         data = {
@@ -320,6 +275,6 @@ if __name__ == "__main__":
 
         with OUTPUT_FILE.open("w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
-            print(f"\nΣυνολική αποθήκευση {len(unique_offers)} μοναδικών προϊόντων στο clean_offers.json!")
+            print(f"\nΑποθήκευση {len(unique_offers)} προϊόντων!")
 
     upload_all_to_ftp()
