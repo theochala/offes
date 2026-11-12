@@ -11,7 +11,6 @@ def clean_title(title):
     if not title:
         return ""
     
-    # Αφαίρεση τιμών, ποσοτήτων € και περιττών συμβόλων από τον τίτλο
     title = re.sub(r'\d+[\.,]\d+\s*€', '', title)
     title = re.sub(r'\d+\s*€', '', title)
     title = re.sub(r'^[\|\-\/\s]+', '', title)
@@ -24,27 +23,23 @@ def is_valid_product(title):
     if not title:
         return False
         
-    # Αποκλεισμός λέξεων που ΔΕΝ είναι προϊόντα (κατηγορίες, μενού, κουμπιά)
+    # Πιο ισορροπημένη λίστα για να μην κόβονται τα προϊόντα του ΑΒ
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
         "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία",
-        "φυλλάδια", "προσφορές", "περισσότερα", "όλα", "εβδομάδα", "αρχική",
-        "αγόρασε", "καλάθι", "σούπερ", "μάρκετ", "προιόντα", "προϊόντα",
-        "νέες", "αποκλειστικά", "lupilu", "parkside", "silvercrest", "deluxe",
-        "από", "έως", "μόνο", "εως"
+        "φυλλάδια", "περισσότερα", "εβδομάδα", "αρχική", "αγόρασε", "καλάθι"
     ]
     
     lower_title = title.lower()
     
     for word in blacklist:
-        if word == lower_title or f" {word} " in f" {lower_title} ":
+        if word == lower_title:
             return False
             
-    # Αν ο τίτλος αποτελείται μόνο από νούμερα ή σύμβολα
     if re.match(r'^[\d\s\.,€+-]+$', title):
         return False
         
-    return len(title) > 4
+    return len(title) > 3
 
 def parse_products(raw_products, supermarket_name):
     parsed = []
@@ -56,7 +51,7 @@ def parse_products(raw_products, supermarket_name):
         title = clean_title(item["title"])
         price_val = prices[-1] if prices else ""
         
-        if len(title) > 4 and prices and price_val != "0,00 €" and price_val != "0 €" and img_url and img_url.startswith('http'):
+        if len(title) > 3 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
             if is_valid_product(title):
                 if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
                     parsed.append({
@@ -68,7 +63,7 @@ def parse_products(raw_products, supermarket_name):
                     })
     return parsed
 
-# --- Ειδική στοχευμένη λογική για τα Lidl (εστίαση σε τίτλους προϊόντων) ---
+# --- Ειδική στοχευμένη λογική για τα Lidl ---
 def logic_lidl(page, name):
     print(f"-> Στοχευμένη ανάγνωση προϊόντων για {name}...")
     
@@ -78,16 +73,15 @@ def logic_lidl(page, name):
 
     raw = page.evaluate("""() => {
         const results = [];
-        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid-item"], div[class*="card"], li[class*="product"]');
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid-item"], div[class*="card"], li');
         
         cards.forEach(card => {
             const text = card.innerText;
             if (text && text.includes('€')) {
-                // Αναζήτηση συγκεκριμένου τίτλου προϊόντος με προτεραιότητα σε επικεφαλίδες
-                const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"], [class*="description"], a[class*="title"]');
+                const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let productTitle = titleEl ? titleEl.innerText.trim() : '';
                 
-                if (!productTitle || productTitle.length < 3) {
+                if (!productTitle) {
                     const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
                     productTitle = lines.length > 0 ? lines[0] : '';
                 }
@@ -120,7 +114,6 @@ def universal_scraper_logic(page, name):
         elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 350 && text.length > 10) {
-                // Εύρεση τίτλου προϊόντος
                 const titleEl = el.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let titleText = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
                 
