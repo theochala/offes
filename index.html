@@ -2,132 +2,105 @@
 <html lang="el">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuperOffer Finder</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; padding: 20px; }
+        header { text-align: center; margin-bottom: 20px; }
+        .filters { text-align: center; margin-bottom: 20px; }
+        select { padding: 8px; font-size: 16px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { max-width: 100%; height: 140px; object-fit: contain; margin-bottom: 10px; }
+        .card h3 { font-size: 14px; margin: 0 0 10px 0; color: #333; }
+        .card .price { font-size: 18px; font-weight: bold; color: #27ae60; }
+        .card .store { font-size: 12px; color: #7f8c8d; margin-top: 5px; }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body>
 
-    <header class="bg-blue-600 text-white py-6 shadow-md text-center">
-        <h1 class="text-3xl font-bold flex items-center justify-center gap-2">
-            🛒 SuperOffer Finder
-        </h1>
-        <p class="text-blue-100 text-sm mt-1">Σύγκριση προσφορών από όλα τα Σούπερ Μάρκετ</p>
+    <header>
+        <h1>🛒 SuperOffer Finder</h1>
+        <p>Σύγκριση προσφορών από όλα τα Σούπερ Μάρκετ</p>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-6">
-        <div class="bg-white p-4 rounded-lg shadow-sm flex flex-col md:flex-row gap-4 mb-6">
-            <div class="flex-1">
-                <input 
-                    type="text" 
-                    id="search-input" 
-                    oninput="filterOffers()"
-                    placeholder="Αναζήτηση προϊόντος (π.χ. Γάλα, Καφές)..." 
-                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-            </div>
-            <div>
-                <select 
-                    id="supermarket-select" 
-                    onchange="filterOffers()"
-                    class="w-full md:w-64 border border-blue-500 text-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                >
-                    <option value="all">Όλα τα Σούπερ Μάρκετ</option>
-                </select>
-            </div>
-        </div>
+    <div class="filters">
+        <select id="storeFilter" onchange="filterOffers()">
+            <option value="all">Όλα τα Σούπερ Μάρκετ</option>
+        </select>
+    </div>
 
-        <div id="offers-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <p class="text-center col-span-full text-gray-500 py-8">Φόρτωση προσφορών...</p>
-        </div>
+    <main id="offersContainer" style="text-align: center;">
+        <p>Φόρτωση προσφορών...</p>
     </main>
 
     <script>
-        let rawOffersData = [];
+        let allOffers = [];
 
-        async function fetchOffers() {
+        async function loadOffers() {
             try {
-                const res = await fetch('clean_offers.json?v=' + new Date().getTime());
-                if (!res.ok) throw new Error('Δεν βρέθηκε το αρχείο');
+                // Ζητάει το αρχείο από τον ίδιο φάκελο
+                const response = await fetch('clean_offers.json');
+                if (!response.ok) throw new Error('Αποτυχία φόρτωσης JSON');
                 
-                const json = await res.json();
-                rawOffersData = json.offers || [];
+                const data = await response.json();
+                allOffers = data.offers;
                 
-                populateSupermarketDropdown();
-            } catch (err) {
-                console.error('Σφάλμα φόρτωσης:', err);
-                rawOffersData = [];
+                setupFilters(allOffers);
+                displayOffers(allOffers);
+            } catch (error) {
+                document.getElementById('offersContainer').innerHTML = '<p style="color: red;">Σφάλμα κατά τη φόρτωση των προσφορών. Βεβαιωθείτε ότι ανέβηκε το clean_offers.json.</p>';
+                console.error(error);
             }
-            filterOffers();
         }
 
-        function populateSupermarketDropdown() {
-            const select = document.getElementById('supermarket-select');
-            select.innerHTML = '<option value="all">Όλα τα Σούπερ Μάρκετ</option>';
-            
-            const markets = [...new Set(rawOffersData.map(item => item.supermarket))].filter(Boolean);
-            
-            markets.sort().forEach(market => {
-                const option = document.createElement('option');
-                option.value = market;
-                option.textContent = market;
-                select.appendChild(option);
+        function setupFilters(offers) {
+            const stores = [...new Set(offers.map(o => o.supermarket))];
+            const select = document.getElementById('storeFilter');
+            stores.forEach(store => {
+                const opt = document.createElement('option');
+                opt.value = store;
+                opt.textContent = store;
+                select.appendChild(opt);
             });
         }
 
         function filterOffers() {
-            const searchVal = document.getElementById('search-input').value.toLowerCase().trim();
-            const marketVal = document.getElementById('supermarket-select').value;
-
-            const filtered = rawOffersData.filter(item => {
-                const matchesMarket = (marketVal === 'all') || (item.supermarket === marketVal);
-                const matchesSearch = !searchVal || (item.title && item.title.toLowerCase().includes(searchVal));
-                return matchesMarket && matchesSearch;
-            });
-
-            renderOffers(filtered);
+            const selectedStore = document.getElementById('storeFilter').value;
+            if (selectedStore === 'all') {
+                displayOffers(allOffers);
+            } else {
+                const filtered = allOffers.filter(o => o.supermarket === selectedStore);
+                displayOffers(filtered);
+            }
         }
 
-        function renderOffers(offers) {
-            const container = document.getElementById('offers-container');
-            container.innerHTML = '';
-
+        function displayOffers(offers) {
+            const container = document.getElementById('offersContainer');
             if (offers.length === 0) {
-                container.innerHTML = `<p class="text-center col-span-full text-gray-500 py-8">Δεν βρέθηκαν προσφορές.</p>`;
+                container.innerHTML = '<p>Δεν βρέθηκαν προσφορές.</p>';
                 return;
             }
 
-            offers.forEach(offer => {
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between';
-                
-                // Εμφάνιση παλιάς/κανονικής τιμής διαγραμμένης εφόσον υπάρχει
-                const oldPriceHtml = offer.old_price ? `<span class="text-xs text-gray-400 line-through mr-2">${offer.old_price}</span>` : '';
-
-                card.innerHTML = `
-                    <div>
-                        <div class="relative h-40 mb-3 bg-gray-50 rounded flex items-center justify-center overflow-hidden">
-                            <img src="${offer.image || ''}" alt="${offer.title}" class="object-contain h-full w-full p-2" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
-                            <span class="absolute top-2 left-2 text-xs font-semibold px-2 py-1 bg-blue-600 text-white rounded">
-                                ${offer.supermarket}
-                            </span>
-                        </div>
-                        <h3 class="text-sm font-medium text-gray-800 leading-snug mb-2 whitespace-normal break-words">
-                            ${offer.title}
-                        </h3>
-                    </div>
-                    <div class="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
+            let html = '<div class="grid">';
+            offers.forEach(o => {
+                html += `
+                    <div class="card">
                         <div>
-                            ${oldPriceHtml}
-                            <span class="text-lg font-bold text-green-600">${offer.price}</span>
+                            <img src="${o.image}" alt="${o.title}" loading="lazy">
+                            <h3>${o.title}</h3>
+                        </div>
+                        <div>
+                            <div class="price">${o.price}</div>
+                            <div class="store">${o.supermarket}</div>
                         </div>
                     </div>
                 `;
-                container.appendChild(card);
             });
+            html += '</div>';
+            container.innerHTML = html;
         }
 
-        window.addEventListener('DOMContentLoaded', fetchOffers);
+        loadOffers();
     </script>
 </body>
 </html>
