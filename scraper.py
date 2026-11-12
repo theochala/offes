@@ -23,21 +23,21 @@ def is_valid_product(title):
     if not title:
         return False
         
-    # Αυστηρή μαύρη λίστα για να κόβονται κουμπιά, μονάδες μέτρησης και άκυρα κείμενα
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
         "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία",
-        "φυλλάδια", "περισσότερα", "εβδομάδα", "αρχική", "αγόρασε", "καλάθι",
-        "προσθήκη σε...", "προσθήκη", "κιλό", "τεμάχιο", "συσκευασία", "από", "έως"
+        "φυλλάδια", "περισσότερα", "εβδομάδα", "αρχική", "αγόρασε", "καλάθι"
     ]
     
     lower_title = title.lower().strip()
     
-    # Αν ο τίτλος ταιριάζει ακριβώς ή περιέχει λέξεις από τη μαύρη λίστα
     for word in blacklist:
-        if lower_title == word or lower_title.startswith("προσθήκη") or lower_title in ["κιλό", "τεμάχιο"]:
+        if lower_title == word:
             return False
             
+    if lower_title in ["κιλό", "τεμάχιο", "συσκευασία"]:
+        return False
+        
     if re.match(r'^[\d\s\.,€+-]+$', title):
         return False
         
@@ -88,7 +88,7 @@ def logic_ab(page, name):
                 let productTitle = titleEl ? titleEl.innerText.trim() : '';
                 
                 if (!productTitle || productTitle.toLowerCase().includes('προσθήκη')) {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη'));
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
                     productTitle = lines.length > 0 ? lines[0] : '';
                 }
                 
@@ -123,8 +123,8 @@ def logic_lidl(page, name):
                 const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let productTitle = titleEl ? titleEl.innerText.trim() : '';
                 
-                if (!productTitle || productTitle.toLowerCase().includes('προσθήκη')) {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη'));
+                if (!productTitle) {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
                     productTitle = lines.length > 0 ? lines[0] : '';
                 }
                 
@@ -142,7 +142,7 @@ def logic_lidl(page, name):
     }""")
     return parse_products(raw, name)
 
-# --- Καθολική λογική για τα υπόλοιπα (με φίλτρο τίτλων) ---
+# --- Καθολική λογική για τα υπόλοιπα καταστήματα (Σκλαβενίτης, Μασούτης, Κρητικός, Γαλαξίας, My Market) ---
 def universal_scraper_logic(page, name):
     print(f"-> Σάρωση σελίδας για {name}...")
     for _ in range(5):
@@ -154,7 +154,7 @@ def universal_scraper_logic(page, name):
         const elements = document.querySelectorAll('article, div, li, section');
         elements.forEach(el => {
             const text = el.innerText;
-            if (text && text.includes('€') && text.length < 350 && text.length > 10) {
+            if (text && text.includes('€') && text.length < 400 && text.length > 10) {
                 const titleEl = el.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let titleText = titleEl ? titleEl.innerText.trim() : '';
                 
