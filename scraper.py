@@ -78,11 +78,11 @@ class SupermarketOffersScraper:
     # ------------------------------------------------------------------
     # 1. ΣΚΛΑΒΕΝΙΤΗΣ (sklavenitis.gr)
     # ------------------------------------------------------------------
-    def scrape_sklavenitis(self, max_pages: int = 5):
+    def scrape_sklavenitis(self, max_pages: int = 3):
         logger.info("Ξεκινάει η συλλογή από Σκλαβενίτη...")
         base_url = "https://www.sklavenitis.gr"
         for page in range(1, max_pages + 1):
-            url = f"{base_url}/prosfores/?pg={page}"
+            url = f"{base_url}/sylloges/prosfores/?pg={page}"
             soup = self._get_soup(url)
             if not soup:
                 break
@@ -119,11 +119,11 @@ class SupermarketOffersScraper:
     # ------------------------------------------------------------------
     # 2. ΑΒ ΒΑΣΙΛΟΠΟΥΛΟΣ (ab.gr)
     # ------------------------------------------------------------------
-    def scrape_ab(self, max_pages: int = 5):
+    def scrape_ab(self, max_pages: int = 3):
         logger.info("Ξεκινάει η συλλογή από ΑΒ Βασιλόπουλο...")
         base_url = "https://www.ab.gr"
         for page in range(max_pages):
-            url = f"{base_url}/eshop/prosfores?pageNumber={page}"
+            url = f"{base_url}/el/search/promotions?page={page}"
             soup = self._get_soup(url)
             if not soup:
                 break
@@ -161,11 +161,11 @@ class SupermarketOffersScraper:
     # ------------------------------------------------------------------
     # 3. MY MARKET (mymarket.gr)
     # ------------------------------------------------------------------
-    def scrape_mymarket(self, max_pages: int = 5):
+    def scrape_mymarket(self, max_pages: int = 3):
         logger.info("Ξεκινάει η συλλογή από My Market...")
         base_url = "https://www.mymarket.gr"
         for page in range(1, max_pages + 1):
-            url = f"{base_url}/prosfores?page={page}"
+            url = f"{base_url}/offers?page={page}"
             soup = self._get_soup(url)
             if not soup:
                 break
@@ -201,13 +201,13 @@ class SupermarketOffersScraper:
             time.sleep(self.delay)
 
     # ------------------------------------------------------------------
-    # 4. ΜΑΣΟΥΤΗΣ (eshop.masoutis.gr)
+    # 4. ΜΑΣΟΥΤΗΣ (masoutis.gr)
     # ------------------------------------------------------------------
-    def scrape_masoutis(self, max_pages: int = 5):
+    def scrape_masoutis(self, max_pages: int = 3):
         logger.info("Ξεκινάει η συλλογή από Μασούτη...")
-        base_url = "https://eshop.masoutis.gr"
+        base_url = "https://www.masoutis.gr"
         for page in range(1, max_pages + 1):
-            url = f"{base_url}/categories/index/prosfores?page={page}"
+            url = f"{base_url}/offers?page={page}"
             soup = self._get_soup(url)
             if not soup:
                 break
@@ -245,7 +245,7 @@ class SupermarketOffersScraper:
     # ------------------------------------------------------------------
     # 5. ΚΡΗΤΙΚΟΣ (kritikos-sm.gr)
     # ------------------------------------------------------------------
-    def scrape_kritikos(self, max_pages: int = 5):
+    def scrape_kritikos(self, max_pages: int = 3):
         logger.info("Ξεκινάει η συλλογή από Κρητικό...")
         base_url = "https://kritikos-sm.gr"
         for page in range(1, max_pages + 1):
@@ -284,7 +284,7 @@ class SupermarketOffersScraper:
                 )
             time.sleep(self.delay)
 
-    def run_all(self, max_pages_per_store: int = 5):
+    def run_all(self, max_pages_per_store: int = 3):
         self.scrape_sklavenitis(max_pages=max_pages_per_store)
         self.scrape_ab(max_pages=max_pages_per_store)
         self.scrape_mymarket(max_pages=max_pages_per_store)
@@ -312,6 +312,6 @@ class SupermarketOffersScraper:
 
 if __name__ == "__main__":
     scraper = SupermarketOffersScraper(delay=1.5)
-    scraper.run_all(max_pages_per_store=3)
+    scraper.run_all(max_pages_per_store=2)
     scraper.export_csv("supermarket_offers.csv")
     scraper.export_json("supermarket_offers.json")
