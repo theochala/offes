@@ -23,19 +23,21 @@ def is_valid_product(title):
     if not title:
         return False
         
+    # Αυστηρή μαύρη λίστα για αποκλεισμό διαφημίσεων, δώρων, κατηγοριών και κουμπιών
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
         "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία",
-        "φυλλάδια", "περισσότερα", "εβδομάδα", "αρχική", "αγόρασε", "καλάθι"
+        "φυλλάδια", "περισσότερα", "εβδομάδα", "αρχική", "αγόρασε", "καλάθι",
+        "διαφήμιση", "δώρο", "προσφορά", "νέο"
     ]
     
     lower_title = title.lower().strip()
     
     for word in blacklist:
-        if lower_title == word:
+        if lower_title == word or lower_title.startswith(word):
             return False
             
-    if lower_title in ["κιλό", "τεμάχιο", "συσκευασία"]:
+    if lower_title in ["κιλό", "τεμάχιο", "συσκευασία", "προϊόν"]:
         return False
         
     if re.match(r'^[\d\s\.,€+-]+$', title):
@@ -87,8 +89,8 @@ def logic_ab(page, name):
                 const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let productTitle = titleEl ? titleEl.innerText.trim() : '';
                 
-                if (!productTitle || productTitle.toLowerCase().includes('προσθήκη')) {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
+                if (!productTitle || productTitle.toLowerCase().includes('προσθήκη') || productTitle.toLowerCase() === 'διαφήμιση' || productTitle.toLowerCase() === 'δώρο') {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'διαφήμιση' && l.toLowerCase() !== 'δώρο');
                     productTitle = lines.length > 0 ? lines[0] : '';
                 }
                 
@@ -123,8 +125,8 @@ def logic_lidl(page, name):
                 const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let productTitle = titleEl ? titleEl.innerText.trim() : '';
                 
-                if (!productTitle) {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
+                if (!productTitle || productTitle.toLowerCase() === 'διαφήμιση' || productTitle.toLowerCase() === 'δώρο') {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && l.toLowerCase() !== 'διαφήμιση' && l.toLowerCase() !== 'δώρο');
                     productTitle = lines.length > 0 ? lines[0] : '';
                 }
                 
@@ -158,8 +160,8 @@ def universal_scraper_logic(page, name):
                 const titleEl = el.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let titleText = titleEl ? titleEl.innerText.trim() : '';
                 
-                if (!titleText || titleText.toLowerCase().includes('προσθήκη') || titleText.toLowerCase() === 'κιλό') {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'κιλό');
+                if (!titleText || titleText.toLowerCase().includes('προσθήκη') || titleText.toLowerCase() === 'κιλό' || titleText.toLowerCase() === 'διαφήμιση' || titleText.toLowerCase() === 'δώρο') {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'κιλό' && l.toLowerCase() !== 'διαφήμιση' && l.toLowerCase() !== 'δώρο');
                     titleText = lines.length > 0 ? lines[0] : '';
                 }
                 
