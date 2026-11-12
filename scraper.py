@@ -23,15 +23,19 @@ def is_valid_product(title):
     if not title:
         return False
         
+    # Αυστηρή μαύρη λίστα για να κόβονται κουμπιά, μονάδες μέτρησης και άκυρα κείμενα
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
         "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία",
-        "φυλλάδια", "περισσότερα", "εβδομάδα", "αρχική", "αγόρασε", "καλάθι"
+        "φυλλάδια", "περισσότερα", "εβδομάδα", "αρχική", "αγόρασε", "καλάθι",
+        "προσθήκη σε...", "προσθήκη", "κιλό", "τεμάχιο", "συσκευασία", "από", "έως"
     ]
     
-    lower_title = title.lower()
+    lower_title = title.lower().strip()
+    
+    # Αν ο τίτλος ταιριάζει ακριβώς ή περιέχει λέξεις από τη μαύρη λίστα
     for word in blacklist:
-        if word == lower_title:
+        if lower_title == word or lower_title.startswith("προσθήκη") or lower_title in ["κιλό", "τεμάχιο"]:
             return False
             
     if re.match(r'^[\d\s\.,€+-]+$', title):
@@ -83,8 +87,8 @@ def logic_ab(page, name):
                 const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let productTitle = titleEl ? titleEl.innerText.trim() : '';
                 
-                if (!productTitle) {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
+                if (!productTitle || productTitle.toLowerCase().includes('προσθήκη')) {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη'));
                     productTitle = lines.length > 0 ? lines[0] : '';
                 }
                 
@@ -119,8 +123,8 @@ def logic_lidl(page, name):
                 const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
                 let productTitle = titleEl ? titleEl.innerText.trim() : '';
                 
-                if (!productTitle) {
-                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
+                if (!productTitle || productTitle.toLowerCase().includes('προσθήκη')) {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη'));
                     productTitle = lines.length > 0 ? lines[0] : '';
                 }
                 
@@ -138,7 +142,7 @@ def logic_lidl(page, name):
     }""")
     return parse_products(raw, name)
 
-# --- Καθολική λογική για τα υπόλοιπα ---
+# --- Καθολική λογική για τα υπόλοιπα (με φίλτρο τίτλων) ---
 def universal_scraper_logic(page, name):
     print(f"-> Σάρωση σελίδας για {name}...")
     for _ in range(5):
@@ -152,12 +156,17 @@ def universal_scraper_logic(page, name):
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 350 && text.length > 10) {
                 const titleEl = el.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
-                let titleText = titleEl ? titleEl.innerText.trim() : text.split('\\n')[0];
+                let titleText = titleEl ? titleEl.innerText.trim() : '';
+                
+                if (!titleText || titleText.toLowerCase().includes('προσθήκη') || titleText.toLowerCase() === 'κιλό') {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'κιλό');
+                    titleText = lines.length > 0 ? lines[0] : '';
+                }
                 
                 const img = el.querySelector('img');
                 const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
                 
-                if (imgSrc && imgSrc.startsWith('http')) {
+                if (imgSrc && imgSrc.startsWith('http') && titleText.length > 3) {
                     if (!results.some(r => r.title === titleText)) {
                         results.push({ title: titleText, text: text, image: imgSrc });
                     }
