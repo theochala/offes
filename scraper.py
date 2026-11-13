@@ -4,8 +4,14 @@ import os
 import re
 from datetime import datetime
 from pathlib import Path
+from ftplib import FTP
 
 OUTPUT_FILE = Path("clean_offers.json")
+
+# --- ΒΑΛΕ ΕΔΩ ΤΑ ΣΤΟΙΧΕΙΑ ΤΟΥ FTP ΣΟΥ ---
+FTP_SERVER = "ftpupload.net"  # Ή ο διακομιστής FTP του InfinityFree
+FTP_USER = "if0_xxxxxxx"        # Το Username σου από το InfinityFree
+FTP_PASS = "το_password_σου"    # Το Password σου
 
 def clean_title(title):
     if not title:
@@ -37,26 +43,116 @@ def is_valid_product(title):
         
     return len(title) > 3
 
-def scrape_flexible_store(page, name):
-    print(f"-> Ευέλικτη σάρωση για {name}...")
-    
+def parse_products(raw_products, supermarket_name):
+    parsed = []
+    for item in raw_products:
+        text = item["text"]
+        img_url = item["image"]
+        
+        prices = re.findall(r'(\d+[\.,]\d+\s*€)', text)
+        if not prices:
+            prices = re.findall(r'(\d+[\.,]\d+)', text)
+            prices = [p + " €" for p in prices]
+            
+        title = clean_title(item["title"])
+        price_val = prices[-1] if prices else ""
+        
+        if len(title) > 3 and prices and price_val != "0,00 €" and img_url and img_url.startswith('http'):
+            if is_valid_product(title):
+                if not any(p['title'] == title and p['supermarket'] == supermarket_name for p in parsed):
+                    parsed.append({
+                        "title": title,
+                        "price": price_val,
+                        "all_prices": prices,
+                        "image": img_url,
+                        "supermarket": supermarket_name
+                    })
+    return parsed
+
+def logic_sklavenitis(page, name):
+    print(f"-> Σάρωση σελίδας για {name}...")
+    for _ in range(8):
+        page.evaluate("window.scrollBy(0, 1500)")
+        page.wait_for_timeout(2000)
+        
+    raw = page.evaluate("""() => {
+        const results = [];
+        const elements = document.querySelectorAll('article, div, li, section');
+        elements.forEach(el => {
+            const text = el.innerText;
+            if (text && text.includes('€') && text.length < 400 && text.length > 10) {
+                const titleEl = el.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
+                let titleText = titleEl ? titleEl.innerText.trim() : '';
+                
+                if (!titleText || titleText.toLowerCase().includes('προσθήκη') || titleText.toLowerCase() === 'κιλό' || titleText.toLowerCase() === 'διαφήμιση' || titleText.toLowerCase() === 'δώρο') {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'κιλό' && l.toLowerCase() !== 'διαφήμιση' && l.toLowerCase() !== 'δώρο');
+                    titleText = lines.length > 0 ? lines[0] : '';
+                }
+                
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+                
+                if (imgSrc && imgSrc.startsWith('http') && titleText.length > 3) {
+                    if (!results.some(r => r.title === titleText)) {
+                        results.push({ title: titleText, text: text, image: imgSrc });
+                    }
+                }
+            }
+        });
+        return results;
+    }""")
+    return parse_products(raw, name)
+
+def logic_ab(page, name):
+    print(f"-> Στοχευμένη ανάγνωση για {name}...")
+    try:
+        page.wait_for_load_state("networkidle", timeout=10000)
+    except:
+        pass
     for _ in range(6):
         page.evaluate("window.scrollBy(0, 1500)")
         page.wait_for_timeout(2000)
 
-    raw_data = page.evaluate("""() => {
+    raw = page.evaluate("""() => {
         const results = [];
-        // Αναζήτηση σε κάρτες, άρθρα ή στοιχεία λίστας που περιέχουν τιμές σε ευρώ
-        const elements = document.querySelectorAll('article, div[class*="product"], div[class*="card"], li, section');
+        const cards = document.querySelectorAll('article, div[class*="product"], div[class*="grid"], div[class*="card"], li');
+        cards.forEach(card => {
+            const text = card.innerText;
+            if (text && text.includes('€')) {
+                const titleEl = card.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"]');
+                let productTitle = titleEl ? titleEl.innerText.trim() : '';
+                if (!productTitle || productTitle.toLowerCase().includes('προσθήκη')) {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€'));
+                    productTitle = lines.length > 0 ? lines[0] : '';
+                }
+                const img = card.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || '') : '';
+                if (imgSrc && imgSrc.startsWith('http') && productTitle.length > 3) {
+                    if (!results.some(r => r.title === productTitle)) {
+                        results.push({ title: productTitle, text: text, image: imgSrc.split(' ')[0] });
+                    }
+                }
+            }
+        });
+        return results;
+    }""")
+    return parse_products(raw, name)
+
+def universal_scraper_logic(page, name):
+    print(f"-> Ευέλικτη σάρωση για {name}...")
+    for _ in range(6):
+        page.evaluate("window.scrollBy(0, 1500)")
+        page.wait_for_timeout(2000)
         
+    raw = page.evaluate("""() => {
+        const results = [];
+        const elements = document.querySelectorAll('article, div[class*="product"], div[class*="card"], li, section');
         elements.forEach(el => {
             const text = el.innerText;
             if (text && text.includes('€') && text.length < 500 && text.length > 10) {
-                // Προσπάθεια εύρεσης τίτλου από τυπικά tags
                 const titleEl = el.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"], a');
                 let titleText = titleEl ? titleEl.innerText.trim() : '';
                 
-                // Αν ο τίτλος είναι κενός ή περιέχει απαγορευμένες λέξεις, παίρνουμε την πρώτη καθαρή γραμμή
                 if (!titleText || titleText.toLowerCase().includes('προσθήκη') || titleText.toLowerCase() === 'διαφήμιση' || titleText.toLowerCase() === 'δώρο') {
                     const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'διαφήμιση' && l.toLowerCase() !== 'δώρο');
                     titleText = lines.length > 0 ? lines[0] : '';
@@ -67,41 +163,16 @@ def scrape_flexible_store(page, name):
                 
                 if (imgSrc && imgSrc.startsWith('http') && titleText.length > 3) {
                     if (!results.some(r => r.title === titleText)) {
-                        results.push({
-                            title: titleText,
-                            text: text,
-                            image: imgSrc.split(' ')[0]
-                        });
+                        results.push({ title: titleText, text: text, image: imgSrc.split(' ')[0] });
                     }
                 }
             }
         });
         return results;
     }""")
+    return parse_products(raw, name)
 
-    parsed = []
-    for item in raw_data:
-        title = clean_title(item["title"])
-        prices = re.findall(r'(\d+[\.,]\d+\s*€)', item["text"])
-        if not prices:
-            prices = re.findall(r'(\d+[\.,]\d+)', item["text"])
-            prices = [p + " €" for p in prices]
-            
-        price_val = prices[-1] if prices else ""
-        
-        if is_valid_product(title) and price_val and price_val != "0,00 €" and item["image"].startswith('http'):
-            if not any(p['title'] == title and p['supermarket'] == name for p in parsed):
-                parsed.append({
-                    "title": title,
-                    "price": price_val,
-                    "all_prices": prices,
-                    "image": item["image"],
-                    "supermarket": name
-                })
-                
-    return parsed
-
-def scrape_store(p, url, name):
+def scrape_store(p, url, name, logic_func=None):
     print(f"\n--- Συλλογή από {name} ---")
     browser = None
     try:
@@ -136,7 +207,11 @@ def scrape_store(p, url, name):
         except:
             pass
 
-        parsed = scrape_flexible_store(page, name)
+        if logic_func:
+            parsed = logic_func(page, name)
+        else:
+            parsed = universal_scraper_logic(page, name)
+
         browser.close()
         
         if parsed:
@@ -153,13 +228,8 @@ def scrape_store(p, url, name):
 
 def upload_all_to_ftp():
     print("\n=== ΜΕΤΑΦΟΡΤΩΣΗ FTP ===")
-    from ftplib import FTP
-    ftp_server = os.getenv("FTP_SERVER")
-    ftp_user = os.getenv("FTP_USERNAME")
-    ftp_pass = os.getenv("FTP_PASSWORD")
-
-    if not all([ftp_server, ftp_user, ftp_pass]):
-        print("[!] Λείπουν τα FTP credentials.")
+    if not all([FTP_SERVER, FTP_USER, FTP_PASS]) or "xxxxxxx" in FTP_USER:
+        print("[!] Παρακαλώ συμπληρώστε τα στοιχεία FTP μέσα στο scraper.py!")
         return
 
     if not OUTPUT_FILE.exists():
@@ -167,8 +237,8 @@ def upload_all_to_ftp():
         return
 
     try:
-        ftp = FTP(ftp_server, timeout=30)
-        ftp.login(user=ftp_user, passwd=ftp_pass)
+        ftp = FTP(FTP_SERVER, timeout=30)
+        ftp.login(user=FTP_USER, passwd=FTP_PASS)
         ftp.cwd("prosfores.infy.click")
         ftp.cwd("htdocs")
 
@@ -183,17 +253,17 @@ if __name__ == "__main__":
     with sync_playwright() as p:
         all_offers = []
         targets = [
-            ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/"),
-            ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions"),
-            ("Μασούτης", "https://www.masoutis.gr/offers"),
-            ("Κρητικός", "https://kritikos-sm.gr/offers/"),
-            ("Γαλαξίας", "https://galaxias.shop/eshop/2"),
-            ("My Market", "https://www.mymarket.gr/offers"),
+            ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/", logic_sklavenitis),
+            ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions", logic_ab),
+            ("Μασούτης", "https://www.masoutis.gr/offers", None),
+            ("Κρητικός", "https://kritikos-sm.gr/offers/", None),
+            ("Γαλαξίας", "https://galaxias.shop/eshop/2", None),
+            ("My Market", "https://www.mymarket.gr/offers", None),
         ]
         
-        for name, url in targets:
+        for name, url, logic_func in targets:
             try:
-                all_offers.extend(scrape_store(p, url, name))
+                all_offers.extend(scrape_store(p, url, name, logic_func))
             except Exception as e:
                 print(f"Σφάλμα {name}: {e}")
 
