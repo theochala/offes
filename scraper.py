@@ -1,150 +1,226 @@
-#!/usr/bin/env python3
-"""
-Supermarket Offers Scraper με Playwright (Greece)
-==================================================
-Χρησιμοποιεί Headless Browser για να παρακάμπτει περιορισμούς JavaScript και anti-bot.
-"""
-
-import csv
-import json
-import logging
-import re
-from dataclasses import dataclass, asdict
-from datetime import datetime
-from typing import List, Optional
-from urllib.parse import urljoin
 from playwright.sync_api import sync_playwright
+import json
+import os
+import re
+from datetime import datetime
+from pathlib import Path
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%H:%M:%S",
-)
-logger = logging.getLogger(__name__)
+OUTPUT_FILE = Path("clean_offers.json")
 
+def clean_title(title):
+    if not title:
+        return ""
+    # Καθαρισμός περιττών χαρακτήρων και τιμών
+    title = re.sub(r'\d+[\.,]\d+\s*€', '', title)
+    title = re.sub(r'\d+\s*€', '', title)
+    title = re.sub(r'^[\|\-\/\s]+', '', title)
+    title = re.sub(r'[\/\|\-\.\,\s]+$', '', title)
+    title = re.sub(r'\s*[\/\|\-]+\s*', ' ', title)
+    return re.sub(r'\s+', ' ', title).strip()
 
-@dataclass
-class OfferItem:
-    supermarket: str
-    title: str
-    original_price: Optional[float]
-    offer_price: Optional[float]
-    discount_label: str
-    url: str
-    scraped_at: str
-
-
-def clean_price(price_str: str) -> Optional[float]:
-    """Μετατρέπει κείμενο τιμής (π.χ. '3,45 €') σε float (3.45)."""
-    if not price_str:
-        return None
-    cleaned = re.sub(r"[^0-9,.]", "", price_str).replace(",", ".")
-    try:
-        return round(float(cleaned), 2)
-    except ValueError:
-        return None
-
-
-class PlaywrightOffersScraper:
-    def __init__(self):
-        self.offers: List[OfferItem] = []
-
-    def scrape_all(self):
-        with sync_playwright() as p:
-            # Εκκίνηση του browser σε headless mode
-            browser = p.chromium.launch(headless=True)
-            context = browser.new_context(
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-                locale="el-GR"
-            )
-            page = context.new_page()
-
-            # ------------------------------------------------------------------
-            # 1. MY MARKET (mymarket.gr)
-            # ------------------------------------------------------------------
-            try:
-                logger.info("Συλλογή από My Market...")
-                page.goto("https://www.mymarket.gr/offers", timeout=45000)
-                page.wait_for_timeout(4000)  # Αναμονή φόρτωσης JavaScript
-                
-                cards = page.locator(".product-card, .product-teaser, article").all()
-                for card in cards[:30]:
-                    try:
-                        title = card.locator(".product-title, h3").inner_text(timeout=1000)
-                        price = card.locator(".price-final, .product-price").inner_text(timeout=1000)
-                        link = card.locator("a").get_attribute("href")
-                        
-                        self.offers.append(
-                            OfferItem(
-                                supermarket="My Market",
-                                title=title.strip(),
-                                original_price=None,
-                                offer_price=clean_price(price),
-                                discount_label="Προσφορά",
-                                url=urljoin("https://www.mymarket.gr", link) if link else "",
-                                scraped_at=datetime.now().isoformat(timespec="seconds"),
-                            )
-                        )
-                    except Exception:
-                        continue
-            except Exception as e:
-                logger.warning(f"Σφάλμα στο My Market: {e}")
-
-            # ------------------------------------------------------------------
-            # 2. ΜΑΣΟΥΤΗΣ (masoutis.gr)
-            # ------------------------------------------------------------------
-            try:
-                logger.info("Συλλογή από Μασούτη...")
-                page.goto("https://www.masoutis.gr/offers", timeout=45000)
-                page.wait_for_timeout(4000)
-                
-                cards = page.locator(".product-box, .item-product, article").all()
-                for card in cards[:30]:
-                    try:
-                        title = card.locator(".product-title, h3").inner_text(timeout=1000)
-                        price = card.locator(".final-price, .price").inner_text(timeout=1000)
-                        link = card.locator("a").get_attribute("href")
-                        
-                        self.offers.append(
-                            OfferItem(
-                                supermarket="Μασούτης",
-                                title=title.strip(),
-                                original_price=None,
-                                offer_price=clean_price(price),
-                                discount_label="Προσφορά",
-                                url=urljoin("https://www.masoutis.gr", link) if link else "",
-                                scraped_at=datetime.now().isoformat(timespec="seconds"),
-                            )
-                        )
-                    except Exception:
-                        continue
-            except Exception as e:
-                logger.warning(f"Σφάλμα στον Μασούτη: {e}")
-
-            browser.close()
+def is_valid_product(title):
+    if not title:
+        return False
+    
+    # Λίστα αποκλεισμού για τυχόν UI artifacts που ξέφυγαν
+    blacklist = [
+        "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
+        "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία",
+        "φυλλάδια", "περισσότερα", "εβδομάδα", "αρχική", "αγόρασε", "καλάθι",
+        "διαφήμιση", "δώρο", "προσφορά", "νέο", "προσθήκη", "κιλό", "τεμάχιο"
+    ]
+    
+    lower_title = title.lower().strip()
+    if lower_title in blacklist or any(lower_title.startswith(w) for w in ["προσθήκη", "διαφήμιση", "δώρο"]):
+        return False
         
-        logger.info(f"Συνολικές προσφορές που συλλέχθηκαν: {len(self.offers)}")
+    if re.match(r'^[\d\s\.,€+-]+$', title):
+        return False
+        
+    return len(title) > 3
 
-    def export_csv(self, filename: str = "supermarket_offers.csv"):
-        if not self.offers:
-            logger.warning("Δεν βρέθηκαν προσφορές για εξαγωγή σε CSV.")
-            return
-        fieldnames = list(asdict(self.offers[0]).keys())
-        with open(filename, mode="w", newline="", encoding="utf-8-sig") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            for offer in self.offers:
-                writer.writerow(asdict(offer))
-        logger.info(f"Αποθηκεύτηκε το αρχείο CSV: {filename}")
+def scrape_generic_store(page, name, card_selector, title_selector, price_selector, img_selector):
+    print(f"-> Στοχευμένη σάρωση για {name}...")
+    
+    # Scroll για να φορτωθούν τα προϊόντα (lazy load)
+    for _ in range(6):
+        page.evaluate("window.scrollBy(0, 1500)")
+        page.wait_for_timeout(2000)
 
-    def export_json(self, filename: str = "supermarket_offers.json"):
-        with open(filename, mode="w", encoding="utf-8") as f:
-            json.dump([asdict(o) for o in self.offers], f, ensure_ascii=False, indent=2)
-        logger.info(f"Αποθηκεύτηκε το αρχείο JSON: {filename}")
+    products_data = page.evaluate(f"""() => {{
+        const results = [];
+        const cards = document.querySelectorAll('{card_selector}');
+        
+        cards.forEach(card => {{
+            const titleEl = card.querySelector('{title_selector}');
+            const priceEl = card.querySelector('{price_selector}');
+            const imgEl = card.querySelector('{img_selector}');
+            
+            const title = titleEl ? titleEl.innerText.trim() : '';
+            const priceText = priceEl ? priceEl.innerText.trim() : '';
+            let imgSrc = imgEl ? (imgEl.src || imgEl.getAttribute('data-src') || imgEl.getAttribute('data-lazy-src') || '') : '';
+            
+            if (title && priceText && imgSrc) {{
+                results.push({{
+                    title: title,
+                    priceText: priceText,
+                    image: imgSrc.split(' ')[0]
+                }});
+            }}
+        }});
+        return results;
+    }}""")
 
+    parsed = []
+    for item in products_data:
+        title = clean_title(item["title"])
+        prices = re.findall(r'(\d+[\.,]\d+\s*€)', item["priceText"])
+        if not prices:
+            prices = re.findall(r'(\d+[\.,]\d+)', item["priceText"])
+            prices = [p + " €" for p in prices]
+            
+        price_val = prices[-1] if prices else ""
+        
+        if is_valid_product(title) and price_val and item["image"].startswith('http'):
+            if not any(p['title'] == title and p['supermarket'] == name for p in parsed):
+                parsed.append({
+                    "title": title,
+                    "price": price_val,
+                    "all_prices": prices,
+                    "image": item["image"],
+                    "supermarket": name
+                })
+                
+    return parsed
+
+def scrape_store(p, url, name):
+    print(f"\n--- Συλλογή από {name} ---")
+    browser = None
+    try:
+        launch_args = {
+            "headless": True,
+            "args": [
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--disable-blink-features=AutomationControlled",
+                "--window-size=1920,1080"
+            ]
+        }
+        browser = p.chromium.launch(**launch_args)
+        ctx = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080},
+            locale="el-GR"
+        )
+        page = ctx.new_page()
+        print(f"-> Μετάβαση στη διεύθυνση: {url}")
+        
+        page.goto(url, timeout=60000, wait_until="domcontentloaded")
+        page.wait_for_timeout(5000)
+        
+        # Κλείσιμο cookies αν υπάρχουν
+        try:
+            popup = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
+            if popup.count() > 0:
+                popup.first().click()
+                page.wait_for_timeout(2000)
+        except:
+            pass
+
+        # Ορισμός ακριβών selectors ανά κατάστημα για απόλυτη ακρίβεια
+        if name == "Σκλαβενίτης":
+            parsed = scrape_generic_store(page, name, "article, div.product-item, div[class*='product']", "h3, h2, a[class*='title'], [class*='Title']", "[class*='price'], [class*='Price']", "img")
+        elif name == "ΑΒ Βασιλόπουλος":
+            parsed = scrape_generic_store(page, name, "article, div[class*='product-card']", "h3, h2, [class*='title']", "[class*='price']", "img")
+        elif name == "Μασούτης":
+            parsed = scrape_generic_store(page, name, "div[class*='product'], article", "h3, h2, [class*='title']", "[class*='price']", "img")
+        elif name == "Κρητικός":
+            parsed = scrape_generic_store(page, name, "div[class*='product'], article, li", "h3, h2, [class*='title']", "[class*='price']", "img")
+        elif name == "Γαλαξίας":
+            parsed = scrape_generic_store(page, name, "div[class*='product'], article, li", "h3, h2, [class*='title']", "[class*='price']", "img")
+        elif name == "My Market":
+            parsed = scrape_generic_store(page, name, "div[class*='product'], article", "h3, h2, [class*='title']", "[class*='price']", "img")
+        else:
+            parsed = scrape_generic_store(page, name, "article, div, li", "h2, h3, h4", "[class*='price']", "img")
+
+        browser.close()
+        
+        if parsed:
+            print(f"-> Επιτυχία: {len(parsed)} προϊόντα từ {name}.")
+            return parsed
+        print(f"-> 0 προϊόντα βρέθηκαν για {name}.")
+        return []
+    except Exception as e:
+        print(f"-> Σφάλμα για {name}: {e}")
+        if browser:
+            try: browser.close()
+            except: pass
+        return []
+
+def upload_all_to_ftp():
+    print("\n=== ΜΕΤΑΦΟΡΤΩΣΗ FTP ===")
+    from ftplib import FTP
+    ftp_server = os.getenv("FTP_SERVER")
+    ftp_user = os.getenv("FTP_USERNAME")
+    ftp_pass = os.getenv("FTP_PASSWORD")
+
+    if not all([ftp_server, ftp_user, ftp_pass]):
+        print("[!] Λείπουν τα FTP credentials.")
+        return
+
+    if not OUTPUT_FILE.exists():
+        print("[!] Δεν βρέθηκε το clean_offers.json.")
+        return
+
+    try:
+        ftp = FTP(ftp_server, timeout=30)
+        ftp.login(user=ftp_user, passwd=ftp_pass)
+        ftp.cwd("prosfores.infy.click")
+        ftp.cwd("htdocs")
+
+        with OUTPUT_FILE.open("rb") as file:
+            ftp.storbinary("STOR clean_offers.json", file)
+        print("[OK] Το clean_offers.json ανέβηκε επιτυχώς στο FTP!")
+        ftp.quit()
+    except Exception as error:
+        print(f"[X] Σφάλμα FTP: {error}")
 
 if __name__ == "__main__":
-    scraper = PlaywrightOffersScraper()
-    scraper.scrape_all()
-    scraper.export_csv("supermarket_offers.csv")
-    scraper.export_json("supermarket_offers.json")
+    with sync_playwright() as p:
+        all_offers = []
+        targets = [
+            ("Σκλαβενίτης", "https://www.sklavenitis.gr/sylloges/prosfores/"),
+            ("ΑΒ Βασιλόπουλος", "https://www.ab.gr/search/promotions"),
+            ("Μασούτης", "https://www.masoutis.gr/offers"),
+            ("Κρητικός", "https://kritikos-sm.gr/offers/"),
+            ("Γαλαξίας", "https://galaxias.shop/eshop/2"),
+            ("My Market", "https://www.mymarket.gr/offers"),
+        ]
+        
+        for name, url in targets:
+            try:
+                all_offers.extend(scrape_store(p, url, name))
+            except Exception as e:
+                print(f"Σφάλμα {name}: {e}")
+
+        unique_offers = []
+        seen = set()
+        for offer in all_offers:
+            key = (offer["supermarket"], offer["title"].lower().strip())
+            if key not in seen:
+                seen.add(key)
+                unique_offers.append(offer)
+
+        data = {
+            "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "total_offers": len(unique_offers),
+            "offers": unique_offers,
+        }
+
+        with OUTPUT_FILE.open("w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+            print(f"\nΣυνολική αποθήκευση {len(unique_offers)} καθαρών προϊόντων!")
+
+    upload_all_to_ftp()
