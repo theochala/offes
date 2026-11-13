@@ -37,56 +37,59 @@ def is_valid_product(title):
         
     return len(title) > 3
 
-def scrape_generic_store(page, name, card_selector, title_selector, price_selector, img_selector):
-    print(f"-> Στοχευμένη σάρωση για {name}...")
+def scrape_flexible_store(page, name):
+    print(f"-> Ευέλικτη σάρωση για {name}...")
     
     for _ in range(6):
         page.evaluate("window.scrollBy(0, 1500)")
         page.wait_for_timeout(2000)
 
-    # Μεταφορά των selectors με ασφάλεια ως όρισμα στη JS (αποφυγή SyntaxError)
-    selectors = {
-        "card": card_selector,
-        "title": title_selector,
-        "price": price_selector,
-        "img": img_selector
-    }
-
-    products_data = page.evaluate("""(sel) => {
+    raw_data = page.evaluate("""() => {
         const results = [];
-        const cards = document.querySelectorAll(sel.card);
+        // Αναζήτηση σε κάρτες, άρθρα ή στοιχεία λίστας που περιέχουν τιμές σε ευρώ
+        const elements = document.querySelectorAll('article, div[class*="product"], div[class*="card"], li, section');
         
-        cards.forEach(card => {
-            const titleEl = card.querySelector(sel.title);
-            const priceEl = card.querySelector(sel.price);
-            const imgEl = card.querySelector(sel.img);
-            
-            const title = titleEl ? titleEl.innerText.trim() : '';
-            const priceText = priceEl ? priceEl.innerText.trim() : '';
-            let imgSrc = imgEl ? (imgEl.src || imgEl.getAttribute('data-src') || imgEl.getAttribute('data-lazy-src') || '') : '';
-            
-            if (title && priceText && imgSrc) {
-                results.push({
-                    title: title,
-                    priceText: priceText,
-                    image: imgSrc.split(' ')[0]
-                });
+        elements.forEach(el => {
+            const text = el.innerText;
+            if (text && text.includes('€') && text.length < 500 && text.length > 10) {
+                // Προσπάθεια εύρεσης τίτλου από τυπικά tags
+                const titleEl = el.querySelector('h2, h3, h4, [class*="title"], [class*="Heading"], a');
+                let titleText = titleEl ? titleEl.innerText.trim() : '';
+                
+                // Αν ο τίτλος είναι κενός ή περιέχει απαγορευμένες λέξεις, παίρνουμε την πρώτη καθαρή γραμμή
+                if (!titleText || titleText.toLowerCase().includes('προσθήκη') || titleText.toLowerCase() === 'διαφήμιση' || titleText.toLowerCase() === 'δώρο') {
+                    const lines = text.split('\\n').map(l => l.trim()).filter(l => l.length > 3 && !l.includes('€') && !l.toLowerCase().includes('προσθήκη') && l.toLowerCase() !== 'διαφήμιση' && l.toLowerCase() !== 'δώρο');
+                    titleText = lines.length > 0 ? lines[0] : '';
+                }
+                
+                const img = el.querySelector('img');
+                const imgSrc = img ? (img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '') : '';
+                
+                if (imgSrc && imgSrc.startsWith('http') && titleText.length > 3) {
+                    if (!results.some(r => r.title === titleText)) {
+                        results.push({
+                            title: titleText,
+                            text: text,
+                            image: imgSrc.split(' ')[0]
+                        });
+                    }
+                }
             }
         });
         return results;
-    }""", selectors)
+    }""")
 
     parsed = []
-    for item in products_data:
+    for item in raw_data:
         title = clean_title(item["title"])
-        prices = re.findall(r'(\d+[\.,]\d+\s*€)', item["priceText"])
+        prices = re.findall(r'(\d+[\.,]\d+\s*€)', item["text"])
         if not prices:
-            prices = re.findall(r'(\d+[\.,]\d+)', item["priceText"])
+            prices = re.findall(r'(\d+[\.,]\d+)', item["text"])
             prices = [p + " €" for p in prices]
             
         price_val = prices[-1] if prices else ""
         
-        if is_valid_product(title) and price_val and item["image"].startswith('http'):
+        if is_valid_product(title) and price_val and price_val != "0,00 €" and item["image"].startswith('http'):
             if not any(p['title'] == title and p['supermarket'] == name for p in parsed):
                 parsed.append({
                     "title": title,
@@ -133,21 +136,7 @@ def scrape_store(p, url, name):
         except:
             pass
 
-        if name == "Σκλαβενίτης":
-            parsed = scrape_generic_store(page, name, "article, div.product-item, div[class*='product']", "h3, h2, a[class*='title'], [class*='Title']", "[class*='price'], [class*='Price']", "img")
-        elif name == "ΑΒ Βασιλόπουλος":
-            parsed = scrape_generic_store(page, name, "article, div[class*='product-card']", "h3, h2, [class*='title']", "[class*='price']", "img")
-        elif name == "Μασούτης":
-            parsed = scrape_generic_store(page, name, "div[class*='product'], article", "h3, h2, [class*='title']", "[class*='price']", "img")
-        elif name == "Κρητικός":
-            parsed = scrape_generic_store(page, name, "div[class*='product'], article, li", "h3, h2, [class*='title']", "[class*='price']", "img")
-        elif name == "Γαλαξίας":
-            parsed = scrape_generic_store(page, name, "div[class*='product'], article, li", "h3, h2, [class*='title']", "[class*='price']", "img")
-        elif name == "My Market":
-            parsed = scrape_generic_store(page, name, "div[class*='product'], article", "h3, h2, [class*='title']", "[class*='price']", "img")
-        else:
-            parsed = scrape_generic_store(page, name, "article, div, li", "h2, h3, h4", "[class*='price']", "img")
-
+        parsed = scrape_flexible_store(page, name)
         browser.close()
         
         if parsed:
