@@ -1,128 +1,179 @@
 {
-    "updated_at": "2026-11-13 12:31:47",
-    "total_offers": 49,
+    "updated_at": "2026-11-13 12:40:40",
+    "total_offers": 53,
     "offers": [
         {
-            "title": "LAYS Στο Φούρνο BBQ",
+            "title": "Κέρδος 15%",
+            "price": "3,98 €",
+            "all_prices": [
+                "3,98 €"
+            ],
+            "image": "https://static.ab.gr/medias/sys_master/products/h83/hd2/10425216565278.jpg?buildNumber=1f4d20af198be9aee92a1aebb0a0422c84194f92cb1dd0516b3d5955a0f800e0&imwidth=300",
+            "supermarket": "ΑΒ Βασιλόπουλος"
+        },
+        {
+            "title": "Κέρδος 20%",
+            "price": "15,31 €",
+            "all_prices": [
+                "15,31 €"
+            ],
+            "image": "https://static.ab.gr/medias/sys_master/products/h65/h3b/10582322348062.jpg?buildNumber=1f4d20af198be9aee92a1aebb0a0422c84194f92cb1dd0516b3d5955a0f800e0&imwidth=300",
+            "supermarket": "ΑΒ Βασιλόπουλος"
+        },
+        {
+            "title": "Κέρδος 30%",
+            "price": "6,6 €",
+            "all_prices": [
+                "6,6 €"
+            ],
+            "image": "https://static.ab.gr/medias/sys_master/products/h0b/h35/10189577322526.jpg?buildNumber=1f4d20af198be9aee92a1aebb0a0422c84194f92cb1dd0516b3d5955a0f800e0&imwidth=300",
+            "supermarket": "ΑΒ Βασιλόπουλος"
+        },
+        {
+            "title": "Κέρδος 12%",
+            "price": "4,50 €",
+            "all_prices": [
+                "4,50 €"
+            ],
+            "image": "https://static.ab.gr/medias/sys_master/h7d/he7/10125381533726.jpg?buildNumber=1f4d20af198be9aee92a1aebb0a0422c84194f92cb1dd0516b3d5955a0f800e0&imwidth=300",
+            "supermarket": "ΑΒ Βασιλόπουλος"
+        },
+        {
+            "title": "Προσφορά 2+1 LAYS Στο Φούρνο BBQ Πατατάκια ψημένα στο φούρνο με γεύση μπάρμπεκιου, τα οποία έχουν 50% λιγότερα λιπαρά από τα κανονικά πατατάκια LAYS. 105γρ. € 3.70 το σετ",
             "price": "3.70 €",
             "all_prices": [
+                "3.70 €",
                 "3.70 €"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/offers/5x@748650.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Αβοκάντο Συσκευασμένο Ready to Eat",
+            "title": "Αβοκάντο Συσκευασμένο Ready to Eat 2τεμ. κιλό",
             "price": "2.59\n\n€",
             "all_prices": [
+                "0.16 €",
+                "7.00 €",
                 "2.59\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1760539393_81009495.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Πιπεριές Κέρατα",
+            "title": "Πιπεριές Κέρατα Κιλό € 2.20 το κιλό ανά 500 γρ",
             "price": "1.10\n\n€",
             "all_prices": [
+                "0.55 €",
                 "1.10\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1539270110_1048.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Γλυκοπατάτες Κόκκινες",
+            "title": "Γλυκοπατάτες Κόκκινες Κιλό € 1.44 το κιλό ανά 500 γρ",
             "price": "0.72\n\n€",
             "all_prices": [
+                "0.36 €",
                 "0.72\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1614675450_731231.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "ΧΑΛΒΑΤΖΗΣ Κους Κους",
+            "title": "20% ΧΑΛΒΑΤΖΗΣ Κους Κους Λαχανικά 220gr κιλό",
             "price": "2.63\n\n€",
             "all_prices": [
+                "11.95 €",
                 "2.63\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@985487.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "ΧΑΛΒΑΤΖΗΣ Ρεβύθια & Κινόα",
+            "title": "20% ΧΑΛΒΑΤΖΗΣ Ρεβύθια & Κινόα Λαχανικά 220gr κιλό",
             "price": "2.63\n\n€",
             "all_prices": [
+                "11.95 €",
                 "2.63\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@985486.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "ΧΑΛΒΑΤΖΗΣ Πληγούρι & Κινόα",
+            "title": "20% ΧΑΛΒΑΤΖΗΣ Πληγούρι & Κινόα Λαχανικά 220gr κιλό",
             "price": "2.63\n\n€",
             "all_prices": [
+                "11.95 €",
                 "2.63\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@985488.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "ΦΡΕΣΚΟΥΛΗΣ Ιταλική",
+            "title": "15% ΦΡΕΣΚΟΥΛΗΣ Ιταλική Σαλάτα 200γρ. κιλό",
             "price": "1.40\n\n€",
             "all_prices": [
+                "7.00 €",
                 "1.40\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1772011014_702059.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "ΧΑΛΒΑΤΖΗΣ Μπουκιές Παντζαριού",
+            "title": "20% ΧΑΛΒΑΤΖΗΣ Μπουκιές Παντζαριού Στον Ατμό 250γρ. κιλό",
             "price": "1.44\n\n€",
             "all_prices": [
+                "5.76 €",
                 "1.44\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@742208.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "ΧΑΛΒΑΤΖΗΣ Παντζάρια Ατμού",
+            "title": "20% ΧΑΛΒΑΤΖΗΣ Παντζάρια Ατμού Συσκευασία 500γρ. κιλό",
             "price": "1.82\n\n€",
             "all_prices": [
+                "3.64 €",
                 "1.82\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1622206416_703513.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "ΧΑΛΒΑΤΖΗΣ Καλαμπόκι Ατμού",
+            "title": "20% ΧΑΛΒΑΤΖΗΣ Καλαμπόκι Ατμού Συσκευασία 400γρ. κιλό",
             "price": "2.68\n\n€",
             "all_prices": [
+                "6.70 €",
                 "2.68\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1622447955_703514.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "ΧΑΛΒΑΤΖΗΣ Φρουτοσαλάτα Ροδάκινο Φέτες",
+            "title": "20% ΧΑΛΒΑΤΖΗΣ Φρουτοσαλάτα Ροδάκινο Φέτες Σε Χυμό Φρούτου 400γρ. κιλό",
             "price": "3.20\n\n€",
             "all_prices": [
+                "8.00 €",
                 "3.20\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1752073170_724959.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "ΧΑΛΒΑΤΖΗΣ Φρουτοσαλάτα Ανανάς Φέτες",
+            "title": "20% ΧΑΛΒΑΤΖΗΣ Φρουτοσαλάτα Ανανάς Φέτες Σε Χυμό Φρούτου 400γρ. κιλό",
             "price": "3.12\n\n€",
             "all_prices": [
+                "7.80 €",
                 "3.12\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@1752073170_724960.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "ΧΑΛΒΑΤΖΗΣ Κολοκύθα Ατμού",
+            "title": "20% ΧΑΛΒΑΤΖΗΣ Κολοκύθα Ατμού Ελληνική 400γρ. κιλό",
             "price": "2.72\n\n€",
             "all_prices": [
+                "6.80 €",
                 "2.72\n\n€"
             ],
             "image": "https://s3.eu-central-1.amazonaws.com/w4ve/kritikos/products/5x@742210.jpg",
