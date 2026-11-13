@@ -10,7 +10,6 @@ OUTPUT_FILE = Path("clean_offers.json")
 def clean_title(title):
     if not title:
         return ""
-    # Καθαρισμός περιττών χαρακτήρων και τιμών
     title = re.sub(r'\d+[\.,]\d+\s*€', '', title)
     title = re.sub(r'\d+\s*€', '', title)
     title = re.sub(r'^[\|\-\/\s]+', '', title)
@@ -22,7 +21,6 @@ def is_valid_product(title):
     if not title:
         return False
     
-    # Λίστα αποκλεισμού για τυχόν UI artifacts που ξέφυγαν
     blacklist = [
         "κατηγορίες", "συλλογές", "είσοδος", "emarket", "φίλτρα", 
         "λίστες", "αξία", "είδους", "εφαρμογή", "καταστήματα", "επικοινωνία",
@@ -42,34 +40,41 @@ def is_valid_product(title):
 def scrape_generic_store(page, name, card_selector, title_selector, price_selector, img_selector):
     print(f"-> Στοχευμένη σάρωση για {name}...")
     
-    # Scroll για να φορτωθούν τα προϊόντα (lazy load)
     for _ in range(6):
         page.evaluate("window.scrollBy(0, 1500)")
         page.wait_for_timeout(2000)
 
-    products_data = page.evaluate(f"""() => {{
+    # Μεταφορά των selectors με ασφάλεια ως όρισμα στη JS (αποφυγή SyntaxError)
+    selectors = {
+        "card": card_selector,
+        "title": title_selector,
+        "price": price_selector,
+        "img": img_selector
+    }
+
+    products_data = page.evaluate("""(sel) => {
         const results = [];
-        const cards = document.querySelectorAll('{card_selector}');
+        const cards = document.querySelectorAll(sel.card);
         
-        cards.forEach(card => {{
-            const titleEl = card.querySelector('{title_selector}');
-            const priceEl = card.querySelector('{price_selector}');
-            const imgEl = card.querySelector('{img_selector}');
+        cards.forEach(card => {
+            const titleEl = card.querySelector(sel.title);
+            const priceEl = card.querySelector(sel.price);
+            const imgEl = card.querySelector(sel.img);
             
             const title = titleEl ? titleEl.innerText.trim() : '';
             const priceText = priceEl ? priceEl.innerText.trim() : '';
             let imgSrc = imgEl ? (imgEl.src || imgEl.getAttribute('data-src') || imgEl.getAttribute('data-lazy-src') || '') : '';
             
-            if (title && priceText && imgSrc) {{
-                results.push({{
+            if (title && priceText && imgSrc) {
+                results.push({
                     title: title,
                     priceText: priceText,
                     image: imgSrc.split(' ')[0]
-                }});
-            }}
-        }});
+                });
+            }
+        });
         return results;
-    }}""")
+    }""", selectors)
 
     parsed = []
     for item in products_data:
@@ -120,7 +125,6 @@ def scrape_store(p, url, name):
         page.goto(url, timeout=60000, wait_until="domcontentloaded")
         page.wait_for_timeout(5000)
         
-        # Κλείσιμο cookies αν υπάρχουν
         try:
             popup = page.locator("button:has-text('Αποδοχή'), button:has-text('Accept'), #onetrust-accept-btn-handler")
             if popup.count() > 0:
@@ -129,7 +133,6 @@ def scrape_store(p, url, name):
         except:
             pass
 
-        # Ορισμός ακριβών selectors ανά κατάστημα για απόλυτη ακρίβεια
         if name == "Σκλαβενίτης":
             parsed = scrape_generic_store(page, name, "article, div.product-item, div[class*='product']", "h3, h2, a[class*='title'], [class*='Title']", "[class*='price'], [class*='Price']", "img")
         elif name == "ΑΒ Βασιλόπουλος":
@@ -148,7 +151,7 @@ def scrape_store(p, url, name):
         browser.close()
         
         if parsed:
-            print(f"-> Επιτυχία: {len(parsed)} προϊόντα từ {name}.")
+            print(f"-> Επιτυχία: {len(parsed)} προϊόντα από {name}.")
             return parsed
         print(f"-> 0 προϊόντα βρέθηκαν για {name}.")
         return []
