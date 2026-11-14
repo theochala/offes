@@ -1,14 +1,14 @@
 {
-    "updated_at": "2026-11-13 16:02:16",
+    "updated_at": "2026-11-14 14:55:46",
     "total_offers": 53,
     "offers": [
         {
             "title": "Κέρδος 15%",
-            "price": "3,98 €",
+            "price": "6,98 €",
             "all_prices": [
-                "3,98 €"
+                "6,98 €"
             ],
-            "image": "https://static.ab.gr/medias/sys_master/products/h83/hd2/10425216565278.jpg?buildNumber=1f4d20af198be9aee92a1aebb0a0422c84194f92cb1dd0516b3d5955a0f800e0&imwidth=300",
+            "image": "https://static.ab.gr/medias/sys_master/products/h02/hdf/10425076088862.jpg?buildNumber=1f4d20af198be9aee92a1aebb0a0422c84194f92cb1dd0516b3d5955a0f800e0&imwidth=300",
             "supermarket": "ΑΒ Βασιλόπουλος"
         },
         {
@@ -21,21 +21,21 @@
             "supermarket": "ΑΒ Βασιλόπουλος"
         },
         {
-            "title": "Κέρδος 30%",
-            "price": "6,6 €",
+            "title": "Κέρδος 40%",
+            "price": "8,78 €",
             "all_prices": [
-                "6,6 €"
+                "8,78 €"
             ],
-            "image": "https://static.ab.gr/medias/sys_master/products/h0b/h35/10189577322526.jpg?buildNumber=1f4d20af198be9aee92a1aebb0a0422c84194f92cb1dd0516b3d5955a0f800e0&imwidth=300",
+            "image": "https://static.ab.gr/medias/sys_master/products/h6e/h6e/10366983962654.jpg?buildNumber=1f4d20af198be9aee92a1aebb0a0422c84194f92cb1dd0516b3d5955a0f800e0&imwidth=300",
             "supermarket": "ΑΒ Βασιλόπουλος"
         },
         {
-            "title": "Κέρδος 12%",
-            "price": "4,50 €",
+            "title": "Κέρδος 30%",
+            "price": "8,27 €",
             "all_prices": [
-                "4,50 €"
+                "8,27 €"
             ],
-            "image": "https://static.ab.gr/medias/sys_master/h7d/he7/10125381533726.jpg?buildNumber=1f4d20af198be9aee92a1aebb0a0422c84194f92cb1dd0516b3d5955a0f800e0&imwidth=300",
+            "image": "https://static.ab.gr/medias/sys_master/products/hb2/hf8/10189600981022.jpg?buildNumber=1f4d20af198be9aee92a1aebb0a0422c84194f92cb1dd0516b3d5955a0f800e0&imwidth=300",
             "supermarket": "ΑΒ Βασιλόπουλος"
         },
         {
@@ -350,21 +350,21 @@
             "supermarket": "My Market"
         },
         {
-            "title": "My Soft Χαρτοπετσέτες 70 Φύλλων 0,120kg",
-            "price": "6,08€",
-            "all_prices": [
-                "6,08€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/fdbb5eee-4d1e-484d-9b57-bf9b281493ed_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
             "title": "Melissa Σπαγγέτι Νο 6 500gr",
             "price": "1,50€",
             "all_prices": [
                 "1,50€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/10_12_24/1738cd56-b586-4bea-ab55-73b75f1dfa3e_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "My Soft Χαρτοπετσέτες 70 Φύλλων 0,120kg",
+            "price": "6,08€",
+            "all_prices": [
+                "6,08€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/fdbb5eee-4d1e-484d-9b57-bf9b281493ed_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -386,6 +386,16 @@
             "supermarket": "My Market"
         },
         {
+            "title": "Το Χωρικό Μπούτι Κοτόπουλου Νωπό Τιμή Κιλού",
+            "price": "4,37€",
+            "all_prices": [
+                "5,82€",
+                "4,37€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/16_01_21/5a5f5567-9af4-42d7-9188-4dbf41b8ed76_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
             "title": "Babycare Χαμομήλι Μωρομάντηλα Triple Pack 3x72τεμ",
             "price": "0,01€",
             "all_prices": [
@@ -395,13 +405,12 @@
             "supermarket": "My Market"
         },
         {
-            "title": "Το Χωρικό Μπούτι Κοτόπουλου Νωπό Τιμή Κιλού",
-            "price": "4,37€",
+            "title": "Τρίκκη Λευκό Τυρί Αγελαδινό Δοχείο Ελληνικό Tιμή Κιλού",
+            "price": "5,65€",
             "all_prices": [
-                "5,82€",
-                "4,37€"
+                "5,65€"
             ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/16_01_21/5a5f5567-9af4-42d7-9188-4dbf41b8ed76_E1.jpg",
+            "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/c8e3967a-98ae-497b-a68b-563cf66fe2a7_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -492,15 +501,6 @@
                 "2,20€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/06_03_26/04ceb0e8-6a62-44ee-9179-da980919b9ef_EH.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "ΝΟΥΝΟΥ Συμπυκνωμένο Γάλα Light 400gr",
-            "price": "2,20€",
-            "all_prices": [
-                "2,20€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/11_03_26/e3f781c2-fdfc-4a03-86b7-70ef27374967_EH.jpg",
             "supermarket": "My Market"
         }
     ]
