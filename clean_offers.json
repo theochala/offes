@@ -1,32 +1,23 @@
 {
-    "updated_at": "2026-11-20 16:52:27",
-    "total_offers": 74,
+    "updated_at": "2026-11-21 16:01:29",
+    "total_offers": 73,
     "offers": [
-        {
-            "title": "Κέρδος 15%",
-            "price": "9,8 €",
-            "all_prices": [
-                "9,8 €"
-            ],
-            "image": "https://static.ab.gr/medias/sys_master/products/h13/h8d/10592364920862.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
-            "supermarket": "ΑΒ Βασιλόπουλος"
-        },
         {
             "title": "Κέρδος 20%",
             "price": "10,5 €",
             "all_prices": [
                 "10,5 €"
             ],
-            "image": "https://static.ab.gr/medias/sys_master/h14/h7b/10125981712414.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
+            "image": "https://static.ab.gr/medias/sys_master/products/h5f/h85/10560469696542.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
             "supermarket": "ΑΒ Βασιλόπουλος"
         },
         {
-            "title": "ΝΟΥΝΟΥ Γιαούρτι Στραγγιστό 1.5% 3x200g",
-            "price": "1.5 €",
+            "title": "Κέρδος 15%",
+            "price": "7,96 €",
             "all_prices": [
-                "1.5 €"
+                "7,96 €"
             ],
-            "image": "https://static.ab.gr/medias/sys_master/products/ha1/h74/10299182317598.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
+            "image": "https://static.ab.gr/medias/sys_master/products/h5f/h26/10535319896094.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
             "supermarket": "ΑΒ Βασιλόπουλος"
         },
         {
@@ -481,16 +472,6 @@
             "supermarket": "My Market"
         },
         {
-            "title": "Χοιρινός Λαιμός Ελληνικός Με Οστό",
-            "price": "5,49€",
-            "all_prices": [
-                "7,20€",
-                "5,49€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/06_03_24/29aae9ec-904f-4769-b612-5f9db777c73d_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
             "title": "Λάπα Βοείου Ελληνική Νωπή Άνευ Οστού",
             "price": "11,09€",
             "all_prices": [
@@ -498,6 +479,16 @@
                 "11,09€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/715af6ee-6b2d-4d55-953d-f7809a754da6_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Χοιρινός Λαιμός Ελληνικός Με Οστό",
+            "price": "5,49€",
+            "all_prices": [
+                "7,20€",
+                "5,49€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/06_03_24/29aae9ec-904f-4769-b612-5f9db777c73d_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -578,21 +569,21 @@
             "supermarket": "My Market"
         },
         {
-            "title": "BabyCare 99% Water Μωρομάντηλα Triple Pack 3x72τεμ",
-            "price": "0,01€",
-            "all_prices": [
-                "0,01€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/19_11_25/60551a5f-a282-4a5e-b34f-807b76260ba5_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
             "title": "Ελιά Βοείου Ελληνική Νωπή Άνευ Οστού",
             "price": "13,59€",
             "all_prices": [
                 "13,59€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/30eeb80f-8445-4f8b-8e8d-85ba8daec57f_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "BabyCare 99% Water Μωρομάντηλα Triple Pack 3x72τεμ",
+            "price": "0,01€",
+            "all_prices": [
+                "0,01€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/19_11_25/60551a5f-a282-4a5e-b34f-807b76260ba5_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -614,21 +605,21 @@
             "supermarket": "My Market"
         },
         {
-            "title": "Ήπειρος Ελαφρύ Δοχείο Τιμή Κιλού",
-            "price": "10,34€",
-            "all_prices": [
-                "10,34€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/21_05_24/8c1f5fef-fc54-45e4-89a2-cd37559a8893_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
             "title": "Milner Τυρί Ολλανδίας Φρατζόλα Προέλευση Ε.Ε. Τιμή Κιλού",
             "price": "10,64€",
             "all_prices": [
                 "10,64€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/10_03_26/a0d384c9-746a-47df-b1c9-1e5d410367e6_EH.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Ήπειρος Ελαφρύ Δοχείο Τιμή Κιλού",
+            "price": "10,34€",
+            "all_prices": [
+                "10,34€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/21_05_24/8c1f5fef-fc54-45e4-89a2-cd37559a8893_E1.jpg",
             "supermarket": "My Market"
         },
         {
