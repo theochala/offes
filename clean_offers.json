@@ -1,6 +1,6 @@
 {
-    "updated_at": "2026-11-24 19:28:24",
-    "total_offers": 76,
+    "updated_at": "2026-11-25 18:34:44",
+    "total_offers": 73,
     "offers": [
         {
             "title": "Κέρδος 20%",
@@ -8,43 +8,16 @@
             "all_prices": [
                 "10,5 €"
             ],
-            "image": "https://static.ab.gr/medias/sys_master/h14/h7b/10125981712414.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
+            "image": "https://static.ab.gr/medias/sys_master/products/h5f/h85/10560469696542.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
             "supermarket": "ΑΒ Βασιλόπουλος"
         },
         {
             "title": "Κέρδος 15%",
-            "price": "7,96 €",
+            "price": "9,8 €",
             "all_prices": [
-                "7,96 €"
+                "9,8 €"
             ],
-            "image": "https://static.ab.gr/medias/sys_master/products/h5f/h26/10535319896094.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
-            "supermarket": "ΑΒ Βασιλόπουλος"
-        },
-        {
-            "title": "ΝΟΥΝΟΥ Γιαούρτι Στραγγιστό 1.5% 3x200g",
-            "price": "1.5 €",
-            "all_prices": [
-                "1.5 €"
-            ],
-            "image": "https://static.ab.gr/medias/sys_master/products/ha1/h74/10299182317598.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
-            "supermarket": "ΑΒ Βασιλόπουλος"
-        },
-        {
-            "title": "Κέρδος 25%",
-            "price": "13,48 €",
-            "all_prices": [
-                "13,48 €"
-            ],
-            "image": "https://static.ab.gr/medias/sys_master/h7d/he7/10125381533726.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
-            "supermarket": "ΑΒ Βασιλόπουλος"
-        },
-        {
-            "title": "ΝΟΥΝΟΥ Γιαούρτι Στραγγιστό 1.5% 1kg",
-            "price": "1.5 €",
-            "all_prices": [
-                "1.5 €"
-            ],
-            "image": "https://static.ab.gr/medias/sys_master/products/h8a/haf/10303113101342.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
+            "image": "https://static.ab.gr/medias/sys_master/products/h13/h8d/10592364920862.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
             "supermarket": "ΑΒ Βασιλόπουλος"
         },
         {
@@ -408,12 +381,12 @@
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Καρότα Ελληνικά Τιμή Κιλού",
-            "price": "0,79€",
+            "title": "Μανταρίνια Κλημεντίνες Ελληνικά Ποιότητα Α΄Τιμή Κιλού",
+            "price": "1,49€",
             "all_prices": [
-                "0,79€"
+                "1,49€"
             ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/09_04_21/a1743310-db7c-466a-8dc1-3b417c021e04_E1.jpg",
+            "image": "https://cdn.mymarket.gr/images/styles/medium/09_04_21/5db79b68-ec51-42e3-a2b3-40ccd1a14e0c_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -436,30 +409,11 @@
         },
         {
             "title": "My Soft Jumbo Χαρτοπετσέτες 100Φύλλα 0,175kg",
-            "price": "5,71€",
+            "price": "4,29€",
             "all_prices": [
-                "5,71€"
+                "4,29€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/f9e7824e-789c-4405-9e66-022d4e6728b4_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "My Soft Jumbo Ρολό Κουζίνας 600gr",
-            "price": "3,67€",
-            "all_prices": [
-                "3,67€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/d73dbbf6-e1c6-494b-98e7-5e082cf8c53c_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Σπάλα Χοιρινή Ολλανδίας Νωπή Άνευ Οστού",
-            "price": "5,25€",
-            "all_prices": [
-                "7,40€",
-                "5,25€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/a532aab7-9fb6-40d1-98b7-18e26495fe8d_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -472,32 +426,12 @@
             "supermarket": "My Market"
         },
         {
-            "title": "Λάπα Βοείου Ελληνική Νωπή Άνευ Οστού",
-            "price": "11,09€",
-            "all_prices": [
-                "13,69€",
-                "11,09€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/715af6ee-6b2d-4d55-953d-f7809a754da6_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
             "title": "ΝΟΥΝΟΥ Τυρί Gouda Ολλανδίας Φραντζόλα Τιμή Κιλού",
-            "price": "10,99€",
+            "price": "7,29€",
             "all_prices": [
-                "10,99€"
+                "7,29€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/10_03_26/ccfddd86-70ec-420a-bcd4-9cc842f669ab_EH.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Χοιρινός Λαιμός Ελληνικός Με Οστό",
-            "price": "5,49€",
-            "all_prices": [
-                "7,20€",
-                "5,49€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/06_03_24/29aae9ec-904f-4769-b612-5f9db777c73d_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -507,6 +441,15 @@
                 "13,59€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/46806209-f4de-4cb0-ba57-fdadb0b078a8_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Μήλα Σμίθ Ελληνικά Ποιότητα Α΄Τιμή Κιλού",
+            "price": "1,59€",
+            "all_prices": [
+                "1,59€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/09_04_21/aa8b659e-18f5-4261-baf3-4cfa66b579ba_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -560,6 +503,15 @@
             "supermarket": "My Market"
         },
         {
+            "title": "Μήλα Ζαγοράς Πηλίου Π.Ο.Π. Ποιότητα Α΄ Τιμή Κιλού",
+            "price": "2,35€",
+            "all_prices": [
+                "2,35€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/05_09_22/ea2e333d-c257-4abb-8c6b-54faee4aa299_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
             "title": "Ελιά Βοείου Ελληνική Νωπή Άνευ Οστού",
             "price": "13,59€",
             "all_prices": [
@@ -578,6 +530,26 @@
             "supermarket": "My Market"
         },
         {
+            "title": "Σπάλα Χοιρινή Ελληνική Νωπή Άνευ Οστού",
+            "price": "5,39€",
+            "all_prices": [
+                "7,55€",
+                "5,39€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/5a5f4942-420f-445a-bef9-f7bc269ba9b6_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Ελιά Βοείου Γερμανίας Νωπή Άνευ Οστού Τιμή Κιλού",
+            "price": "14,29€",
+            "all_prices": [
+                "16,89€",
+                "14,29€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/31d9a13e-846e-4b8e-8d90-736e7ac86ce6_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
             "title": "Melissa Σπαγγέτι Νο 6 500gr",
             "price": "1,50€",
             "all_prices": [
@@ -588,9 +560,9 @@
         },
         {
             "title": "Ήπειρος Μαλακή Ημιδοχείο Τιμή Κιλού",
-            "price": "9,78€",
+            "price": "9,65€",
             "all_prices": [
-                "9,78€"
+                "9,65€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/14_03_23/1ee68b82-3900-48fb-964c-90fa84f9016d_E1.jpg",
             "supermarket": "My Market"
@@ -611,6 +583,15 @@
                 "0,01€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/07_04_25/a345c0ed-9880-45aa-805c-9e203002c73a_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Λεμόνια Ελληνικά Τιμή Κιλού",
+            "price": "1,49€",
+            "all_prices": [
+                "1,49€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/09_04_21/47bbdafd-c34e-4fb4-8217-0a593869a0be_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -650,42 +631,6 @@
             "supermarket": "My Market"
         },
         {
-            "title": "ΝΟΥΝΟΥ Συμπυκνωμένο Γάλα Light 400gr",
-            "price": "2,20€",
-            "all_prices": [
-                "2,20€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/11_03_26/e3f781c2-fdfc-4a03-86b7-70ef27374967_EH.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Pummaro Χυμό Τομάτας Κλασσικός Συμπυκνωμένος 500gr",
-            "price": "1,40€",
-            "all_prices": [
-                "1,40€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/31_10_24/ca6a7288-84ce-4333-8482-cb71b7a6beeb_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "ΝΟΥΝΟΥ Συμπυκνωμένο Γάλα Light Multipack 6x400gr",
-            "price": "2,20€",
-            "all_prices": [
-                "2,20€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/06_03_26/04ceb0e8-6a62-44ee-9179-da980919b9ef_EH.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Pummaro Χυμός Τομάτας 2x500gr",
-            "price": "1,40€",
-            "all_prices": [
-                "1,40€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/08_03_25/c1d133ba-2d7d-4b4e-a775-a374ba340320_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
             "title": "Green Cola 1,5lt",
             "price": "0,79€",
             "all_prices": [
@@ -695,21 +640,21 @@
             "supermarket": "My Market"
         },
         {
-            "title": "ΝΟΥΝΟΥ Συμπυκνωμένο Γάλα 400gr",
-            "price": "2,20€",
+            "title": "Τρίπολη Βαρελίσιο Τυρί Προέλευσης Ελλάδας Τιμή Κιλού",
+            "price": "7,98€",
             "all_prices": [
-                "2,20€"
+                "7,98€"
             ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/11_03_26/c67de7d2-db91-484e-8c9e-b1a99d457085_EH.jpg",
+            "image": "https://cdn.mymarket.gr/images/styles/medium/13_03_24/89a763b8-7efa-4acc-996c-d2714d0766c4_E1.jpg",
             "supermarket": "My Market"
         },
         {
-            "title": "ΝΟΥΝΟΥ Συμπυκνωμένο Γάλα Multipack 6x400gr",
-            "price": "2,20€",
+            "title": "Σφακιανές Μαδάρες Γραβιέρα Κρήτης Ποπ Τιμή Κιλού",
+            "price": "12,98€",
             "all_prices": [
-                "2,20€"
+                "12,98€"
             ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/06_03_26/e94b8eb4-ee93-40a9-bc2f-25dbc2175dbf_EH.jpg",
+            "image": "https://cdn.mymarket.gr/images/styles/medium/12_04_24/1901775a-2d78-4cc1-8cf2-b88443965d26_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -728,6 +673,33 @@
                 "7,21€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/11_02_21/16564a26-a9cc-4c55-aad5-47121563c177_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Ελιά Βοείου Πολωνίας Νωπή Άνευ Οστού Τιμή Κιλού",
+            "price": "11,29€",
+            "all_prices": [
+                "11,29€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/21_04_21/a9d42d20-e8cd-4e96-9ab6-dc6e9b31a8c0_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Kyknos Τριμμένες Τομάτες Χάρτινο 500gr",
+            "price": "1,58€",
+            "all_prices": [
+                "1,58€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/25_02_21/feb37e6d-6c20-47f4-b3bc-10fb8f73beba_EH.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Septona Μωρομάντηλα Χαμομήλι Multi 3x80τεμ",
+            "price": "0,01€",
+            "all_prices": [
+                "0,01€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/22_01_25/0bdcdd29-c319-4267-9ed1-c6aca1a4404d_EH.jpg",
             "supermarket": "My Market"
         }
     ]
