@@ -1,23 +1,23 @@
 {
-    "updated_at": "2026-11-25 18:34:44",
+    "updated_at": "2026-11-26 18:18:28",
     "total_offers": 73,
     "offers": [
         {
-            "title": "Κέρδος 20%",
-            "price": "10,5 €",
+            "title": "Κέρδος 15%",
+            "price": "2,29 €",
             "all_prices": [
-                "10,5 €"
+                "2,29 €"
             ],
-            "image": "https://static.ab.gr/medias/sys_master/products/h5f/h85/10560469696542.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
+            "image": "https://static.ab.gr/medias/sys_master/products/h76/h11/10425248022558.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
             "supermarket": "ΑΒ Βασιλόπουλος"
         },
         {
-            "title": "Κέρδος 15%",
-            "price": "9,8 €",
+            "title": "Κέρδος 20%",
+            "price": "11,16 €",
             "all_prices": [
-                "9,8 €"
+                "11,16 €"
             ],
-            "image": "https://static.ab.gr/medias/sys_master/products/h13/h8d/10592364920862.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
+            "image": "https://static.ab.gr/medias/sys_master/products/hb4/hb6/10329351159838.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
             "supermarket": "ΑΒ Βασιλόπουλος"
         },
         {
@@ -201,183 +201,183 @@
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Babylino Sensitive Πάνες No4 (8 13kg.) Economy 50τεμ",
-            "price": "0,180€",
+            "title": "Pampers Premium Care Πάνες Νo5 (11 16kg.) Jumbo Pack 44τεμ",
+            "price": "0,313€",
             "all_prices": [
-                "8.99€",
-                "0,180€"
+                "13.79€",
+                "0,313€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/545_8.jpg",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/YPXREZPNCJ20260326150357.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Babylino Sensitive Πάνες Νo5+ (12 17kg.) Economy 42τεμ",
-            "price": "0,214€",
+            "title": "Pampers Premium Care Πάνες Νo7 (15+kg.) Jumbo Pack 32τεμ",
+            "price": "0,431€",
             "all_prices": [
-                "8.99€",
-                "0,214€"
+                "13.79€",
+                "0,431€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/545_218.jpg",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_545_1000.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Babycare 99% Water Μωρομάντηλα 3x72τεμ",
-            "price": "0,013€",
+            "title": "Libresse Σερβιέτες Maxi Good Night 10τεμ",
+            "price": "0,158€",
             "all_prices": [
-                "2.75€",
-                "0,013€"
+                "1.58€",
+                "0,158€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_545_1082.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/576_41.jpg",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Babycare Χαμομήλι Μωρομάντηλα 3x72τεμ",
-            "price": "0,012€",
+            "title": "Aim White Now Οδοντόκρεμα 75ml",
+            "price": "26,00€",
             "all_prices": [
-                "2.58€",
-                "0,012€"
+                "1.95€",
+                "26,00€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_545_1046.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/VNLUUVAFTJ20251009123429.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Babycare Sensitive Plus Μωρομάντηλα 3x54τεμ",
-            "price": "0,016€",
+            "title": "Ultrex Men Σαμπουάν Για Ξηροδερμία 360ml",
+            "price": "9,44€",
             "all_prices": [
-                "2.64€",
-                "0,016€"
+                "3.40€",
+                "9,44€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_545_1038.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/RANXNQUVIE20260512124526.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Colgate Max White Οδοντόκρεμα One 75ml",
-            "price": "28,40€",
+            "title": "Ultrex Men Σαμπουάν Deep Clean Action Για Όλους Τους Τύπους Μαλλιών 360ml",
+            "price": "9,44€",
             "all_prices": [
-                "2.13€",
-                "28,40€"
+                "3.40€",
+                "9,44€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_570_574.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/DZWVCWBYYG20260512124325.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Colgate Zig Zag Οδοντόβουρτσα Μέτρια Flex",
-            "price": "1,48€",
+            "title": "Syoss Intense Keratin Σαμπουάν Για Αδύναμα Μαλλιά 750ml",
+            "price": "5,21€",
             "all_prices": [
-                "1.48€",
-                "1,48€"
+                "3.91€",
+                "5,21€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/570_1626.jpg",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_570_588.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Sanex Zero% Αποσμητικό Roll On Extra Control 50ml",
-            "price": "56,80€",
+            "title": "Syoss Intense Color Σαμπουάν Για Βαμμένα Μαλλιά 750ml",
+            "price": "5,21€",
             "all_prices": [
-                "2.84€",
-                "56,80€"
+                "3.91€",
+                "5,21€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/570_1636.jpg",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_570_13.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Head & Shoulders Σαμπουάν Classic Clean 330ml",
-            "price": "10,52€",
+            "title": "Zewa Deluxe Χαρτί Υγείας Camomile 3Φύλλων 8τεμ. 704γρ",
+            "price": "5,57€",
             "all_prices": [
-                "3.47€",
-                "10,52€"
+                "3.92€",
+                "5,57€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/YPAWYUOHTE20260317124706.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_576_84.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Head & Shoulders Σαμπουάν Ενυδάτωσης 330ml",
-            "price": "10,52€",
+            "title": "Zewa Deluxe Lavender Dreams Χαρτί Υγείας 3Φύλλων 8τεμ. 704γρ",
+            "price": "5,57€",
             "all_prices": [
-                "3.47€",
-                "10,52€"
+                "3.92€",
+                "5,57€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/UBXVNQZQRI20260317123704.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/NTHINXKJEA20260401085630.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Palmolive Naturals Αφρόλουτρο Μέλι & Γάλα 500ml",
-            "price": "3,98€",
+            "title": "Fairy MaxPower Υγρό Απορρυπαντικό Πιάτων 660ml",
+            "price": "3,76€",
             "all_prices": [
-                "1.99€",
-                "3,98€"
+                "2.48€",
+                "3,76€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_570_1705.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/WXWZJZKBUJ20250918094154.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Planet Baby Υγρό Απορρυπαντικό Πιάτων 425ml",
-            "price": "3,98€",
+            "title": "Fairy MaxPower Υγρό Απορρυπαντικό Πιάτων Λεμόνι 660ml",
+            "price": "3,76€",
             "all_prices": [
-                "1.69€",
-                "3,98€"
+                "2.48€",
+                "3,76€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/572_707.jpg",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/VCAXCVHUZF20250918100258.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Palmolive Original Υγρό Απορρυπαντικό Πιάτων 500ml",
-            "price": "2,46€",
+            "title": "Klinex Χλωρίνη Σπρέι 750ml",
+            "price": "3,73€",
             "all_prices": [
-                "1.23€",
-                "2,46€"
+                "2.80€",
+                "3,73€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/UENBTRSUNR20261116135334.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/IIIBVEKKLM20261029152632.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Ajax Καθαριστικό Επιφανειών WC Expert 500ml",
-            "price": "3,94€",
+            "title": "Cajoline Συμπυκνωμένο Μαλακτικό Ρούχων Gold 82mez. 1,725lt",
+            "price": "0,056€",
             "all_prices": [
-                "1.97€",
-                "3,94€"
+                "4.59€",
+                "0,056€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/ZLHYPJWRJX20261001144438.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_572_2338.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Planet Baby Συμπυκνωμένο Μαλακτικό Ρούχων 40mez. 900ml",
-            "price": "0,079€",
+            "title": "Cajoline Συμπυκνωμένο Μαλακτικό Ρούχων Blue Fresh 82mez. 1,725lt",
+            "price": "0,056€",
             "all_prices": [
-                "3.17€",
-                "0,079€"
+                "4.59€",
+                "0,056€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_572_2741.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_572_2342.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Soupline Συμπυκνωμένο Μαλακτικό Ρούχων Mistral 78mez. 1,638lt",
-            "price": "0,062€",
+            "title": "Cajoline Συμπυκνωμένο Μαλακτικό Ρούχων Red Fruits 52mez. 1,096lt",
+            "price": "0,065€",
             "all_prices": [
-                "4.82€",
-                "0,062€"
+                "3.39€",
+                "0,065€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/GIFFVKVHHW20260922100313.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_572_2340.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Soupline Elixir Oriental Συμπυκνωμένο Μαλακτικό Ρούχων Silk Musk 52mez. 730ml",
-            "price": "0,069€",
+            "title": "Skip Υγρό Απορρυπαντικό Πλυντηρίου Ρούχων Active Clean 84mez.3,78lt",
+            "price": "0,166€",
             "all_prices": [
-                "3.59€",
-                "0,069€"
+                "13.95€",
+                "0,166€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/ZCUCHDXZVL20261002111321.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/KOIBREIITH20260619150241.webp",
             "supermarket": "Κρητικός"
         },
         {
-            "title": "Planet Cold Fusion Υγρό Απορρυπαντικό Πλυντηρίου Ρούχων 45mez. 2,070lt",
-            "price": "0,176€",
+            "title": "Skip Απορρυπαντικό Πλυντηρίου Ρούχων Σκόνη Clean Power 77mez. 5,005kg",
+            "price": "0,181€",
             "all_prices": [
-                "7.92€",
-                "0,176€"
+                "13.95€",
+                "0,181€"
             ],
-            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportPromoOffers/PromoOffers_572_2726.webp",
+            "image": "https://masoutisimagesneu.blob.core.windows.net/images/ExportOffers/QAOIMYWJKC20260622134323.webp",
             "supermarket": "Κρητικός"
         },
         {
@@ -391,9 +391,9 @@
         },
         {
             "title": "My Soft Lux Χαρτί Υγείας 3φυλλο 10αρι 1,200kg",
-            "price": "3,21€",
+            "price": "3,25€",
             "all_prices": [
-                "3,21€"
+                "3,25€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/4ce84040-f98c-45d3-aeb2-d4ee13b1f623_E1.jpg",
             "supermarket": "My Market"
@@ -414,6 +414,15 @@
                 "4,29€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/f9e7824e-789c-4405-9e66-022d4e6728b4_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "My Soft Jumbo Ρολό Κουζίνας 600gr",
+            "price": "4,00€",
+            "all_prices": [
+                "4,00€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/07_07_21/d73dbbf6-e1c6-494b-98e7-5e082cf8c53c_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -494,15 +503,6 @@
             "supermarket": "My Market"
         },
         {
-            "title": "My Gusto Γάλα Υψηλής Θερμικής Επεξεργασίας 1,5% Λιπαρά 1Lt",
-            "price": "1,00€",
-            "all_prices": [
-                "1,00€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/13_03_25/b58cc1d5-7139-41cd-9380-4d743ce9fffe_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
             "title": "Μήλα Ζαγοράς Πηλίου Π.Ο.Π. Ποιότητα Α΄ Τιμή Κιλού",
             "price": "2,35€",
             "all_prices": [
@@ -512,21 +512,12 @@
             "supermarket": "My Market"
         },
         {
-            "title": "Ελιά Βοείου Ελληνική Νωπή Άνευ Οστού",
-            "price": "13,59€",
+            "title": "My Gusto Γάλα Υψηλής Θερμικής Επεξεργασίας 1,5% Λιπαρά 1Lt",
+            "price": "1,00€",
             "all_prices": [
-                "13,59€"
+                "1,00€"
             ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/30eeb80f-8445-4f8b-8e8d-85ba8daec57f_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "My Soft Χαρτοπετσέτες 70 Φύλλων 0,120kg",
-            "price": "6,08€",
-            "all_prices": [
-                "6,08€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/fdbb5eee-4d1e-484d-9b57-bf9b281493ed_E1.jpg",
+            "image": "https://cdn.mymarket.gr/images/styles/medium/13_03_25/b58cc1d5-7139-41cd-9380-4d743ce9fffe_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -540,13 +531,21 @@
             "supermarket": "My Market"
         },
         {
-            "title": "Ελιά Βοείου Γερμανίας Νωπή Άνευ Οστού Τιμή Κιλού",
-            "price": "14,29€",
+            "title": "Ελιά Βοείου Ελληνική Νωπή Άνευ Οστού",
+            "price": "13,59€",
             "all_prices": [
-                "16,89€",
-                "14,29€"
+                "13,59€"
             ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/31d9a13e-846e-4b8e-8d90-736e7ac86ce6_E1.jpg",
+            "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/30eeb80f-8445-4f8b-8e8d-85ba8daec57f_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "My Soft Χαρτοπετσέτες 70 Φύλλων 0,120kg",
+            "price": "5,83€",
+            "all_prices": [
+                "5,83€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/11_06_21/fdbb5eee-4d1e-484d-9b57-bf9b281493ed_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -568,6 +567,25 @@
             "supermarket": "My Market"
         },
         {
+            "title": "Ελιά Βοείου Γερμανίας Νωπή Άνευ Οστού Τιμή Κιλού",
+            "price": "14,29€",
+            "all_prices": [
+                "16,89€",
+                "14,29€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/11_01_24/31d9a13e-846e-4b8e-8d90-736e7ac86ce6_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Λεμόνια Ελληνικά Τιμή Κιλού",
+            "price": "1,49€",
+            "all_prices": [
+                "1,49€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/09_04_21/47bbdafd-c34e-4fb4-8217-0a593869a0be_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
             "title": "BabyCare 99% Water Μωρομάντηλα Triple Pack 3x72τεμ",
             "price": "0,01€",
             "all_prices": [
@@ -583,15 +601,6 @@
                 "0,01€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/07_04_25/a345c0ed-9880-45aa-805c-9e203002c73a_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Λεμόνια Ελληνικά Τιμή Κιλού",
-            "price": "1,49€",
-            "all_prices": [
-                "1,49€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/09_04_21/47bbdafd-c34e-4fb4-8217-0a593869a0be_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -622,21 +631,75 @@
             "supermarket": "My Market"
         },
         {
-            "title": "Θράκης Γεύσεις Γαλοπούλα Καπνιστή Τοστ Τιμή Κιλού",
-            "price": "8,20€",
+            "title": "Κωστηλάτας Φυσικό Μεταλλικό Νερό 6x1,5lt",
+            "price": "0,19€",
             "all_prices": [
-                "8,20€"
+                "0,19€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/17_06_21/34dbbfc3-ad3b-41df-843e-4a55da9c462b_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Θράκης Γεύσεις Γαλοπούλα Καπνιστή Τοστ Τιμή Κιλού",
+            "price": "8,41€",
+            "all_prices": [
+                "8,41€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/11_02_21/5fbd724f-6636-44d4-a0b5-78bccf5de449_E1.jpg",
             "supermarket": "My Market"
         },
         {
-            "title": "Green Cola 1,5lt",
-            "price": "0,79€",
+            "title": "Alfa Τορτίγια Κλασσική 6τεμ 370gr",
+            "price": "4,62€",
             "all_prices": [
-                "0,79€"
+                "6,93€",
+                "6,24€",
+                "4,16€",
+                "6,93€",
+                "2,31€",
+                "4,62€"
             ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/27_11_25/1b18f99a-420a-4679-bfd5-7abfc9ef993e_E1.jpg",
+            "image": "https://cdn.mymarket.gr/images/styles/medium/30_05_22/4e90ecc2-ac63-4b0a-b012-36e3379efe3a_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Λουμίδης Παπαγάλος Καφές Ελληνικός Παραδοσιακός 194gr",
+            "price": "3,09€",
+            "all_prices": [
+                "4,76€",
+                "24,54€",
+                "15,93€",
+                "4,76€",
+                "3,09€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/06_03_23/2f0ca6c4-8d26-4cd7-9b41-ab6042ae9405_EH.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Pummaro Χυμό Τομάτας Κλασσικός Συμπυκνωμένος 500gr",
+            "price": "1,62€",
+            "all_prices": [
+                "1,62€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/31_10_24/ca6a7288-84ce-4333-8482-cb71b7a6beeb_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Θέρισο Φυσικό Μεταλλικό Νερό 12x500ml",
+            "price": "0,29€",
+            "all_prices": [
+                "0,29€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/14_05_25/d07b51ac-3404-4e7e-90aa-7cb1c45d3cf9_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
+            "title": "Pummaro Χυμός Τομάτας 2x500gr",
+            "price": "1,61€",
+            "all_prices": [
+                "1,61€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/08_03_25/c1d133ba-2d7d-4b4e-a775-a374ba340320_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -646,60 +709,6 @@
                 "7,98€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/13_03_24/89a763b8-7efa-4acc-996c-d2714d0766c4_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Σφακιανές Μαδάρες Γραβιέρα Κρήτης Ποπ Τιμή Κιλού",
-            "price": "12,98€",
-            "all_prices": [
-                "12,98€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/12_04_24/1901775a-2d78-4cc1-8cf2-b88443965d26_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Παπαδοπούλου Ψωμί Τοστ Γεύση2 Σταρένιο 700gr",
-            "price": "2,23€",
-            "all_prices": [
-                "2,23€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/08_06_23/c7104265-12d5-462a-816d-6aa85b05a599_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Adoro Light 10% Φρατζόλα Γερμανίας Τιμή Κιλού",
-            "price": "7,21€",
-            "all_prices": [
-                "7,21€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/11_02_21/16564a26-a9cc-4c55-aad5-47121563c177_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Ελιά Βοείου Πολωνίας Νωπή Άνευ Οστού Τιμή Κιλού",
-            "price": "11,29€",
-            "all_prices": [
-                "11,29€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/21_04_21/a9d42d20-e8cd-4e96-9ab6-dc6e9b31a8c0_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Kyknos Τριμμένες Τομάτες Χάρτινο 500gr",
-            "price": "1,58€",
-            "all_prices": [
-                "1,58€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/25_02_21/feb37e6d-6c20-47f4-b3bc-10fb8f73beba_EH.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Septona Μωρομάντηλα Χαμομήλι Multi 3x80τεμ",
-            "price": "0,01€",
-            "all_prices": [
-                "0,01€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/22_01_25/0bdcdd29-c319-4267-9ed1-c6aca1a4404d_EH.jpg",
             "supermarket": "My Market"
         }
     ]
