@@ -1,6 +1,6 @@
 {
-    "updated_at": "2026-11-26 18:18:28",
-    "total_offers": 73,
+    "updated_at": "2026-11-27 18:00:13",
+    "total_offers": 76,
     "offers": [
         {
             "title": "Κέρδος 15%",
@@ -18,6 +18,33 @@
                 "11,16 €"
             ],
             "image": "https://static.ab.gr/medias/sys_master/products/hb4/hb6/10329351159838.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
+            "supermarket": "ΑΒ Βασιλόπουλος"
+        },
+        {
+            "title": "Κέρδος 30%",
+            "price": "15,31 €",
+            "all_prices": [
+                "15,31 €"
+            ],
+            "image": "https://static.ab.gr/medias/sys_master/products/hd2/h7b/10498906554398.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
+            "supermarket": "ΑΒ Βασιλόπουλος"
+        },
+        {
+            "title": "Κέρδος 25%",
+            "price": "4,50 €",
+            "all_prices": [
+                "4,50 €"
+            ],
+            "image": "https://static.ab.gr/medias/sys_master/h7d/he7/10125381533726.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
+            "supermarket": "ΑΒ Βασιλόπουλος"
+        },
+        {
+            "title": "Κέρδος 10%",
+            "price": "0,38 €",
+            "all_prices": [
+                "0,38 €"
+            ],
+            "image": "https://static.ab.gr/medias/sys_master/h1b/h82/10126457274398.jpg?buildNumber=a9f2e53372062d0a3c294b6efbbae500b736fb9decc0161ff3ce37945bb5860a&imwidth=300",
             "supermarket": "ΑΒ Βασιλόπουλος"
         },
         {
@@ -549,21 +576,21 @@
             "supermarket": "My Market"
         },
         {
+            "title": "Ήπειρος Μαλακή Ημιδοχείο Τιμή Κιλού",
+            "price": "9,65€",
+            "all_prices": [
+                "9,65€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/kerdizw-kathimerina.png",
+            "supermarket": "My Market"
+        },
+        {
             "title": "Melissa Σπαγγέτι Νο 6 500gr",
             "price": "1,50€",
             "all_prices": [
                 "1,50€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/10_12_24/1738cd56-b586-4bea-ab55-73b75f1dfa3e_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Ήπειρος Μαλακή Ημιδοχείο Τιμή Κιλού",
-            "price": "9,65€",
-            "all_prices": [
-                "9,65€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/14_03_23/1ee68b82-3900-48fb-964c-90fa84f9016d_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -622,6 +649,15 @@
             "supermarket": "My Market"
         },
         {
+            "title": "Κωστηλάτας Φυσικό Μεταλλικό Νερό 6x1,5lt",
+            "price": "0,19€",
+            "all_prices": [
+                "0,19€"
+            ],
+            "image": "https://cdn.mymarket.gr/images/styles/medium/17_06_21/34dbbfc3-ad3b-41df-843e-4a55da9c462b_E1.jpg",
+            "supermarket": "My Market"
+        },
+        {
             "title": "Milner Τυρί Ολλανδίας Φρατζόλα Προέλευση Ε.Ε. Τιμή Κιλού",
             "price": "10,64€",
             "all_prices": [
@@ -631,12 +667,16 @@
             "supermarket": "My Market"
         },
         {
-            "title": "Κωστηλάτας Φυσικό Μεταλλικό Νερό 6x1,5lt",
-            "price": "0,19€",
+            "title": "Λουμίδης Παπαγάλος Καφές Ελληνικός Παραδοσιακός 194gr",
+            "price": "3,09€",
             "all_prices": [
-                "0,19€"
+                "4,76€",
+                "24,54€",
+                "15,93€",
+                "4,76€",
+                "3,09€"
             ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/17_06_21/34dbbfc3-ad3b-41df-843e-4a55da9c462b_E1.jpg",
+            "image": "https://cdn.mymarket.gr/images/styles/medium/06_03_23/2f0ca6c4-8d26-4cd7-9b41-ab6042ae9405_EH.jpg",
             "supermarket": "My Market"
         },
         {
@@ -663,16 +703,12 @@
             "supermarket": "My Market"
         },
         {
-            "title": "Λουμίδης Παπαγάλος Καφές Ελληνικός Παραδοσιακός 194gr",
-            "price": "3,09€",
+            "title": "Θέρισο Φυσικό Μεταλλικό Νερό 12x500ml",
+            "price": "0,29€",
             "all_prices": [
-                "4,76€",
-                "24,54€",
-                "15,93€",
-                "4,76€",
-                "3,09€"
+                "0,29€"
             ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/06_03_23/2f0ca6c4-8d26-4cd7-9b41-ab6042ae9405_EH.jpg",
+            "image": "https://cdn.mymarket.gr/images/styles/medium/14_05_25/d07b51ac-3404-4e7e-90aa-7cb1c45d3cf9_E1.jpg",
             "supermarket": "My Market"
         },
         {
@@ -682,15 +718,6 @@
                 "1,62€"
             ],
             "image": "https://cdn.mymarket.gr/images/styles/medium/31_10_24/ca6a7288-84ce-4333-8482-cb71b7a6beeb_E1.jpg",
-            "supermarket": "My Market"
-        },
-        {
-            "title": "Θέρισο Φυσικό Μεταλλικό Νερό 12x500ml",
-            "price": "0,29€",
-            "all_prices": [
-                "0,29€"
-            ],
-            "image": "https://cdn.mymarket.gr/images/styles/medium/14_05_25/d07b51ac-3404-4e7e-90aa-7cb1c45d3cf9_E1.jpg",
             "supermarket": "My Market"
         },
         {
